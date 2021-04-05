@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Reached</string>
+    <string name="app_name_release">Reached</string>
+    <string name="app_name_staging">Reached-stage</string>
+    <string name="app_name_dev">Reached-Dev</string>
+    <string name="button_text_create">CREATE</string>
+    <string name="button_text_join">JOIN</string>
+    <string name="add">Add</string>
+    <string name="button_view_list">View list</string>
+</resources>

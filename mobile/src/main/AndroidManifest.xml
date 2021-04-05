@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.joshsoftware.reached">
+
+    <application
+        android:name="com.joshsoftware.reached.FamApp"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApplication">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBbuKMkR0kT4b3cowY03EeI-gASGckjow4" />
+        <activity android:name="com.joshsoftware.reached.ui.activity.GroupMemberActivity"  android:screenOrientation="portrait"></activity>
+        <activity android:name="com.joshsoftware.reached.ui.activity.ScanQrCodeActivity"  android:screenOrientation="portrait"/>
+        <activity android:name="com.joshsoftware.reached.ui.activity.SplashActivity"
+            android:theme="@style/SplashTheme" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.joshsoftware.reached.ui.activity.QrCodeActivity"  android:screenOrientation="portrait"/>
+        <activity android:name="com.joshsoftware.reached.ui.activity.GroupChoiceActivity"  android:screenOrientation="portrait"/>
+        <activity android:name="com.joshsoftware.reached.ui.activity.MapActivity"  android:screenOrientation="portrait"/>
+        <activity android:name="com.joshsoftware.reached.ui.LoginActivity" android:screenOrientation="portrait">
+        </activity>
+    </application>
+
+</manifest>

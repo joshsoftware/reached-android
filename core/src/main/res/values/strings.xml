@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="network_error">Please check your internet connection</string>
+    <string name="please_try_again">Please try again</string>
+    <string name="something_went_wrong">Something went wrond</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="sos_alert">SOS Alert</string>
+
+</resources>

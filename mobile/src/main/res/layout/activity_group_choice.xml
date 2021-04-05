@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/parent"
+    tools:context=".ui.activity.GroupChoiceActivity">
+
+    <ImageView
+        android:scaleType="centerCrop"
+        android:src="@drawable/login_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/createButton"
+        android:text="@string/button_text_create"
+        style="@style/ChoiceButton"
+        app:layout_constraintBottom_toTopOf="@id/joinButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/joinButton"
+        android:text="@string/button_text_join"
+        style="@style/ChoiceButton"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
