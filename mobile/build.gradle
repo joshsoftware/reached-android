@@ -15,7 +15,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.joshsoftware.fampal"
+        applicationId "com.joshsoftware.reached"
         minSdkVersion 28
         targetSdkVersion 30
         versionCode 1

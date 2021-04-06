@@ -24,7 +24,7 @@
         android:layout_marginBottom="32dp"/>
 
     <TextView
-        android:text="Welcome to Family tracker!"
+        android:text="Welcome to Reached!"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:textSize="18sp"
