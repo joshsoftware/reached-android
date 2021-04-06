@@ -2,6 +2,7 @@ package com.joshsoftware.reached.di
 
 import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
+import com.joshsoftware.reached.ui.activity.GroupListActivity
 import com.joshsoftware.reached.ui.activity.GroupMemberActivity
 import com.joshsoftware.reached.ui.activity.MapActivity
 import dagger.Module
@@ -21,4 +22,6 @@ abstract class ActivityModule {
 
     @ContributesAndroidInjector
     abstract fun contributeMapActivity(): MapActivity
+    @ContributesAndroidInjector
+    abstract fun contributeGroupListActivity(): GroupListActivity
 }

@@ -3,7 +3,9 @@ package com.joshsoftware.reached.ui.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.adapter.GroupsAdapter
@@ -16,22 +18,32 @@ class GroupListActivity : BaseActivity() {
     lateinit var adapter: GroupsAdapter
     lateinit var viewModel: GroupListViewModel
     @Inject
-    lateinit var viewModelFactory: GroupListViewModel
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group_list)
+        setupRecyclerView()
+    }
 
+    private fun setupRecyclerView() {
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = GroupsAdapter {
+
+        }
+        recyclerView.adapter = adapter
     }
 
     override fun initializeViewModel() {
-        viewModel = ViewModelProvider(this, viewModelFactory)[GroupListViewModel::class]
+        viewModel = ViewModelProvider(this, viewModelFactory)[GroupListViewModel::class.java]
 
-        viewModel.result.observe(this, Observer {
-
+        viewModel.result.observe(this, { list ->
+            list?.let {
+                adapter.submitList(it)
+            }
         })
 
-        viewModel.spinner.observe(this, Observer { loading ->
+        viewModel.spinner.observe(this, { loading ->
             loading?.let {
                 if(it) {
                     showProgressView(parentLayout)

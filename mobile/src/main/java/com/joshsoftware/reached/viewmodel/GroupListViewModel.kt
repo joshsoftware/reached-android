@@ -8,7 +8,9 @@ import javax.inject.Inject
 
 class GroupListViewModel @Inject constructor(var repository: GroupRepository): BaseViewModel<ArrayList<Group>>() {
 
-    fun requestGroups(user: User) {
-
+    fun fetchGroups(user: User) {
+        executeRoutine {
+            repository.
+        }
     }
 }

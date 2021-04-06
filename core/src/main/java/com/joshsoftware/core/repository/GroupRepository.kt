@@ -23,6 +23,9 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     suspend fun fetchGroup(userId: String): String? {
         return dbManager.fetchGroup(userId)
     }
+    suspend fun fetchGroups(user: User): String? {
+        return dbManager.fetchGroups(user)
+    }
 
     fun fetchGroupDetails(groupId: String,
                           onFetch: (Group?) -> Unit,

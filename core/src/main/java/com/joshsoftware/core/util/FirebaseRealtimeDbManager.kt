@@ -246,4 +246,11 @@ class FirebaseRealtimeDbManager {
             }
         })
     }
+
+    suspend fun fetchGroups(user: User) = suspendCoroutine<Group?> { continuation ->
+        user.groups.forEach { s, b ->
+            groupReference.child(s).get()
+        }
+    }
+
 }
