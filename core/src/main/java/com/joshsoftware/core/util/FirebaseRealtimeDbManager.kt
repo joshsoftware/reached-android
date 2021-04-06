@@ -2,16 +2,14 @@ package com.joshsoftware.core.util
 
 import android.location.Location
 import com.google.firebase.database.*
-import com.google.gson.internal.ObjectConstructor
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.model.User
-import java.util.ArrayList
+import kotlin.collections.ArrayList
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlin.system.measureTimeMillis
 
 class FirebaseRealtimeDbManager {
     private val db = FirebaseDatabase.getInstance()
@@ -49,8 +47,10 @@ class FirebaseRealtimeDbManager {
     }
 
     suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String) = suspendCoroutine<String> { continuation ->
+        val map = hashMapOf<String, Member>()
+        map.put(userId, Member(name = user.name))
         groupReference.child(id).setValue(Group(
-            members = arrayListOf(Member(id = userId, name = user.name)),
+            members = map,
             created_by = userId,
             name = groupName
         )).addOnCompleteListener {
@@ -74,7 +74,7 @@ class FirebaseRealtimeDbManager {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
                 group?.let {
-                    it.members.add(Member(userId, user.name))
+                    it.members.put(userId, Member(user.name))
                 }
                 groupReference.child(id).setValue(group).addOnCompleteListener {
                     if(it.isSuccessful) {
@@ -161,11 +161,9 @@ class FirebaseRealtimeDbManager {
                 if (group == null) {
                     onFetch(null)
                 } else {
-                    val index = group?.members?.indexOfFirst { it.id == memberId }
-                    index?.let {
-                        if (index != -1) {
-                            onFetch(group.members[index])
-                        }
+                    val member = group.members.get(memberId)
+                    member?.let {
+                        onFetch(member)
                     }
 
                 }
@@ -197,13 +195,11 @@ class FirebaseRealtimeDbManager {
         groupReference.child(groupId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
-                val index = group?.members?.indexOfFirst { it.id == userId }
-                index?.let {
-                    if (index != -1) {
-                        group.members[index].lat = location.latitude
-                        group.members[index].long = location.longitude
+                val member = group?.members?.get(userId)
+                member?.let {
+                        member.lat = location.latitude
+                        member.long = location.longitude
                         groupReference.child(groupId).setValue(group)
-                    }
                 }
 
 
@@ -223,7 +219,7 @@ class FirebaseRealtimeDbManager {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
                 if(group != null) {
-                    onFetch(group.members)
+                    onFetch(ConversionUtil().getMemberListFromMap(group.members))
                 } else {
                     onFetch(arrayListOf())
                 }
@@ -234,6 +230,7 @@ class FirebaseRealtimeDbManager {
             }
         })
     }
+
 
     fun observeSos(groupId: String,
                              onFetch: (SosUser?) -> Unit,

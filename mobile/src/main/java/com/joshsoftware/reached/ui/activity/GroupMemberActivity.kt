@@ -18,6 +18,7 @@ import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.ui.BaseLocationActivity
 import com.joshsoftware.core.ui.adapter.MemberAdapter
+import com.joshsoftware.core.util.ConversionUtil
 import com.joshsoftware.core.viewmodel.GroupMemberViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberMobileBinding
@@ -128,8 +129,10 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
         viewModel.result.observe(this, Observer { group ->
             group?.let {
-                it.members.add(Member(name = "All members"))
-                adapter.submitList(group.members)
+                val util = ConversionUtil()
+                val members = util.getMemberListFromMap(group.members)
+                members.add(Member(name = "All members"))
+                adapter.submitList(members)
             }
         })
 
