@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ui.activity.CreateGroupActivity"></activity>
+        <activity android:name=".ui.activity.GroupListActivity"></activity>
+        <activity android:name=".ui.activity.CreateGroupActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -44,7 +45,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.LoginActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
