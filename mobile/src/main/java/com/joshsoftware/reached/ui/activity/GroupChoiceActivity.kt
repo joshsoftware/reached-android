@@ -9,6 +9,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.ui.BaseLocationActivity
 import com.joshsoftware.reached.databinding.ActivityGroupChoiceBinding
+import com.joshsoftware.reached.ui.dialog.CreateGroupDialog
 import com.journeyapps.barcodescanner.CaptureActivity
 import java.util.*
 import javax.inject.Inject
@@ -34,16 +35,8 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
         binding.apply {
             createButton.setOnClickListener {
-//                val intent = Intent(this@GroupChoiceActivity, CreateGroupActivity::class.java)
-//                startActivity(intent)
-                val groupId = UUID.randomUUID().toString()
-                val id = sharedPreferences.userId
-                val user = sharedPreferences.userData
-                if (user != null) {
-                    if (id != null) {
-                        viewModel.createGroup(groupId, id, user)
-                    }
-                }
+                val dialog = CreateGroupDialog()
+                dialog.show(supportFragmentManager, dialog.tag)
             }
 
             joinButton.setOnClickListener {

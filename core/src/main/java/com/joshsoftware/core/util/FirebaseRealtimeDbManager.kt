@@ -120,29 +120,29 @@ class FirebaseRealtimeDbManager {
 
         groupReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val groups = snapshot.value as HashMap<*, *>?
-                var found = false
-                if(groups != null) {
-                    groups.keys.forEach { key ->
-                        val map = groups[key] as HashMap<String, HashMap<*, *>>
-                        val members = map["members"] as HashMap<String, Any>
-                        members.forEach { member ->
-                            if(member.key == userId) {
-                                found = true
-                                continuation.resume(key as String?)
-                            }
-                        }
-                    }
-                    if(!found) {
-                        continuation.resume(null)
-                    }
-                    if(groups.isEmpty()) {
-                        continuation.resume(null)
-                    }
-                } else {
-                    continuation.resume(null)
-                }
-
+//                val groups = snapshot.value as HashMap<*, *>?
+//                var found = false
+//                if(groups != null) {
+//                    groups.keys.forEach { key ->
+//                        val map = groups[key] as HashMap<String, HashMap<*, *>>
+//                        val members = map["members"] as HashMap<String, Any>
+//                        members.forEach { member ->
+//                            if(member.key == userId) {
+//                                found = true
+//                                continuation.resume(key as String?)
+//                            }
+//                        }
+//                    }
+//                    if(!found) {
+//                        continuation.resume(null)
+//                    }
+//                    if(groups.isEmpty()) {
+//                        continuation.resume(null)
+//                    }
+//                } else {
+//                    continuation.resume(null)
+//                }
+                continuation.resume(null)
             }
 
             override fun onCancelled(error: DatabaseError) {

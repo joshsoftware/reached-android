@@ -38,4 +38,8 @@
         <item name="android:textColor">@color/buttonTextColor</item>
         <item name="android:textSize">14sp</item>
     </style>
+    <style name="AlertDialogStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/App.ShapeAppearance.SmallComponent</item>
+        <item name="android:layout_height">@dimen/create_group_dialog_height</item>
+    </style>
 </resources>

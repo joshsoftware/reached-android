@@ -2,4 +2,5 @@
 <resources>
     <dimen name="dimen_qr_code">280dp</dimen>
     <dimen name="text_input_edit_text_height">56dp</dimen>
+    <dimen name="create_group_dialog_height">235dp</dimen>
 </resources>
