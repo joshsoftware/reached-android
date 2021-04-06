@@ -117,16 +117,17 @@ class FirebaseRealtimeDbManager {
     }
 
     suspend fun fetchGroup(userId: String) = suspendCoroutine<String?> { continuation ->
+
         groupReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val groups = snapshot.value as HashMap<*, *>?
                 var found = false
                 if(groups != null) {
                     groups.keys.forEach { key ->
-                        val map = groups[key] as HashMap<String, ArrayList<Member>>
-                        val members = map["members"] as ArrayList<HashMap<*, *>>
+                        val map = groups[key] as HashMap<String, HashMap<*, *>>
+                        val members = map["members"] as HashMap<String, Any>
                         members.forEach { member ->
-                            if(member["id"] == userId) {
+                            if(member.key == userId) {
                                 found = true
                                 continuation.resume(key as String?)
                             }
@@ -139,7 +140,7 @@ class FirebaseRealtimeDbManager {
                         continuation.resume(null)
                     }
                 } else {
-                    continuation.resume
+                    continuation.resume(null)
                 }
 
             }

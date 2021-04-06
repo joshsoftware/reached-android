@@ -34,6 +34,8 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
         binding.apply {
             createButton.setOnClickListener {
+//                val intent = Intent(this@GroupChoiceActivity, CreateGroupActivity::class.java)
+//                startActivity(intent)
                 val groupId = UUID.randomUUID().toString()
                 val id = sharedPreferences.userId
                 val user = sharedPreferences.userData
@@ -114,7 +116,6 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     override fun onLocationChange(location: Location) {
 
     }
-
 
     private fun startGroupMembersActivity(groupId: String) {
         val intent = Intent(this, GroupMemberActivity::class.java)

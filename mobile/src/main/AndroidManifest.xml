@@ -3,7 +3,7 @@
     package="com.joshsoftware.reached">
 
     <application
-        android:name="com.joshsoftware.reached.FamApp"
+        android:name=".FamApp"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,25 +11,40 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
+        <activity android:name=".ui.activity.CreateGroupActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDacw9al4jpEeuFw4UxOaPSU4ON7a_gMjE" />
-        <activity android:name="com.joshsoftware.reached.ui.activity.GroupMemberActivity"  android:screenOrientation="portrait"></activity>
-        <activity android:name="com.joshsoftware.reached.ui.activity.ScanQrCodeActivity"  android:screenOrientation="portrait"/>
-        <activity android:name="com.joshsoftware.reached.ui.activity.SplashActivity"
-            android:theme="@style/SplashTheme" android:screenOrientation="portrait">
+
+        <activity
+            android:name=".ui.activity.GroupMemberActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.ScanQrCodeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.joshsoftware.reached.ui.activity.QrCodeActivity"  android:screenOrientation="portrait"/>
-        <activity android:name="com.joshsoftware.reached.ui.activity.GroupChoiceActivity"  android:screenOrientation="portrait"/>
-        <activity android:name="com.joshsoftware.reached.ui.activity.MapActivity"  android:screenOrientation="portrait"/>
-        <activity android:name="com.joshsoftware.reached.ui.LoginActivity" android:screenOrientation="portrait">
-        </activity>
+        <activity
+            android:name=".ui.activity.QrCodeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.GroupChoiceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.MapActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.LoginActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

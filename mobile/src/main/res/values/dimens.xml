@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="dimen_qr_code">280dp</dimen>
+    <dimen name="text_input_edit_text_height">56dp</dimen>
 </resources>

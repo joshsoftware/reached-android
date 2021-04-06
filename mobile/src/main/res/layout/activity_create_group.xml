@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/groupEditTextLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_gravity="top"
+        android:hint="@string/hint_type_group_name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/groupEditText"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/text_input_edit_text_height"
+            android:inputType="textCapSentences"
+            android:textColor="@color/boxTextColor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabDone"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="@string/add"
+        android:layout_width="wrap_content"
+        app:tint="@color/white"
+        android:src="@drawable/ic_round_done_24"
+        app:iconGravity="end"
+        app:layout_anchor="@id/bottomAppBar"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"/>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:backgroundTint="@color/colorPrimary"
+        android:id="@+id/bottomAppBar"
+        app:navigationIcon="@drawable/ic_back"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:fabAlignmentMode="end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_gravity="bottom"
+        app:fabCradleMargin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

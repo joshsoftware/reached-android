@@ -6,21 +6,21 @@ import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.ui.BaseLoginActivity
-import com.joshsoftware.reached.databinding.ActivityLoginBinding
+import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.GroupMemberActivity
 import com.joshsoftware.reached.ui.activity.INTENT_GROUP_ID
 import javax.inject.Inject
 
 class LoginActivity : BaseLoginActivity() {
-    lateinit var binding: ActivityLoginBinding
+    lateinit var binding: ActivityLoginMobileBinding
 
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivityLoginMobileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
