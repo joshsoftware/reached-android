@@ -14,7 +14,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBbuKMkR0kT4b3cowY03EeI-gASGckjow4" />
+            android:value="AIzaSyDacw9al4jpEeuFw4UxOaPSU4ON7a_gMjE" />
         <activity android:name="com.joshsoftware.reached.ui.activity.GroupMemberActivity"  android:screenOrientation="portrait"></activity>
         <activity android:name="com.joshsoftware.reached.ui.activity.ScanQrCodeActivity"  android:screenOrientation="portrait"/>
         <activity android:name="com.joshsoftware.reached.ui.activity.SplashActivity"
