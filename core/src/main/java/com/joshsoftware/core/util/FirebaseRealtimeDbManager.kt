@@ -138,6 +138,8 @@ class FirebaseRealtimeDbManager {
                     if(groups.isEmpty()) {
                         continuation.resume(null)
                     }
+                } else {
+                    continuation.resume
                 }
 
             }
