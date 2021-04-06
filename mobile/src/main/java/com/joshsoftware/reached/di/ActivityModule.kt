@@ -16,7 +16,7 @@ abstract class ActivityModule {
     @ContributesAndroidInjector
     abstract fun contributeGroupMemberActivity(): GroupMemberActivity
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [GroupChoiceModule::class])
     abstract fun contributeGroupChoiceActivity(): GroupChoiceActivity
 
     @ContributesAndroidInjector

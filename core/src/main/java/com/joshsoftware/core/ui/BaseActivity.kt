@@ -26,7 +26,7 @@ import com.joshsoftware.core.R
 import com.joshsoftware.core.di.Injectable
 import com.joshsoftware.core.viewmodel.BaseViewModel
 
-open abstract class BaseActivity: AppCompatActivity(), Injectable {
+abstract class BaseActivity: AppCompatActivity(), Injectable {
     var progressLayout: FrameLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

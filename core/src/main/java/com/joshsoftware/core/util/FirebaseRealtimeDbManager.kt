@@ -48,10 +48,11 @@ class FirebaseRealtimeDbManager {
         sosReference.child(groupId).removeValue()
     }
 
-    suspend fun createGroupWith(id: String, userId: String, user: User) = suspendCoroutine<String> { continuation ->
+    suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String) = suspendCoroutine<String> { continuation ->
         groupReference.child(id).setValue(Group(
             members = arrayListOf(Member(id = userId, name = user.name)),
-            created_by = userId
+            created_by = userId,
+            name = groupName
         )).addOnCompleteListener {
             if(it.isSuccessful) {
                 continuation.resume(id)

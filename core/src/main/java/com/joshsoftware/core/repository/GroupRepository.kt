@@ -12,8 +12,8 @@ import javax.inject.Inject
 
 class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManager) {
 
-    suspend fun createGroup(id: String, userId: String, user: User): String {
-        return dbManager.createGroupWith(id, userId, user)
+    suspend fun createGroup(id: String, userId: String, user: User, groupName: String): String {
+        return dbManager.createGroupWith(id, userId, user, groupName)
     }
 
     suspend fun joinGroup(id: String, userId: String, user: User): String {
