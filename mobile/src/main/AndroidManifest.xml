@@ -46,6 +46,11 @@
         <activity
             android:name=".ui.LoginActivity"
             android:screenOrientation="portrait" />
+
+        <service
+            android:name="com.joshsoftware.reached.service.LocationUpdateService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

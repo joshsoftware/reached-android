@@ -8,12 +8,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
+import com.joshsoftware.core.PermissionActivity
 import com.joshsoftware.core.viewmodel.LoginViewModel
 import timber.log.Timber
 import javax.inject.Inject
 
 private const val RC_SIGN_IN = 1
-open abstract class BaseLoginActivity: BaseActivity() {
+open abstract class BaseLoginActivity: PermissionActivity() {
 
 
     lateinit var viewModel: LoginViewModel
