@@ -6,5 +6,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="sos_alert">SOS Alert</string>
+    <string name="me">Me</string>
 
 </resources>

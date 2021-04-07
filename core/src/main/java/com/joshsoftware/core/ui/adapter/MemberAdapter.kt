@@ -1,22 +1,33 @@
 package com.joshsoftware.core.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
+import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.FamViewHolder
 import com.joshsoftware.core.R
 import com.joshsoftware.core.model.Member
 import kotlinx.android.synthetic.main.member_view.view.*
 
-class MemberAdapter(var onClick: (Member) -> Unit): ListAdapter<Member, FamViewHolder>(DIFF_CALLBACK) {
+class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (Member) -> Unit): ListAdapter<Member, FamViewHolder>(DIFF_CALLBACK) {
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: FamViewHolder, position: Int) {
         val model = getItem(position)
         if(model != null) {
             holder.itemView.apply {
-                nameTextView.text = model.name
+                if(sharedPreferences.userId != null) {
+                    if(model.id == sharedPreferences.userId) {
+                        nameTextView.text = context.getString(R.string.me)
+                    } else {
+                        nameTextView.text = model.name
+                    }
+                } else {
+                    nameTextView.text = model.name
+                }
                 model.profileUrl?.let {
                     Glide.with(this).load(it).into(profileImageView);
                 }

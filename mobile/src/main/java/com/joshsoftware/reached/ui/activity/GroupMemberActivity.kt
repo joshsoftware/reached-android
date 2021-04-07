@@ -58,7 +58,7 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
             setSupportActionBar(bottomAppBar)
 
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
-            adapter = MemberAdapter {
+            adapter = MemberAdapter(sharedPreferences) {
                 startMapActivity(it)
             }
             recyclerView.adapter = adapter
