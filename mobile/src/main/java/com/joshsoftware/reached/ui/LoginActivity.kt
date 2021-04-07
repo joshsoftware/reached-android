@@ -8,8 +8,10 @@ import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
+import com.joshsoftware.reached.ui.activity.GroupListActivity
 import com.joshsoftware.reached.ui.activity.GroupMemberActivity
 import com.joshsoftware.reached.ui.activity.INTENT_GROUP_ID
+import timber.log.Timber
 import javax.inject.Inject
 
 class LoginActivity : BaseLoginActivity() {
@@ -26,7 +28,7 @@ class LoginActivity : BaseLoginActivity() {
 
         if(sharedPreferences.userData != null) {
             sharedPreferences.userId?.let {
-                viewModel.fetchGroup(it)
+                viewModel.fetchUserDetails(it)
             }
         }
 
@@ -44,23 +46,26 @@ class LoginActivity : BaseLoginActivity() {
     }
 
     private fun registerViewModelObservers() {
+
         viewModel.result.observe(this, Observer { (id, user) ->
             sharedPreferences.saveUserId(id)
             sharedPreferences.saveUserData(user)
-            viewModel.fetchGroup(id)
+            viewModel.fetchUserDetails(id)
         })
 
-        viewModel.groupId.observe(this, Observer { id ->
-            if(id != null) {
-                startGroupMembersActivity(id)
-            } else {
-                startGroupChoiceActivity()
+        viewModel.user.observe(this, Observer { user ->
+            user?.let {
+                sharedPreferences.saveUserData(user)
+                if (user.groups.isEmpty()) {
+                    startGroupChoiceActivity()
+                } else {
+                    startGroupListActivity()
+                }
             }
-            finish()
         })
 
-        viewModel.error.observe(this, Observer {
-
+        viewModel.error.observe(this, Observer { error ->
+            Timber.d(error)
         })
 
         viewModel.spinner.observe(this, Observer {loading ->
@@ -73,9 +78,8 @@ class LoginActivity : BaseLoginActivity() {
         })
     }
 
-    private fun startGroupMembersActivity(groupId: String) {
-        val intent = Intent(this, GroupMemberActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, groupId)
+    private fun startGroupListActivity() {
+        val intent = Intent(this, GroupListActivity::class.java)
         startActivity(intent)
     }
 

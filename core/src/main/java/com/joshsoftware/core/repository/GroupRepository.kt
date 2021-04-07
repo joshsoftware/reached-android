@@ -7,8 +7,8 @@ import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.model.User
 import com.joshsoftware.core.util.FirebaseRealtimeDbManager
-import java.util.ArrayList
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManager) {
 
@@ -23,8 +23,10 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     suspend fun fetchGroup(userId: String): String? {
         return dbManager.fetchGroup(userId)
     }
-    suspend fun fetchGroups(user: User): String? {
-        return dbManager.fetchGroups(user)
+
+
+    suspend fun fetchGroupList(user: User): ArrayList<Group> {
+        return dbManager.fetchGroupList(user)
     }
 
     fun fetchGroupDetails(groupId: String,

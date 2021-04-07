@@ -10,7 +10,7 @@ class GroupListViewModel @Inject constructor(var repository: GroupRepository): B
 
     fun fetchGroups(user: User) {
         executeRoutine {
-            repository.
+            _result.value = repository.fetchGroupList(user)
         }
     }
 }

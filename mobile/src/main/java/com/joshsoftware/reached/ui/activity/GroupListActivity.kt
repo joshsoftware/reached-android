@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.adapter.GroupsAdapter
@@ -20,10 +21,16 @@ class GroupListActivity : BaseActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    @Inject
+    lateinit var sharedPreferences: AppSharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group_list)
         setupRecyclerView()
+        sharedPreferences.userData?.let {
+            viewModel.fetchGroups(it)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -31,6 +38,7 @@ class GroupListActivity : BaseActivity() {
         adapter = GroupsAdapter {
 
         }
+
         recyclerView.adapter = adapter
     }
 

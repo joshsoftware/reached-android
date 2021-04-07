@@ -21,6 +21,10 @@ class LoginViewModel @Inject constructor(var repository: LoginRepository,
     val groupId: LiveData<String?>
         get() = _groupId
 
+    protected var _user = MutableLiveData<User?>()
+    val user: LiveData<User?>
+        get() = _user
+
     fun signInWithGoogle(account: GoogleSignInAccount) {
         _spinner.value = true
 
@@ -33,6 +37,7 @@ class LoginViewModel @Inject constructor(var repository: LoginRepository,
             }
         }
     }
+
     fun fetchGroup(userId: String) {
         _spinner.value = true
 
@@ -43,6 +48,12 @@ class LoginViewModel @Inject constructor(var repository: LoginRepository,
                     _groupId.value = groupId
                 }
             }
+        }
+    }
+
+    fun fetchUserDetails(userId: String) {
+        executeRoutine {
+            _user.value = repository.fetchUserDetails(userId)
         }
     }
 }

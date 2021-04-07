@@ -117,6 +117,18 @@ class FirebaseRealtimeDbManager {
         })
     }
 
+    suspend fun fetchUserDetails(userId: String) = suspendCoroutine<User?> { continuation ->
+        userReference.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                   continuation.resume(snapshot.getValue(User::class.java))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                continuation.resumeWithException(error.toException())
+            }
+        })
+    }
+
     suspend fun fetchGroup(userId: String) = suspendCoroutine<String?> { continuation ->
 
         groupReference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -247,10 +259,23 @@ class FirebaseRealtimeDbManager {
         })
     }
 
-    suspend fun fetchGroups(user: User) = suspendCoroutine<Group?> { continuation ->
-        user.groups.forEach { s, b ->
-            groupReference.child(s).get()
+    suspend fun fetchGroupList(user: User) = suspendCoroutine<ArrayList<Group>> { continuation ->
+        val groupList = arrayListOf<Group>()
+        user.groups.forEach { (s, b) ->
+            val task = groupReference.child(s).get()
+            if(task.isSuccessful) {
+                val group = task.result.getValue(Group::class.java)
+                group?.let {
+                    groupList.add(it)
+                }
+            } else {
+                task.exception?.let {
+                    continuation.resumeWithException(it)
+                }
+            }
         }
+        continuation.resume(groupList)
+
     }
 
 }

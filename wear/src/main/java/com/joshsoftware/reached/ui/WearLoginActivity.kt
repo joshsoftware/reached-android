@@ -7,9 +7,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.databinding.ActivityLoginBinding
+import timber.log.Timber
 import javax.inject.Inject
 
-class LoginActivity : BaseLoginActivity() {
+class WearLoginActivity : BaseLoginActivity() {
     lateinit var binding: ActivityLoginBinding
 
     @Inject
@@ -48,8 +49,8 @@ class LoginActivity : BaseLoginActivity() {
             finish()
         })
 
-        viewModel.error.observe(this, Observer {
-
+        viewModel.error.observe(this, Observer { error ->
+            Timber.d(error)
         })
 
         viewModel.spinner.observe(this, Observer { loading ->

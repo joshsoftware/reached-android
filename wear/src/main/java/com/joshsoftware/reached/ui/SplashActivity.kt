@@ -13,7 +13,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun startLoginActivity() {
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, WearLoginActivity::class.java)
         startActivity(intent)
     }
 
