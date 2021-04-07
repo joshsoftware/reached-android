@@ -6,6 +6,7 @@ import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.model.User
+import kotlin.Exception
 import kotlin.collections.ArrayList
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -18,15 +19,30 @@ class FirebaseRealtimeDbManager {
     val sosReference = db.getReference(FirebaseDatabaseKey.SOS.key)
 
     suspend fun addUserWith(id: String, user: User) = suspendCoroutine<User> { continuation ->
-        userReference.child(id).setValue(user).addOnCompleteListener {
-            if(it.isSuccessful) {
-                continuation.resume(user)
-            } else {
-                it.exception?.let { ex ->
-                    continuation.resumeWithException(ex)
+        userReference.child(id).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val requestedUser = snapshot.getValue(User::class.java)
+                if(requestedUser != null) {
+                    continuation.resume(requestedUser)
+                } else {
+                    userReference.child(id).setValue(user).addOnCompleteListener {
+                        if(it.isSuccessful) {
+                            continuation.resume(user)
+                        } else {
+                            it.exception?.let { ex ->
+                                continuation.resumeWithException(ex)
+                            }
+                        }
+                    }
                 }
+
             }
-        }
+
+            override fun onCancelled(error: DatabaseError) {
+                continuation.resumeWithException(error.toException())
+            }
+        })
+
     }
 
     suspend fun sendSOS(groupId: String, user: User, userId: String) = suspendCoroutine<String> { continuation ->
@@ -48,14 +64,19 @@ class FirebaseRealtimeDbManager {
 
     suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String) = suspendCoroutine<String> { continuation ->
         val map = hashMapOf<String, Member>()
-        map.put(userId, Member(name = user.name))
+        map[userId] = Member(name = user.name)
         groupReference.child(id).setValue(Group(
             members = map,
             created_by = userId,
             name = groupName
         )).addOnCompleteListener {
             if(it.isSuccessful) {
-                continuation.resume(id)
+                updateUserWithGroup(id, user, userId,  {
+                    continuation.resume(id)
+                },  { ex ->
+                    continuation.resumeWithException(ex)
+                })
+
             } else {
                 it.exception?.let { ex ->
                     continuation.resumeWithException(ex)
@@ -64,6 +85,22 @@ class FirebaseRealtimeDbManager {
         }
     }
 
+    private fun updateUserWithGroup(
+        groupId: String,
+        user: User,
+        userId: String,
+        onComplete: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        user.groups[groupId] = true
+        userReference.child(userId).setValue(user).addOnCompleteListener {
+            if(it.isSuccessful) {
+                onComplete()
+            } else {
+                it.exception?.let(onError)
+            }
+        }
+    }
 
     suspend fun joinGroupWith(id: String, userId: String, user: User) = suspendCoroutine<String> { continuation ->
         groupReference.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
@@ -262,19 +299,23 @@ class FirebaseRealtimeDbManager {
     suspend fun fetchGroupList(user: User) = suspendCoroutine<ArrayList<Group>> { continuation ->
         val groupList = arrayListOf<Group>()
         user.groups.forEach { (s, b) ->
-            val task = groupReference.child(s).get()
-            if(task.isSuccessful) {
-                val group = task.result.getValue(Group::class.java)
-                group?.let {
-                    groupList.add(it)
+            groupReference.child(s).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val group = snapshot.getValue(Group::class.java)
+                    group?.let {
+                        it.id = s
+                        groupList.add(it)
+                        if(user.groups.size == groupList.size) {
+                            continuation.resume(groupList)
+                        }
+                    }
                 }
-            } else {
-                task.exception?.let {
-                    continuation.resumeWithException(it)
+
+                override fun onCancelled(error: DatabaseError) {
+                    continuation.resumeWithException(error.toException())
                 }
-            }
+            })
         }
-        continuation.resume(groupList)
 
     }
 

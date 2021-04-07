@@ -1,5 +1,6 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.adapter.GroupsAdapter
@@ -36,10 +38,16 @@ class GroupListActivity : BaseActivity() {
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = GroupsAdapter {
-
+            startGroupMembersActivity(it)
         }
 
         recyclerView.adapter = adapter
+    }
+
+    private fun startGroupMembersActivity(group: Group) {
+        val intent = Intent(this, GroupMemberActivity::class.java)
+        intent.putExtra(INTENT_GROUP_ID, group.id)
+        startActivity(intent)
     }
 
     override fun initializeViewModel() {

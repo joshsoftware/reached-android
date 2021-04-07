@@ -61,6 +61,7 @@ class LoginActivity : BaseLoginActivity() {
                 } else {
                     startGroupListActivity()
                 }
+                finish()
             }
         })
 
