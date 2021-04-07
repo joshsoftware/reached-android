@@ -10,9 +10,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:src="@drawable/ic_profile_placeholder"
             android:id="@+id/profileImageView"
+            app:shapeAppearanceOverlay="@style/CircularImage"
             android:layout_width="60dp"
             android:layout_height="60dp"
             app:layout_constraintStart_toStartOf="parent"

@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:src="@drawable/ic_profile_placeholder"
             android:id="@+id/profileImageView"
             android:layout_width="30dp"

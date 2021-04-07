@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.bumptech.glide.Glide
 import com.joshsoftware.core.FamViewHolder
 import com.joshsoftware.core.R
 import com.joshsoftware.core.model.Member
@@ -16,6 +17,9 @@ class MemberAdapter(var onClick: (Member) -> Unit): ListAdapter<Member, FamViewH
         if(model != null) {
             holder.itemView.apply {
                 nameTextView.text = model.name
+                model.profileUrl?.let {
+                    Glide.with(this).load(it).into(profileImageView);
+                }
             }
             holder.itemView.setOnClickListener {
                 onClick(model)

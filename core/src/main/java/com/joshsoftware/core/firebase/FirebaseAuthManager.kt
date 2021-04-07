@@ -22,7 +22,8 @@ class FirebaseAuthManager {
                         if (task.isSuccessful) {
                             Timber.d("signInWithCredential:success")
                             task.result?.user?.let {
-                                continuation.resume(it.uid to User(it.displayName, it.email))
+                                val user = User(it.displayName, it.email, it.photoUrl?.toString())
+                                continuation.resume(it.uid to user)
                             }
                             task.result?.user?.getIdToken(true)?.addOnSuccessListener {
                                 it.token?.let { token ->
