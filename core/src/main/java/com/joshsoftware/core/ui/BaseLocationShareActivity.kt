@@ -14,7 +14,6 @@ import com.joshsoftware.core.PermissionActivity
 private const val REQUEST_CHECK_SETTINGS: Int = 6
 abstract class BaseLocationActivity: PermissionActivity(), GoogleApiClient.ConnectionCallbacks{
     private lateinit var mGoogleApiClient: GoogleApiClient
-    private lateinit var mLocation: Location
     private lateinit var mLocationRequest: LocationRequest
     private var listener: LocationChangeListener? = null
 
