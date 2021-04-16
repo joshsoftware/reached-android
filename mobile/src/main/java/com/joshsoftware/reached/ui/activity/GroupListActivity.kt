@@ -1,19 +1,20 @@
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
+import android.view.Menu
+import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
+import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.reached.ui.adapter.GroupsAdapter
 import com.joshsoftware.reached.viewmodel.GroupListViewModel
 import kotlinx.android.synthetic.main.activity_group_list.*
+import kotlinx.android.synthetic.main.activity_groups.*
 import javax.inject.Inject
 
 class GroupListActivity : BaseActivity() {
@@ -30,6 +31,7 @@ class GroupListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group_list)
         setupRecyclerView()
+        setSupportActionBar(findViewById(R.id.bottomAppBar))
         sharedPreferences.userData?.let {
             viewModel.fetchGroups(it)
         }
@@ -75,4 +77,20 @@ class GroupListActivity : BaseActivity() {
             }
         })
     }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.logout) {
+            sharedPreferences.deleteUserData()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.group_members_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
 }

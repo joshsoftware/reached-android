@@ -115,7 +115,11 @@ class FirebaseRealtimeDbManager {
                 }
                 groupReference.child(id).setValue(group).addOnCompleteListener {
                     if(it.isSuccessful) {
-                        continuation.resume(id)
+                        updateUserWithGroup(id, user, userId,  {
+                            continuation.resume(id)
+                        },  { ex ->
+                            continuation.resumeWithException(ex)
+                        })
                     } else {
                         it.exception?.let {ex ->
                             continuation.resumeWithException(ex)

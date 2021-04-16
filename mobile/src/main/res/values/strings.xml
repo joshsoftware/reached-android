@@ -12,4 +12,5 @@
     <string name="button_text_cancel">cancel</string>
     <string name="enter_name">Enter name..</string>
     <string name="valid_please_enter_group_name">Please enter group name</string>
+    <string name="my_groups">Groups</string>
 </resources>

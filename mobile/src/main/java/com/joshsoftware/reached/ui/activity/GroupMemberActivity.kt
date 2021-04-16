@@ -23,6 +23,7 @@ import com.joshsoftware.core.viewmodel.GroupMemberViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberMobileBinding
 import com.joshsoftware.reached.ui.LoginActivity
+import kotlinx.android.synthetic.main.activity_group_member_mobile.*
 import javax.inject.Inject
 
 
@@ -48,7 +49,6 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         setContentView(view)
         setLocationChangeListener(this)
         binding.apply {
-            setUpBottomAppBarShapeAppearance(add, bottomAppBar)
             intent.extras?.getString(INTENT_GROUP_ID)?.let {
                 fetchLocation()
                 viewModel.fetchGroupDetails(it)
@@ -127,8 +127,9 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupMemberViewModel::class.java]
 
 
-        viewModel.result.observe(this, Observer { group ->
+        viewModel.result.observe(this, { group ->
             group?.let {
+                supportActionBar?.title = it.name
                 val util = ConversionUtil()
                 val members = util.getMemberListFromMap(group.members)
                 members.add(Member(name = "All members"))

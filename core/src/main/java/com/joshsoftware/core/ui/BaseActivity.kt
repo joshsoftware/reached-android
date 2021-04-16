@@ -117,21 +117,4 @@ abstract class BaseActivity: AppCompatActivity(), Injectable {
             progressLayout?.visibility = View.GONE
         }
     }
-
-    protected fun setUpBottomAppBarShapeAppearance(fabDone: FloatingActionButton, bottomBar: BottomAppBar) {
-        val fabShapeAppearanceModel = fabDone.shapeAppearanceModel
-        val cutCornersFab =
-                fabShapeAppearanceModel.bottomLeftCorner is CutCornerTreatment && fabShapeAppearanceModel.bottomRightCorner is CutCornerTreatment
-
-        val topEdge =
-            BottomAppBarTopEdgeTreatment(
-                bottomBar.fabCradleMargin,
-                bottomBar.fabCradleRoundedCornerRadius,
-                bottomBar.cradleVerticalOffset
-            )
-
-        val babBackground = bottomBar.background as MaterialShapeDrawable
-        babBackground.shapeAppearanceModel =
-                babBackground.shapeAppearanceModel.toBuilder().setTopEdge(topEdge).build();
-    }
 }
