@@ -53,7 +53,7 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     }
 
     fun isGroupCreated(userId: String,
-                       onFetch: (String?) -> Unit,
+                       onFetch: (Boolean) -> Unit,
                        onCancel: (DatabaseError) -> Unit) {
         dbManager.isGroupCreated(userId, onFetch, onCancel)
     }

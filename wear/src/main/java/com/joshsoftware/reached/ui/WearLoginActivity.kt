@@ -37,16 +37,19 @@ class WearLoginActivity : BaseLoginActivity() {
         viewModel.result.observe(this, Observer { (id, user) ->
             sharedPreferences.saveUserId(id)
             sharedPreferences.saveUserData(user)
-            viewModel.fetchGroup(id)
+            viewModel.fetchUserDetails(id)
         })
 
-        viewModel.groupId.observe(this, Observer { id ->
-            if(id != null) {
-                startGroupMembersActivity(id)
-            } else {
-                startGroupWaitActivity()
+        viewModel.user.observe(this, Observer { user ->
+            user?.let {
+                sharedPreferences.saveUserData(user)
+                if (user.groups.isEmpty()) {
+                    startGroupWaitActivity()
+                } else {
+                    startGroupListActivity()
+                }
+                finish()
             }
-            finish()
         })
 
         viewModel.error.observe(this, Observer { error ->
@@ -67,9 +70,8 @@ class WearLoginActivity : BaseLoginActivity() {
         startActivity(intent)
     }
 
-    private fun startGroupMembersActivity(id: String) {
-        val intent = Intent(this, GroupMemberActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, id)
+    private fun startGroupListActivity() {
+        val intent = Intent(this, WearGroupListActivity::class.java)
         startActivity(intent)
     }
 }

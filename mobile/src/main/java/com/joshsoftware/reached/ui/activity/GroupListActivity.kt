@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
+import com.joshsoftware.core.ui.adapter.GroupsAdapter
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.LoginActivity
-import com.joshsoftware.reached.ui.adapter.GroupsAdapter
 import com.joshsoftware.core.viewmodel.GroupListViewModel
 import kotlinx.android.synthetic.main.activity_group_list.*
 import kotlinx.android.synthetic.main.activity_groups.*

@@ -2,17 +2,14 @@ package com.joshsoftware.reached.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.core.viewmodel.GroupListViewModel
-import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberBinding
-import com.joshsoftware.reached.ui.adapter.GroupsAdapter
+import com.joshsoftware.core.ui.adapter.GroupsAdapter
 import javax.inject.Inject
 
 class WearGroupListActivity : BaseActivity() {

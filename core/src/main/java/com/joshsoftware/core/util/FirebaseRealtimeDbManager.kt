@@ -133,22 +133,20 @@ class FirebaseRealtimeDbManager {
 
     fun isGroupCreated(
         userId: String,
-        onFetch: (String?) -> Unit,
+        onFetch: (Boolean) -> Unit,
         onError: (DatabaseError) -> Unit
     ) {
-        groupReference.addValueEventListener(object : ValueEventListener {
+        userReference.child(userId).addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val groups = snapshot.value as HashMap<*, *>?
-                var found = false
-                groups?.keys?.forEach { key ->
-                    val map = groups[key] as HashMap<String, ArrayList<Member>>
-                    val members = map["members"] as ArrayList<HashMap<*, *>>
-                    members.forEach { member ->
-                        if(member["id"] == userId) {
-                            found = true
-                            onFetch(key as String?)
-                        }
+                val user = snapshot.getValue(User::class.java)
+                if (user != null) {
+                    if(user.groups.size > 0) {
+                        onFetch(true)
+                    } else {
+                        onFetch(false)
                     }
+                } else {
+                    onFetch(false)
                 }
             }
 

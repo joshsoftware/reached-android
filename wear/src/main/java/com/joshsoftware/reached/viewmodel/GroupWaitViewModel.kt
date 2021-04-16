@@ -4,7 +4,7 @@ import com.joshsoftware.core.repository.GroupRepository
 import com.joshsoftware.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
-class GroupWaitViewModel @Inject constructor(var repository: GroupRepository): BaseViewModel<String?>() {
+class GroupWaitViewModel @Inject constructor(var repository: GroupRepository): BaseViewModel<Boolean>() {
 
     fun checkIfGroupJoinedOrCreated(userId: String) {
         executeRoutine {
