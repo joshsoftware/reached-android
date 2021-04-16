@@ -1,4 +1,4 @@
-package com.joshsoftware.reached.ui.activity
+package com.joshsoftware.reached.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,15 +9,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
-import com.joshsoftware.reached.R
-import com.joshsoftware.reached.ui.LoginActivity
-import com.joshsoftware.reached.ui.adapter.GroupsAdapter
 import com.joshsoftware.core.viewmodel.GroupListViewModel
-import kotlinx.android.synthetic.main.activity_group_list.*
-import kotlinx.android.synthetic.main.activity_groups.*
+import com.joshsoftware.reached.R
+import com.joshsoftware.reached.databinding.ActivityGroupMemberBinding
+import com.joshsoftware.reached.ui.adapter.GroupsAdapter
 import javax.inject.Inject
 
-class GroupListActivity : BaseActivity() {
+class WearGroupListActivity : BaseActivity() {
 
     lateinit var adapter: GroupsAdapter
     lateinit var viewModel: GroupListViewModel
@@ -26,24 +24,26 @@ class GroupListActivity : BaseActivity() {
 
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
+    lateinit var binding: ActivityGroupMemberBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_group_list)
+        binding = ActivityGroupMemberBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
         setupRecyclerView()
-        setSupportActionBar(findViewById(R.id.bottomAppBar))
         sharedPreferences.userData?.let {
             viewModel.fetchGroups(it)
         }
     }
 
     private fun setupRecyclerView() {
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = GroupsAdapter {
             startGroupMembersActivity(it)
         }
 
-        recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
     private fun startGroupMembersActivity(group: Group) {
@@ -62,13 +62,13 @@ class GroupListActivity : BaseActivity() {
         })
 
         viewModel.spinner.observe(this, { loading ->
-            loading?.let {
-                if(it) {
-                    showProgressView(parentLayout)
-                } else {
-                    hideProgressView()
-                }
-            }
+//            loading?.let {
+//                if(it) {
+//                    showProgressView(binding.parentLayout)
+//                } else {
+//                    hideProgressView()
+//                }
+//            }
         })
 
         viewModel.error.observe(this,  { error ->
@@ -76,21 +76,6 @@ class GroupListActivity : BaseActivity() {
                 showErrorMessage(it)
             }
         })
-    }
-
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.logout) {
-            sharedPreferences.deleteUserData()
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.group_members_menu, menu)
-        return super.onCreateOptionsMenu(menu)
     }
 
 }

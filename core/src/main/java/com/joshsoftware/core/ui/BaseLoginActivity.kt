@@ -3,12 +3,14 @@ package com.joshsoftware.core.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.joshsoftware.core.PermissionActivity
+import com.joshsoftware.core.service.LocationUpdateService
 import com.joshsoftware.core.viewmodel.LoginViewModel
 import timber.log.Timber
 import javax.inject.Inject
@@ -55,6 +57,32 @@ open abstract class BaseLoginActivity: PermissionActivity() {
                 }
             }
         }
+    }
+    protected fun checkForLocationPermission() {
+        requestPermission(arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION)) { coarseStatus ->
+            if(coarseStatus == Status.GRANTED) {
+                requestPermission(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)) { fineStatus ->
+                    if (fineStatus == Status.GRANTED) {
+                        requestPermission(arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)) { backgroundStatus ->
+                            if (backgroundStatus == Status.GRANTED) {
+                                startLocationTrackingService()
+                            } else if (backgroundStatus ==  Status.DENIED) {
+                                checkForLocationPermission()
+                            }
+                        }
+                    } else if (fineStatus ==  Status.DENIED) {
+                        checkForLocationPermission()
+                    }
+                }
+            } else if (coarseStatus ==  Status.DENIED) {
+                checkForLocationPermission()
+            }
+        }
+    }
+
+    private fun startLocationTrackingService() {
+        val intent = Intent(this, LocationUpdateService::class.java)
+        ContextCompat.startForegroundService(this, intent)
     }
 
     abstract fun attemptSignIn(account: GoogleSignInAccount)

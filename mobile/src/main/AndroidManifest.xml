@@ -48,7 +48,7 @@
             android:screenOrientation="portrait" />
 
         <service
-            android:name="com.joshsoftware.reached.service.LocationUpdateService"
+            android:name="com.joshsoftware.core.service.LocationUpdateService"
             android:enabled="true"
             android:exported="true"/>
     </application>

@@ -1,4 +1,4 @@
-package com.joshsoftware.reached.viewmodel
+package com.joshsoftware.core.viewmodel
 
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.User

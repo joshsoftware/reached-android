@@ -51,6 +51,12 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
+
+        <service
+            android:name="com.joshsoftware.core.service.LocationUpdateService"
+            android:enabled="true"
+            android:exported="true"/>
+
     </application>
 
 </manifest>

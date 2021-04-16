@@ -1,6 +1,6 @@
 package com.joshsoftware.reached.di
 
-import com.joshsoftware.reached.service.LocationUpdateService
+import com.joshsoftware.core.service.LocationUpdateService
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

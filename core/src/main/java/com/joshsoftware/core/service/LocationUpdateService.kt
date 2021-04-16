@@ -1,4 +1,4 @@
-package com.joshsoftware.reached.service
+package com.joshsoftware.core.service
 
 import android.annotation.SuppressLint
 import android.app.*
@@ -9,17 +9,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.Toast
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.tasks.Task
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.R
 import com.joshsoftware.core.repository.GroupRepository
 import com.joshsoftware.core.ui.BaseLocationActivity
-import com.joshsoftware.reached.R
-import com.joshsoftware.reached.ui.LoginActivity
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -66,7 +64,7 @@ class LocationUpdateService: Service(), GoogleApiClient.ConnectionCallbacks {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val input = intent!!.getStringExtra("inputExtra")
         createNotificationChannel()
-        val notificationIntent = Intent(this, LoginActivity::class.java)
+        val notificationIntent = Intent()
         val pendingIntent = PendingIntent.getActivity(
             this,
             0, notificationIntent, 0

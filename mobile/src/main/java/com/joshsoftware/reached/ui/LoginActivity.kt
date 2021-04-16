@@ -2,17 +2,13 @@ package com.joshsoftware.reached.ui
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
-import com.joshsoftware.reached.service.LocationUpdateService
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.GroupListActivity
-import com.joshsoftware.reached.ui.activity.GroupMemberActivity
-import com.joshsoftware.reached.ui.activity.INTENT_GROUP_ID
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -44,32 +40,6 @@ class LoginActivity : BaseLoginActivity() {
         registerViewModelObservers()
     }
 
-    private fun checkForLocationPermission() {
-        requestPermission(arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION)) { coarseStatus ->
-            if(coarseStatus == Status.GRANTED) {
-                requestPermission(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)) { fineStatus ->
-                    if (fineStatus == Status.GRANTED) {
-                        requestPermission(arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)) { backgroundStatus ->
-                            if (backgroundStatus == Status.GRANTED) {
-                                startLocationTrackingService()
-                            } else if (backgroundStatus ==  Status.DENIED) {
-                                checkForLocationPermission()
-                            }
-                        }
-                    } else if (fineStatus ==  Status.DENIED) {
-                        checkForLocationPermission()
-                    }
-                }
-            } else if (coarseStatus ==  Status.DENIED) {
-                checkForLocationPermission()
-            }
-        }
-    }
-
-    private fun startLocationTrackingService() {
-        val intent = Intent(this, LocationUpdateService::class.java)
-        ContextCompat.startForegroundService(this, intent)
-    }
 
     override fun attemptSignIn(account: GoogleSignInAccount) {
         viewModel.signInWithGoogle(account)
