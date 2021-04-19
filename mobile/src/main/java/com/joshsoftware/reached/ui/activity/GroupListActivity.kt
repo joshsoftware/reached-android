@@ -1,18 +1,20 @@
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.OvershootInterpolator
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
-import com.joshsoftware.core.ui.adapter.GroupsAdapter
+import com.joshsoftware.reached.ui.adapter.GroupsAdapter
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.core.viewmodel.GroupListViewModel
@@ -23,7 +25,6 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_group_list.*
 import kotlinx.android.synthetic.main.activity_groups.*
-import timber.log.Timber
 import javax.inject.Inject
 
 class GroupListActivity : BaseActivity(), HasSupportFragmentInjector {
@@ -47,6 +48,10 @@ class GroupListActivity : BaseActivity(), HasSupportFragmentInjector {
         setSupportActionBar(findViewById(R.id.bottomAppBar))
         sharedPreferences.userData?.let {
             viewModel.fetchGroups(it)
+        }
+
+        add.setOnClickListener {
+            toggleFabMenu()
         }
     }
 
@@ -117,4 +122,22 @@ class GroupListActivity : BaseActivity(), HasSupportFragmentInjector {
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
         return dispatchingAndroidInjector
     }
+
+    private fun toggleFabMenu() {
+            if(dialogLayout.visibility == View.VISIBLE) {
+                rotateFabWithAnimation(add, 0f)
+                fabMenuLayout.visibility = View.GONE
+                dialogLayout.visibility = View.GONE
+            } else {
+                rotateFabWithAnimation(add, 135f)
+                fabMenuLayout.visibility = View.VISIBLE
+                dialogLayout.visibility = View.VISIBLE
+                dialogLayout.alpha = 0.1f
+            }
+    }
+    private fun rotateFabWithAnimation(fab: FloatingActionButton, degree: Float) {
+        val interpolator = OvershootInterpolator()
+        ViewCompat.animate(fab).rotation(degree).withLayer().setDuration(300).setInterpolator(interpolator).start()
+    }
+
 }

@@ -9,7 +9,7 @@ import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.core.viewmodel.GroupListViewModel
 import com.joshsoftware.reached.databinding.ActivityGroupMemberBinding
-import com.joshsoftware.core.ui.adapter.GroupsAdapter
+import com.joshsoftware.reached.ui.adapter.GroupsAdapter
 import javax.inject.Inject
 
 class WearGroupListActivity : BaseActivity() {

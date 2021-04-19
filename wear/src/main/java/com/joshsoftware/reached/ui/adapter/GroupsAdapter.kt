@@ -1,4 +1,4 @@
-package com.joshsoftware.core.ui.adapter
+package com.joshsoftware.reached.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

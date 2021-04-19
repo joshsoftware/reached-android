@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.wear.widget.WearableLinearLayoutManager
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Member
@@ -44,8 +45,7 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
                 groupId = it
                 viewModel.observeSos(groupId)
             }
-
-            recyclerView.layoutManager = WearableLinearLayoutManager(this@GroupMemberActivity)
+            recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
             adapter = MemberAdapter {
                 startMapActivity(it)
             }
