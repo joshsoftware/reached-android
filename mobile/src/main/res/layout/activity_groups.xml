@@ -34,12 +34,12 @@
         android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintStart_toStartOf="@id/add"
         app:layout_constraintEnd_toEndOf="@id/add"
         app:layout_constraintBottom_toTopOf="@id/add">
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabSos"
+            android:id="@+id/fabCreate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fabSize="mini"
@@ -47,12 +47,12 @@
             app:tint="@color/white"
             app:backgroundTint="@color/colorPrimary"
             android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@id/fabAdd"
+            app:layout_constraintBottom_toTopOf="@id/fabJoin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             />
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAdd"
+            android:id="@+id/fabJoin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fabSize="mini"

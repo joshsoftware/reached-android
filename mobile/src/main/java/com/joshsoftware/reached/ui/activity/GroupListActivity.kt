@@ -11,15 +11,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.zxing.integration.android.IntentIntegrator
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.PermissionActivity
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.ui.adapter.GroupsAdapter
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.core.viewmodel.GroupListViewModel
+import com.joshsoftware.reached.ui.dialog.CreateGroupDialog
 import com.joshsoftware.reached.ui.dialog.JoinGroupDialog
 import com.joshsoftware.reached.utils.InviteLinkUtils
+import com.journeyapps.barcodescanner.CaptureActivity
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
@@ -27,7 +31,7 @@ import kotlinx.android.synthetic.main.activity_group_list.*
 import kotlinx.android.synthetic.main.activity_groups.*
 import javax.inject.Inject
 
-class GroupListActivity : BaseActivity(), HasSupportFragmentInjector {
+class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
 
     lateinit var adapter: GroupsAdapter
     lateinit var viewModel: GroupListViewModel
@@ -52,6 +56,21 @@ class GroupListActivity : BaseActivity(), HasSupportFragmentInjector {
 
         add.setOnClickListener {
             toggleFabMenu()
+        }
+
+        fabCreate.setOnClickListener {
+            val dialog = CreateGroupDialog()
+            dialog.show(supportFragmentManager, dialog.tag)
+        }
+        fabJoin.setOnClickListener {
+            requestPermission(arrayOf(android.Manifest.permission.CAMERA), action = {
+                if(it == PermissionActivity.Status.GRANTED) {
+                    IntentIntegrator(this@GroupListActivity)
+                            .setCaptureActivity(CaptureActivity::class.java)
+                            .setOrientationLocked(true)
+                            .initiateScan(); // `this` is the current Activity
+                }
+            })
         }
     }
 
@@ -116,13 +135,6 @@ class GroupListActivity : BaseActivity(), HasSupportFragmentInjector {
         menuInflater.inflate(R.menu.group_members_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
-
-    @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
-        return dispatchingAndroidInjector
-    }
-
     private fun toggleFabMenu() {
             if(dialogLayout.visibility == View.VISIBLE) {
                 rotateFabWithAnimation(add, 0f)
@@ -138,6 +150,12 @@ class GroupListActivity : BaseActivity(), HasSupportFragmentInjector {
     private fun rotateFabWithAnimation(fab: FloatingActionButton, degree: Float) {
         val interpolator = OvershootInterpolator()
         ViewCompat.animate(fab).rotation(degree).withLayer().setDuration(300).setInterpolator(interpolator).start()
+    }
+
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
+        return dispatchingAndroidInjector
     }
 
 }

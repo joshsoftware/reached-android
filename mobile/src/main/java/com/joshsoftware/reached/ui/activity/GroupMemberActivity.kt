@@ -120,11 +120,7 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     }
     private fun startMapActivity(member: Member) {
         val intent = Intent(this, MapActivity::class.java)
-        if(member.id == null) {
-            intent.putExtra(INTENT_MEMBER_ID, "")
-        } else {
-            intent.putExtra(INTENT_MEMBER_ID, member.id)
-        }
+        intent.putExtra(INTENT_MEMBER_ID, member.id)
         intent.putExtra(INTENT_GROUP_ID, groupId)
         startActivity(intent)
     }
@@ -138,7 +134,6 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
                 supportActionBar?.title = it.name
                 val util = ConversionUtil()
                 val members = util.getMemberListFromMap(group.members)
-                members.add(Member(name = "All members"))
                 adapter.submitList(members)
             }
         })
