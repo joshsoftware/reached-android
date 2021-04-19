@@ -113,7 +113,7 @@ class FirebaseRealtimeDbManager {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
                 group?.let {
-                    it.members.put(userId, Member(user.name, user.profileUrl))
+                    it.members.put(userId, Member(name = user.name, profileUrl = user.profileUrl, lat = 0.0, long = 0.0))
                 }
                 groupReference.child(id).setValue(group).addOnCompleteListener {
                     if(it.isSuccessful) {

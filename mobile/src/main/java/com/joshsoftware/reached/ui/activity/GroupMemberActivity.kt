@@ -51,7 +51,6 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         binding = ActivityGroupMemberMobileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        handleDynamicLinks()
         setLocationChangeListener(this)
         binding.apply {
             intent.extras?.getParcelable<Group>(INTENT_GROUP)?.let {
@@ -196,7 +195,7 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
     fun showSosDialog(
         sos: SosUser?,
-    ){
+    ) {
         sos?.let {
             var alertDialog: AlertDialog? = null
             val builder = AlertDialog.Builder(this)
@@ -212,26 +211,5 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
             alertDialog.show()
         }
 
-    }
-
-
-    private fun handleDynamicLinks() {
-        FirebaseDynamicLinks.getInstance()
-                .getDynamicLink(intent)
-                .addOnSuccessListener {
-                    var deepLink: Uri?= null
-                    it?.let {
-                        deepLink = it.link
-                    }
-
-                    deepLink?.let {
-                        val itemId = it.getQueryParameter("groupId")
-                        itemId?.let { itemId ->
-                            print(itemId)
-                        }
-                    }
-                }.addOnFailureListener {
-                    Timber.i(it)
-                }
     }
 }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.zxing.integration.android.IntentIntegrator
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseLocationActivity
 import com.joshsoftware.reached.databinding.ActivityGroupChoiceBinding
 import com.joshsoftware.reached.ui.dialog.CreateGroupDialog
@@ -116,7 +117,7 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
     private fun startGroupMembersActivity(groupId: String) {
         val intent = Intent(this, GroupMemberActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, groupId)
+        intent.putExtra(INTENT_GROUP, Group(groupId))
         startActivity(intent)
     }
 

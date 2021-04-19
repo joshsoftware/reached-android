@@ -1,11 +1,14 @@
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
@@ -13,11 +16,17 @@ import com.joshsoftware.core.ui.adapter.GroupsAdapter
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.core.viewmodel.GroupListViewModel
+import com.joshsoftware.reached.ui.dialog.JoinGroupDialog
+import com.joshsoftware.reached.utils.InviteLinkUtils
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_group_list.*
 import kotlinx.android.synthetic.main.activity_groups.*
+import timber.log.Timber
 import javax.inject.Inject
 
-class GroupListActivity : BaseActivity() {
+class GroupListActivity : BaseActivity(), HasSupportFragmentInjector {
 
     lateinit var adapter: GroupsAdapter
     lateinit var viewModel: GroupListViewModel
@@ -31,10 +40,19 @@ class GroupListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group_list)
         setupRecyclerView()
+        val linkUtils = InviteLinkUtils()
+        linkUtils.handleDynamicLinks(intent) {
+            showJoinGroupAlertDialog(it)
+        }
         setSupportActionBar(findViewById(R.id.bottomAppBar))
         sharedPreferences.userData?.let {
             viewModel.fetchGroups(it)
         }
+    }
+
+    private fun showJoinGroupAlertDialog(group: Group) {
+        val dialog = JoinGroupDialog.newInstance(group)
+        dialog.show(supportFragmentManager, dialog.tag)
     }
 
     private fun setupRecyclerView() {
@@ -88,9 +106,15 @@ class GroupListActivity : BaseActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.group_members_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
+        return dispatchingAndroidInjector
+    }
 }

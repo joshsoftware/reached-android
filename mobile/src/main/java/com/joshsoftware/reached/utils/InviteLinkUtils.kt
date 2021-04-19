@@ -5,6 +5,8 @@ import android.net.Uri
 import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.joshsoftware.core.model.Group
+import timber.log.Timber
 
 const val IOS_BUNDLE_ID = "com.joshsoftware.app.reached"
 class InviteLinkUtils {
@@ -36,5 +38,25 @@ class InviteLinkUtils {
                 .setAppStoreId("1561609913")
                 .setMinimumVersion("1.0")
                 .build()
+    }
+
+    fun handleDynamicLinks(intent: Intent, onGroupFetch: (Group) -> Unit ) {
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(intent)
+                .addOnSuccessListener {
+                    var deepLink: Uri?= null
+                    it?.let {
+                        deepLink = it.link
+                    }
+
+                    deepLink?.let {
+                        val id = it.getQueryParameter("groupId")
+                        val name = it.getQueryParameter("groupName")
+                        val group = Group(id, name = name)
+                        onGroupFetch(group)
+                    }
+                }.addOnFailureListener {
+                    Timber.i(it)
+                }
     }
 }

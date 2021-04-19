@@ -14,4 +14,7 @@
     <string name="valid_please_enter_group_name">Please enter group name</string>
     <string name="my_groups">Groups</string>
     <string name="button_text_invite">INVITE</string>
+    <string name="greetings">Greetings!</string>
+    <string name="you_have_been_invited_to_the_group_join_to_proceed">You have been invited to the group %1$s. You can join to proceed.</string>
+    <string name="joining_group">Joining group...</string>
 </resources>

@@ -16,7 +16,6 @@ import timber.log.Timber
 
 const val INTENT_GROUP_ID = "INTENT_GROUP_ID"
 const val INTENT_GROUP = "INTENT_GROUP"
-const val INTENT_GROUP_NAME = "INTENT_GROUP_NAME"
 class QrCodeActivity : AppCompatActivity() {
     lateinit var binding: ActivityQrCodeBinding
 
