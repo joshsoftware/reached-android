@@ -1,9 +1,6 @@
 package com.joshsoftware.reached.di
 
-import com.joshsoftware.reached.ui.GroupMemberActivity
-import com.joshsoftware.reached.ui.GroupWaitActivity
-import com.joshsoftware.reached.ui.WearLoginActivity
-import com.joshsoftware.reached.ui.MapActivity
+import com.joshsoftware.reached.ui.*
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -17,6 +14,8 @@ abstract class ActivityModule {
 
     @ContributesAndroidInjector
     abstract fun contributeGroupMapActivity(): MapActivity
+    @ContributesAndroidInjector
+    abstract fun contributeWearGroupListActivity(): WearGroupListActivity
 
     @ContributesAndroidInjector
     abstract fun contributeGroupWaitActivity(): GroupWaitActivity

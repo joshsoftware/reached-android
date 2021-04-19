@@ -39,7 +39,7 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         setContentView(view)
         binding.apply {
             intent.extras?.getString(INTENT_GROUP_ID)?.let {
-                fetchLocation()
+//                fetchLocation()
                 viewModel.fetchGroupDetails(it)
                 groupId = it
                 viewModel.observeSos(groupId)

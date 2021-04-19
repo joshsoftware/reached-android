@@ -21,9 +21,5 @@ abstract class ViewModelModule {
     @ViewModelKey(CreateGroupViewModel::class)
     abstract fun buildCreateGroupViewModel(viewModel: CreateGroupViewModel): ViewModel
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(GroupListViewModel::class)
-    abstract fun buildGroupListViewModel(viewModel: GroupListViewModel): ViewModel
 
 }

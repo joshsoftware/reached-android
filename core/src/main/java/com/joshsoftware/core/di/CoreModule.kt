@@ -9,6 +9,7 @@ import com.joshsoftware.core.di.viewmodel.ViewModelKey
 import com.joshsoftware.core.firebase.FirebaseAuthManager
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.core.util.FirebaseRealtimeDbManager
+import com.joshsoftware.core.viewmodel.GroupListViewModel
 import com.joshsoftware.core.viewmodel.GroupMemberViewModel
 import com.joshsoftware.core.viewmodel.LoginViewModel
 import com.joshsoftware.core.viewmodel.MapViewModel
@@ -30,6 +31,10 @@ abstract class CoreModule {
     @IntoMap
     @ViewModelKey(GroupMemberViewModel::class)
     abstract fun buildGroupMemberViewModel(viewModel: GroupMemberViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(GroupListViewModel::class)
+    abstract fun buildGroupListViewModel(viewModel: GroupListViewModel): ViewModel
     @Binds
     @IntoMap
     @ViewModelKey(MapViewModel::class)

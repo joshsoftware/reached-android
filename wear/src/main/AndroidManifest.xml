@@ -38,6 +38,12 @@
 
         </activity>
 
+        <activity
+            android:name="com.joshsoftware.reached.ui.WearGroupListActivity"
+            android:theme="@style/AppTheme">
+
+        </activity>
+
         <uses-library
             android:name="com.google.android.wearable"
             android:required="true" />
