@@ -65,7 +65,7 @@ class FirebaseRealtimeDbManager {
 
     suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String) = suspendCoroutine<Group> { continuation ->
         val map = hashMapOf<String, Member>()
-        map[userId] = Member(name = user.name, profileUrl = user.profileUrl)
+        map[userId] = Member(name = user.name, profileUrl = user.profileUrl, lat = 0.0, long = 0.0)
         val group = Group(
             members = map,
             created_by = userId,
@@ -74,6 +74,7 @@ class FirebaseRealtimeDbManager {
         groupReference.child(id).setValue(group).addOnCompleteListener {
             if(it.isSuccessful) {
                 updateUserWithGroup(id, user, userId,  {
+                    group.id = id
                     continuation.resume(group)
                 },  { ex ->
                     continuation.resumeWithException(ex)

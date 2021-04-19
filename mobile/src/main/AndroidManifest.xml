@@ -19,10 +19,10 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="craveapp.in"
+                    android:host="reached1.page.link"
                     android:scheme="https" />
                 <data
-                    android:host="craveapp.in"
+                    android:host="reached1.page.link"
                     android:scheme="http" />
             </intent-filter>
         </activity>

@@ -69,7 +69,10 @@ class JoinGroupDialog: BaseDialogFragment() {
 
                 buttonPositive.setOnClickListener {
                     group?.id?.let { gId ->
-                        viewModel.joinGroup(gId, sharedPreferences.userId!!, sharedPreferences.userData!!)
+                        viewModel.joinGroup(gId, sharedPreferences.userId!!, sharedPreferences.userData!!).observe(this@JoinGroupDialog, androidx.lifecycle.Observer {
+                            startGroupMemberActivity()
+                            dismiss()
+                        })
                     }
                 }
             }
@@ -91,11 +94,6 @@ class JoinGroupDialog: BaseDialogFragment() {
 
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupChoiceViewModel::class.java]
-
-        viewModel.result.observe(this, {
-            startGroupMemberActivity()
-            dismiss()
-        })
 
         viewModel.spinner.observe(this, { loading ->
             loading.let {
