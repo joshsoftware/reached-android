@@ -10,6 +10,7 @@ import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
 import com.google.zxing.BarcodeFormat
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.reached.databinding.ActivityQrCodeBinding
+import com.joshsoftware.reached.utils.InviteLinkUtils
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import timber.log.Timber
 
@@ -32,7 +33,18 @@ class QrCodeActivity : AppCompatActivity() {
                     startGroupMemberActivity(gId)
                 }
                 binding.inviteButton.setOnClickListener {
-                    group.name?.let { name -> createAndShareDynamicLink(gId, groupName = name) }
+                    val linkUtils = InviteLinkUtils()
+                    group.name?.let { name -> linkUtils.getInviteLinkFor(gId, groupName = name) { shortInvitedLink ->
+                        shortInvitedLink?.let { uri ->
+                            val i = Intent(Intent.ACTION_SEND)
+                            i.type = "text/plain"
+                            i.putExtra(Intent.EXTRA_SUBJECT, "Reached - kids and kin's are safe")
+                            var strShareMessage = "\n${name}\n"
+                            strShareMessage += uri
+                            i.putExtra(Intent.EXTRA_TEXT, strShareMessage)
+                            startActivity(Intent.createChooser(i, "Share via"))
+                        }
+                    }}
                 }
             }
 
@@ -56,30 +68,5 @@ class QrCodeActivity : AppCompatActivity() {
         }
     }
 
-    private fun createAndShareDynamicLink(groupId: String, groupName: String) {
-        val url = Uri.Builder()
-                .scheme("https")
-                .authority("google.com")
-                .appendQueryParameter("groupId", groupId)
-                .appendQueryParameter("groupName", groupName)
-                .build()
-        val shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
-                .setLink(url)
-                .setDomainUriPrefix("https://reached1.page.link")
-                .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
-                .buildShortDynamicLink()
-        shortLinkTask.addOnCompleteListener {
-            if(it.isSuccessful) {
-                val i = Intent(Intent.ACTION_SEND)
-                i.type = "text/plain"
-                i.putExtra(Intent.EXTRA_SUBJECT, "Reached - kids and kin's are safe")
-                var strShareMessage = "\n${groupName}\n"
-                strShareMessage += it.result.shortLink
-                i.putExtra(Intent.EXTRA_TEXT, strShareMessage)
-                startActivity(Intent.createChooser(i, "Share via"))
-            }
-        }
 
-
-    }
 }
