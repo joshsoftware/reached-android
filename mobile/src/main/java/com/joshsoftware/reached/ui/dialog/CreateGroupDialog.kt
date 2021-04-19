@@ -12,10 +12,12 @@ import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseDialogFragment
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.DialogCreateGroupBinding
 import com.joshsoftware.reached.ui.activity.GroupMemberActivity
+import com.joshsoftware.reached.ui.activity.INTENT_GROUP
 import com.joshsoftware.reached.ui.activity.INTENT_GROUP_ID
 import com.joshsoftware.reached.viewmodel.CreateGroupViewModel
 import java.util.*
@@ -102,10 +104,10 @@ class CreateGroupDialog: BaseDialogFragment() {
         })
     }
 
-    private fun startGroupMemberActivity(groupId: String) {
+    private fun startGroupMemberActivity(group: Group) {
         if (activity != null) {
             val intent = Intent(activity, GroupMemberActivity::class.java)
-            intent.putExtra(INTENT_GROUP_ID, groupId)
+            intent.putExtra(INTENT_GROUP, group)
             startActivity(intent)
         }
     }

@@ -6,6 +6,7 @@ import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.model.User
+import timber.log.Timber
 import kotlin.Exception
 import kotlin.collections.ArrayList
 import kotlin.coroutines.resume
@@ -62,17 +63,18 @@ class FirebaseRealtimeDbManager {
         sosReference.child(groupId).removeValue()
     }
 
-    suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String) = suspendCoroutine<String> { continuation ->
+    suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String) = suspendCoroutine<Group> { continuation ->
         val map = hashMapOf<String, Member>()
         map[userId] = Member(name = user.name, profileUrl = user.profileUrl)
-        groupReference.child(id).setValue(Group(
+        val group = Group(
             members = map,
             created_by = userId,
             name = groupName
-        )).addOnCompleteListener {
+        )
+        groupReference.child(id).setValue(group).addOnCompleteListener {
             if(it.isSuccessful) {
                 updateUserWithGroup(id, user, userId,  {
-                    continuation.resume(id)
+                    continuation.resume(group)
                 },  { ex ->
                     continuation.resumeWithException(ex)
                 })
@@ -230,16 +232,17 @@ class FirebaseRealtimeDbManager {
                           onFetch: (Group?) -> Unit,
                           onCancel: (DatabaseError) -> Unit
     ) {
-        groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val group = snapshot.getValue(Group::class.java)
-                onFetch(group)
-            }
+            groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val group = snapshot.getValue(Group::class.java)
+                    onFetch(group)
+                }
 
-            override fun onCancelled(error: DatabaseError) {
-                onCancel(error)
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    onCancel(error)
+                }
+            })
+
     }
 
     suspend fun updateLocation(groupId: String, userId: String, location: Location) = suspendCoroutine<Group?> { continuation ->

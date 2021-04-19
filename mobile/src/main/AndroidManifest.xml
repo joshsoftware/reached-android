@@ -11,7 +11,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ui.activity.GroupListActivity"></activity>
+        <activity android:name=".ui.activity.GroupListActivity">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="craveapp.in"
+                    android:scheme="https" />
+                <data
+                    android:host="craveapp.in"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.activity.CreateGroupActivity" />
 
         <meta-data

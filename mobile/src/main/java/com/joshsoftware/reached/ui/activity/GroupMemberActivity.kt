@@ -2,6 +2,7 @@ package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -13,7 +14,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.ui.BaseLocationActivity
@@ -24,6 +27,7 @@ import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberMobileBinding
 import com.joshsoftware.reached.ui.LoginActivity
 import kotlinx.android.synthetic.main.activity_group_member_mobile.*
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -47,13 +51,15 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         binding = ActivityGroupMemberMobileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        handleDynamicLinks()
         setLocationChangeListener(this)
         binding.apply {
-            intent.extras?.getString(INTENT_GROUP_ID)?.let {
-                fetchLocation()
-                viewModel.fetchGroupDetails(it)
-                groupId = it
-                viewModel.observeSos(groupId)
+            intent.extras?.getParcelable<Group>(INTENT_GROUP)?.let {
+                it.id?.let { gId ->
+                    viewModel.fetchGroupDetails(gId)
+                    groupId = gId
+                    viewModel.observeSos(gId)
+                }
             }
             setSupportActionBar(bottomAppBar)
 
@@ -61,6 +67,7 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
             adapter = MemberAdapter(sharedPreferences) {
                 startMapActivity(it)
             }
+
             recyclerView.adapter = adapter
 
             add.setOnClickListener {
@@ -108,7 +115,7 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     }
 
     private fun onAddMemberClick() {
-        intent.extras?.getString(INTENT_GROUP_ID)?.let {
+        intent.extras?.getParcelable<Group>(INTENT_GROUP)?.let {
             startQrCodeActivity(it)
         }
     }
@@ -159,9 +166,9 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         })
     }
 
-    private fun startQrCodeActivity(id: String) {
+    private fun startQrCodeActivity(group: Group) {
         val intent = Intent(this, QrCodeActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, id)
+        intent.putExtra(INTENT_GROUP, group)
         startActivity(intent)
     }
 
@@ -207,4 +214,24 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
     }
 
+
+    private fun handleDynamicLinks() {
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(intent)
+                .addOnSuccessListener {
+                    var deepLink: Uri?= null
+                    it?.let {
+                        deepLink = it.link
+                    }
+
+                    deepLink?.let {
+                        val itemId = it.getQueryParameter("groupId")
+                        itemId?.let { itemId ->
+                            print(itemId)
+                        }
+                    }
+                }.addOnFailureListener {
+                    Timber.i(it)
+                }
+    }
 }

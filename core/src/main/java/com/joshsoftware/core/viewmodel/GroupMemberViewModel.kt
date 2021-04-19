@@ -20,11 +20,11 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
         get() = _sos
 
     fun fetchGroupDetails(groupId: String) {
-        repository.fetchGroupDetails(groupId, {
-            _result.value = it
-        }, {
-            _error.value = it.message
-        })
+            repository.fetchGroupDetails(groupId, {
+                _result.value = it
+            }, {
+                _error.value = it.message
+            })
     }
 
     fun updateLocationForMember(groupId: String, userId: String, location: Location) {
@@ -49,8 +49,8 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
         repository.observeSos(groupId, {
             _sos.value = it
         }, {
-            _error.value = it.message
-        })
+                                  _error.value = it.message
+                              })
     }
 
 }

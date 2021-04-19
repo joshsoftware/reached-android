@@ -48,7 +48,7 @@ class GroupListActivity : BaseActivity() {
 
     private fun startGroupMembersActivity(group: Group) {
         val intent = Intent(this, GroupMemberActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, group.id)
+        intent.putExtra(INTENT_GROUP, group)
         startActivity(intent)
     }
 
