@@ -108,8 +108,8 @@ class LocationUpdateService: Service(), GoogleApiClient.ConnectionCallbacks {
     override fun onConnected(p0: Bundle?) {
         Timber.i("Connected")
         mLocationRequest = LocationRequest().apply {
-            interval = 10000
-            fastestInterval = 10000
+            interval = 1000 * 60 * 5
+            fastestInterval = 1000 * 60 * 5
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 

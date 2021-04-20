@@ -8,6 +8,8 @@ data class Member(
     var id: String? = null,
     var name: String? = null,
     var profileUrl: String? = null,
+    var lastUpdated: String? = null,
+    var sosState: Boolean = false,
     var lat: Double? = null,
     var long: Double? = null
 ): Parcelable

@@ -1,4 +1,4 @@
-package com.joshsoftware.core.ui.adapter
+package com.joshsoftware.reached.ui.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,11 +8,16 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.FamViewHolder
-import com.joshsoftware.core.R
 import com.joshsoftware.core.model.Member
+import com.joshsoftware.core.util.DateTimeUtils
+import com.joshsoftware.reached.R
 import kotlinx.android.synthetic.main.member_view.view.*
 
-class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (Member) -> Unit): ListAdapter<Member, FamViewHolder>(DIFF_CALLBACK) {
+class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (Member) -> Unit): ListAdapter<Member, FamViewHolder>(
+    DIFF_CALLBACK
+) {
+
+    var dateTimeUtils = DateTimeUtils()
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: FamViewHolder, position: Int) {
@@ -27,6 +32,9 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                     }
                 } else {
                     nameTextView.text = model.name
+                }
+                model.lastUpdated?.let { updatedText ->
+                    lastUpdatedTextView.text = dateTimeUtils.getLastUpdatedFormatted(updatedText)
                 }
                 model.profileUrl?.let {
                     Glide.with(this).load(it).into(profileImageView);

@@ -1,14 +1,16 @@
 package com.joshsoftware.core.util
 
 import android.location.Location
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.model.User
-import timber.log.Timber
-import kotlin.Exception
-import kotlin.collections.ArrayList
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -18,6 +20,7 @@ class FirebaseRealtimeDbManager {
     val groupReference = db.getReference(FirebaseDatabaseKey.GROUPS.key)
     val userReference = db.getReference(FirebaseDatabaseKey.USERS.key)
     val sosReference = db.getReference(FirebaseDatabaseKey.SOS.key)
+    val dateTimeUtils = DateTimeUtils()
 
     suspend fun addUserWith(id: String, user: User) = suspendCoroutine<User> { continuation ->
         userReference.child(id).addListenerForSingleValueEvent(object: ValueEventListener {
@@ -65,7 +68,7 @@ class FirebaseRealtimeDbManager {
 
     suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double) = suspendCoroutine<Group> { continuation ->
         val map = hashMapOf<String, Member>()
-        map[userId] = Member(name = user.name, profileUrl = user.profileUrl, lat = lat, long = long)
+        map[userId] = Member(name = user.name, profileUrl = user.profileUrl, lat = lat, long = long, lastUpdated = dateTimeUtils.getCurrentTime())
         val group = Group(
             members = map,
             created_by = userId,
@@ -114,7 +117,7 @@ class FirebaseRealtimeDbManager {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
                 group?.let {
-                    it.members.put(userId, Member(name = user.name, profileUrl = user.profileUrl, lat = lat, long = long))
+                    it.members.put(userId, Member(name = user.name, profileUrl = user.profileUrl, lat = lat, long = long, lastUpdated = dateTimeUtils.getCurrentTime()))
                 }
                 groupReference.child(id).setValue(group).addOnCompleteListener {
                     if(it.isSuccessful) {
@@ -254,6 +257,7 @@ class FirebaseRealtimeDbManager {
                 member?.let {
                         member.lat = location.latitude
                         member.long = location.longitude
+                        member.lastUpdated = dateTimeUtils.getCurrentTime()
                         groupReference.child(groupId).setValue(group)
                 }
 
@@ -322,7 +326,6 @@ class FirebaseRealtimeDbManager {
                 }
             })
         }
-
     }
 
 }

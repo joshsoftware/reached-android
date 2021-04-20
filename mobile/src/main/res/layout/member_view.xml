@@ -14,10 +14,10 @@
             android:src="@drawable/ic_profile_placeholder"
             android:id="@+id/profileImageView"
             app:shapeAppearanceOverlay="@style/CircularImage"
-            android:layout_width="50dp"
+            android:layout_width="56dp"
             app:strokeColor="@color/black"
             android:padding="2dp"
-            android:layout_height="50dp"
+            android:layout_height="56dp"
             app:strokeWidth="0.5dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -40,5 +40,26 @@
             android:layout_marginStart="12dp"
             app:layout_constraintStart_toEndOf="@+id/profileImageView"
             />
+        <TextView
+            android:textSize="12sp"
+            android:id="@+id/lastUpdatedTextView"
+            android:text="few hours ago"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+        <ImageView
+            android:layout_marginTop="4dp"
+            android:src="@drawable/ic_clock"
+            android:id="@+id/clockImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="@id/lastUpdatedTextView"
+            app:layout_constraintBottom_toBottomOf="@id/lastUpdatedTextView"
+            app:layout_constraintEnd_toStartOf="@+id/lastUpdatedTextView"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

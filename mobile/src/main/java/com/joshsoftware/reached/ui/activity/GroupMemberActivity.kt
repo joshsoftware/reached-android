@@ -2,7 +2,6 @@ package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
 import android.location.Location
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,20 +13,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.ui.BaseLocationActivity
-import com.joshsoftware.core.ui.adapter.MemberAdapter
+import com.joshsoftware.reached.ui.adapter.MemberAdapter
 import com.joshsoftware.core.util.ConversionUtil
 import com.joshsoftware.core.viewmodel.GroupMemberViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberMobileBinding
 import com.joshsoftware.reached.ui.LoginActivity
-import kotlinx.android.synthetic.main.activity_group_member_mobile.*
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -63,7 +59,9 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
             setSupportActionBar(bottomAppBar)
 
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
-            adapter = MemberAdapter(sharedPreferences) {
+            adapter = MemberAdapter(
+                sharedPreferences
+            ) {
                 startMapActivity(it)
             }
 
