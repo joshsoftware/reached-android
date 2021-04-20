@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.joshsoftware.core.FamViewHolder
-import com.joshsoftware.core.R
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.reached.R
 import kotlinx.android.synthetic.main.group_view.view.*
 
 class GroupsAdapter(var onClick: (Group) -> Unit): ListAdapter<Group, FamViewHolder>(DIFF_CALLBACK) {

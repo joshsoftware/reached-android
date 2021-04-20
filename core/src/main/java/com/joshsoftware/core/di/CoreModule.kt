@@ -7,6 +7,7 @@ import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.di.viewmodel.DaggerViewModelFactory
 import com.joshsoftware.core.di.viewmodel.ViewModelKey
 import com.joshsoftware.core.firebase.FirebaseAuthManager
+import com.joshsoftware.core.service.LocationUpdateService
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.core.util.FirebaseRealtimeDbManager
 import com.joshsoftware.core.viewmodel.GroupListViewModel
@@ -39,7 +40,8 @@ abstract class CoreModule {
     @IntoMap
     @ViewModelKey(MapViewModel::class)
     abstract fun buildMapViewModel(viewModel: MapViewModel): ViewModel
-
+    @ContributesAndroidInjector
+    abstract fun contributeLocationUpdateService(): LocationUpdateService
     @Binds
     abstract fun bindViewModelFactory(factory: DaggerViewModelFactory): ViewModelProvider.Factory
 

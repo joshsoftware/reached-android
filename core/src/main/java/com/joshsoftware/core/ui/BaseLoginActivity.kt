@@ -1,7 +1,8 @@
-package com.joshsoftware.core.ui
+ package com.joshsoftware.core.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -63,12 +64,16 @@ open abstract class BaseLoginActivity: PermissionActivity() {
             if(coarseStatus == Status.GRANTED) {
                 requestPermission(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)) { fineStatus ->
                     if (fineStatus == Status.GRANTED) {
-                        requestPermission(arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)) { backgroundStatus ->
-                            if (backgroundStatus == Status.GRANTED) {
-                                startLocationTrackingService()
-                            } else if (backgroundStatus ==  Status.DENIED) {
-                                checkForLocationPermission()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            requestPermission(arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)) { backgroundStatus ->
+                                if (backgroundStatus == Status.GRANTED) {
+                                    startLocationTrackingService()
+                                } else if (backgroundStatus ==  Status.DENIED) {
+                                    checkForLocationPermission()
+                                }
                             }
+                        } else {
+                            startLocationTrackingService()
                         }
                     } else if (fineStatus ==  Status.DENIED) {
                         checkForLocationPermission()

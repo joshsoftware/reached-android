@@ -20,11 +20,7 @@
             android:theme="@style/AppTheme"></activity>
         <activity android:name="com.joshsoftware.reached.ui.SplashActivity"
             android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.joshsoftware.reached.ui.MapActivity"
@@ -35,7 +31,11 @@
         <activity
             android:name="com.joshsoftware.reached.ui.WearLoginActivity"
             android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -56,7 +56,7 @@
             android:value="true" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
+            android:value="AIzaSyDacw9al4jpEeuFw4UxOaPSU4ON7a_gMjE" />
 
         <service
             android:name="com.joshsoftware.core.service.LocationUpdateService"

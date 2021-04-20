@@ -21,6 +21,7 @@ class WearLoginActivity : BaseLoginActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        checkForLocationPermission()
 
         binding.btnGoogleSignIn.setOnClickListener {
             signIn()
