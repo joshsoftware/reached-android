@@ -65,7 +65,13 @@ class CreateGroupDialog: BaseDialogFragment() {
                         if (id != null) {
                             val client = LocationServices.getFusedLocationProviderClient(context)
                             client.lastLocation.addOnSuccessListener { location ->
-                                viewModel.createGroup(groupId, id, user, groupName, location)
+                                var lat = 0.0
+                                var long = 0.0
+                                if(location != null) {
+                                    lat = location.latitude
+                                    long = location.longitude
+                                }
+                                viewModel.createGroup(groupId, id, user, groupName, lat, long)
                             }
                         }
                     }

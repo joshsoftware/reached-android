@@ -9,10 +9,10 @@ import javax.inject.Inject
 
 class GroupChoiceViewModel @Inject constructor(var repository: GroupRepository): BaseViewModel<String>() {
 
-    fun joinGroup(id: String, userId: String, user: User, location: Location): MutableLiveData<String> {
+    fun joinGroup(id: String, userId: String, user: User,  lat: Double, long: Double): MutableLiveData<String> {
         val liveData = MutableLiveData<String>()
         executeRoutine {
-            val id = repository.joinGroup(id, userId, user, location)
+            val id = repository.joinGroup(id, userId, user, lat, long)
             liveData.value = id
         }
         return liveData

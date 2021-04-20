@@ -72,11 +72,18 @@ class JoinGroupDialog: BaseDialogFragment() {
                     group?.id?.let { gId ->
                         val client = LocationServices.getFusedLocationProviderClient(context)
                         client.lastLocation.addOnSuccessListener { location ->
+                            var lat = 0.0
+                            var long = 0.0
+                            if(location != null) {
+                                lat = location.latitude
+                                long = location.longitude
+                            }
                             viewModel.joinGroup(
                                 gId,
                                 sharedPreferences.userId!!,
                                 sharedPreferences.userData!!,
-                                location
+                                lat,
+                                long
                             ).observe(this@JoinGroupDialog, androidx.lifecycle.Observer {
                                 startGroupMemberActivity()
                                 dismiss()

@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 class CreateGroupViewModel @Inject constructor(var repository: GroupRepository): BaseViewModel<Group>() {
 
-    fun createGroup(id: String, userId: String, user: User, groupName: String, location: Location) {
+    fun createGroup(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double) {
         executeRoutine {
-            val id = repository.createGroup(id, userId, user, groupName, location)
+            val id = repository.createGroup(id, userId, user, groupName, lat, long)
             _result.value = id
         }
     }

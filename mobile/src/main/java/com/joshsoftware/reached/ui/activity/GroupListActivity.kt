@@ -6,10 +6,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.OvershootInterpolator
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.zxing.integration.android.IntentIntegrator
 import com.joshsoftware.core.AppSharedPreferences
@@ -96,6 +98,12 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
         startActivity(intent)
     }
 
+    private fun startGroupMembersActivity(groupId: String) {
+        val intent = Intent(this, GroupMemberActivity::class.java)
+        intent.putExtra(INTENT_GROUP, Group(id = groupId))
+        startActivity(intent)
+    }
+
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupListViewModel::class.java]
 
@@ -158,6 +166,47 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
         return dispatchingAndroidInjector
+    }
+
+    // Get the results:
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        val result =
+            IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null) {
+            if (result.contents == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
+            } else {
+                val groupId = result.contents
+
+                val id = sharedPreferences.userId
+                val user = sharedPreferences.userData
+                if (user != null) {
+                    if (id != null) {
+
+                        val client = LocationServices.getFusedLocationProviderClient(applicationContext)
+                        client.lastLocation.addOnSuccessListener { location ->
+                            var lat = 0.0
+                            var long = 0.0
+                            if(location != null) {
+                                lat = location.latitude
+                                long = location.longitude
+                            }
+                                viewModel.joinGroup(groupId, id, user, lat, long)
+                                    .observe(this, androidx.lifecycle.Observer {
+                                        startGroupMembersActivity(result.contents)
+                                    })
+
+                        }
+                    }
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
 }
