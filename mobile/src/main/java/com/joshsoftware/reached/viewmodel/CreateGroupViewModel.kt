@@ -1,5 +1,6 @@
 package com.joshsoftware.reached.viewmodel
 
+import android.location.Location
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.User
 import com.joshsoftware.core.repository.GroupRepository
@@ -8,9 +9,9 @@ import javax.inject.Inject
 
 class CreateGroupViewModel @Inject constructor(var repository: GroupRepository): BaseViewModel<Group>() {
 
-    fun createGroup(id: String, userId: String, user: User, groupName: String) {
+    fun createGroup(id: String, userId: String, user: User, groupName: String, location: Location) {
         executeRoutine {
-            val id = repository.createGroup(id, userId, user, groupName)
+            val id = repository.createGroup(id, userId, user, groupName, location)
             _result.value = id
         }
     }

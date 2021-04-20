@@ -63,9 +63,9 @@ class FirebaseRealtimeDbManager {
         sosReference.child(groupId).removeValue()
     }
 
-    suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String) = suspendCoroutine<Group> { continuation ->
+    suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String, location: Location) = suspendCoroutine<Group> { continuation ->
         val map = hashMapOf<String, Member>()
-        map[userId] = Member(name = user.name, profileUrl = user.profileUrl, lat = 0.0, long = 0.0)
+        map[userId] = Member(name = user.name, profileUrl = user.profileUrl, lat = location.latitude, long = location.longitude)
         val group = Group(
             members = map,
             created_by = userId,
@@ -105,7 +105,7 @@ class FirebaseRealtimeDbManager {
         }
     }
 
-    suspend fun joinGroupWith(id: String, userId: String, user: User) = suspendCoroutine<String> { continuation ->
+    suspend fun joinGroupWith(id: String, userId: String, user: User, location: Location) = suspendCoroutine<String> { continuation ->
         groupReference.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 continuation.resumeWithException(error.toException())
@@ -114,7 +114,7 @@ class FirebaseRealtimeDbManager {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
                 group?.let {
-                    it.members.put(userId, Member(name = user.name, profileUrl = user.profileUrl, lat = 0.0, long = 0.0))
+                    it.members.put(userId, Member(name = user.name, profileUrl = user.profileUrl, lat = location.latitude, long = location.longitude))
                 }
                 groupReference.child(id).setValue(group).addOnCompleteListener {
                     if(it.isSuccessful) {

@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
@@ -69,10 +70,18 @@ class JoinGroupDialog: BaseDialogFragment() {
 
                 buttonPositive.setOnClickListener {
                     group?.id?.let { gId ->
-                        viewModel.joinGroup(gId, sharedPreferences.userId!!, sharedPreferences.userData!!).observe(this@JoinGroupDialog, androidx.lifecycle.Observer {
-                            startGroupMemberActivity()
-                            dismiss()
-                        })
+                        val client = LocationServices.getFusedLocationProviderClient(context)
+                        client.lastLocation.addOnSuccessListener { location ->
+                            viewModel.joinGroup(
+                                gId,
+                                sharedPreferences.userId!!,
+                                sharedPreferences.userData!!,
+                                location
+                            ).observe(this@JoinGroupDialog, androidx.lifecycle.Observer {
+                                startGroupMemberActivity()
+                                dismiss()
+                            })
+                        }
                     }
                 }
             }

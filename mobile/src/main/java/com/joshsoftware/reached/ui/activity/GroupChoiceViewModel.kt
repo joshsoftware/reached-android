@@ -1,5 +1,6 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import com.joshsoftware.core.model.User
 import com.joshsoftware.core.repository.GroupRepository
@@ -8,10 +9,10 @@ import javax.inject.Inject
 
 class GroupChoiceViewModel @Inject constructor(var repository: GroupRepository): BaseViewModel<String>() {
 
-    fun joinGroup(id: String, userId: String, user: User): MutableLiveData<String> {
+    fun joinGroup(id: String, userId: String, user: User, location: Location): MutableLiveData<String> {
         val liveData = MutableLiveData<String>()
         executeRoutine {
-            val id = repository.joinGroup(id, userId, user)
+            val id = repository.joinGroup(id, userId, user, location)
             liveData.value = id
         }
         return liveData

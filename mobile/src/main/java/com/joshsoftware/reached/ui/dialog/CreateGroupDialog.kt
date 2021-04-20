@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
@@ -57,13 +58,15 @@ class CreateGroupDialog: BaseDialogFragment() {
                         showToastMessage(getString(R.string.valid_please_enter_group_name))
                         return@setOnClickListener
                     }
-
                     val groupId = UUID.randomUUID().toString()
                     val id = sharedPreferences.userId
                     val user = sharedPreferences.userData
                     if (user != null) {
                         if (id != null) {
-                            viewModel.createGroup(groupId, id, user, groupName)
+                            val client = LocationServices.getFusedLocationProviderClient(context)
+                            client.lastLocation.addOnSuccessListener { location ->
+                                viewModel.createGroup(groupId, id, user, groupName, location)
+                            }
                         }
                     }
                 }
