@@ -36,6 +36,9 @@ class CreateGroupDialog: BaseDialogFragment() {
 
     lateinit var viewModel: CreateGroupViewModel
 
+    var listener: CreateGroupDialogListener? = null
+
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         initializeViewModel()
 
@@ -139,5 +142,11 @@ class CreateGroupDialog: BaseDialogFragment() {
         }
     }
 
+    fun setDialogListener(listener: CreateGroupDialogListener) {
+        this.listener = listener
+    }
 
+    interface CreateGroupDialogListener {
+        fun onCreate()
+    }
 }

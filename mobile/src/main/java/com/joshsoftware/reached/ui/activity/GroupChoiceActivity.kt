@@ -41,6 +41,11 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         binding.apply {
             createButton.setOnClickListener {
                 val dialog = CreateGroupDialog()
+                dialog.setDialogListener(object: CreateGroupDialog.CreateGroupDialogListener {
+                    override fun onCreate() {
+                        finish()
+                    }
+                })
                 dialog.show(supportFragmentManager, dialog.tag)
             }
 

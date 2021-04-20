@@ -67,7 +67,9 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
                 if(it == PermissionActivity.Status.GRANTED) {
                     IntentIntegrator(this@GroupListActivity)
                             .setCaptureActivity(CaptureActivity::class.java)
-                            .setOrientationLocked(true)
+                            .setOrientationLocked(false)
+                            .setBeepEnabled(false)
+                            .setPrompt("Scan QR code to join a group")
                             .initiateScan(); // `this` is the current Activity
                 }
             })

@@ -17,4 +17,6 @@
     <string name="greetings">Greetings!</string>
     <string name="you_have_been_invited_to_the_group_join_to_proceed">You have been invited to the group %1$s. You can join to proceed.</string>
     <string name="joining_group">Joining group...</string>
+    <string name="send_sos">Send SOS</string>
+    <string name="add_member">Add member</string>
 </resources>
