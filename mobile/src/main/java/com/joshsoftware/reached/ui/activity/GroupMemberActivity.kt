@@ -1,13 +1,11 @@
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
-import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.OvershootInterpolator
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,19 +14,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
-import com.joshsoftware.core.model.SosUser
-import com.joshsoftware.core.ui.BaseLocationActivity
-import com.joshsoftware.reached.ui.adapter.MemberAdapter
+import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.core.util.ConversionUtil
 import com.joshsoftware.core.viewmodel.GroupMemberViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberMobileBinding
 import com.joshsoftware.reached.ui.LoginActivity
-import kotlinx.android.synthetic.main.activity_group_member_mobile.*
+import com.joshsoftware.reached.ui.adapter.MemberAdapter
 import javax.inject.Inject
 
 
-class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.LocationChangeListener {
+class GroupMemberActivity : BaseActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -48,7 +44,6 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         binding = ActivityGroupMemberMobileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        setLocationChangeListener(this)
         binding.apply {
             intent.extras?.getParcelable<Group>(INTENT_GROUP)?.let {
                 it.id?.let { gId ->
@@ -84,6 +79,10 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
             bottomAppBar.setNavigationOnClickListener {
                 finish()
+            }
+
+            showOnMapLayout.setOnClickListener {
+                startMapActivity(Member(""))
             }
         }
 
@@ -133,7 +132,7 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupMemberViewModel::class.java]
 
 
-        viewModel.result.observe(this, { group ->
+        viewModel.result.observe(this, Observer { group ->
             group?.let {
                 supportActionBar?.title = it.name
                 val util = ConversionUtil()
@@ -168,14 +167,6 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         val intent = Intent(this, QrCodeActivity::class.java)
         intent.putExtra(INTENT_GROUP, group)
         startActivity(intent)
-    }
-
-    override fun onLocationChange(location: Location) {
-        intent.extras?.getString(INTENT_GROUP_ID)?.let { gId ->
-            preferences.userId?.let {
-                viewModel.updateLocationForMember(gId, it, location)
-            }
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

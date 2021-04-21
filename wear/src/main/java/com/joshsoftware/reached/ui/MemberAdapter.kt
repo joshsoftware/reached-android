@@ -1,21 +1,54 @@
 package com.joshsoftware.reached.ui
 
+import android.text.TextUtils
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.bumptech.glide.Glide
+import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.FamViewHolder
 import com.joshsoftware.core.R
 import com.joshsoftware.core.model.Member
 import kotlinx.android.synthetic.main.member_view.view.*
 
-class MemberAdapter(var onClick: (Member) -> Unit): ListAdapter<Member, FamViewHolder>(DIFF_CALLBACK) {
+class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (Member) -> Unit): ListAdapter<Member, FamViewHolder>(DIFF_CALLBACK) {
 
     override fun onBindViewHolder(holder: FamViewHolder, position: Int) {
         val model = getItem(position)
         if(model != null) {
             holder.itemView.apply {
-                nameTextView.text = model.name
+                if(!TextUtils.isEmpty(model.id)) {
+                    if(sharedPreferences.userId != null) {
+                        if(model.id == sharedPreferences.userId) {
+                            nameTextView.text = context.getString(R.string.me)
+                        } else {
+                            nameTextView.text = model.name
+                        }
+                    } else {
+                        nameTextView.text = model.name
+                    }
+                    if(model.sosState) {
+                        containerCardView.strokeWidth = 4
+                        containerCardView.setStrokeColor(ContextCompat.getColor(context, com.joshsoftware.reached.R.color.colorAlert))
+                    } else {
+                        containerCardView.strokeWidth = 0
+                    }
+                    model.profileUrl?.let {
+                        Glide.with(this).load(it).into(profileImageView);
+                    }
+                } else {
+                    nameTextView.text = "Show on map"
+                    nameTextView.setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
+                    containerCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    profileImageView.visibility = View.GONE
+                    nameTextView.gravity = Gravity.CENTER
+                }
+
             }
             holder.itemView.setOnClickListener {
                 onClick(model)
