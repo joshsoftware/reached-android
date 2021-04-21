@@ -23,6 +23,11 @@ class WearLoginActivity : BaseLoginActivity() {
         setContentView(view)
         checkForLocationPermission()
 
+        if(sharedPreferences.userData != null) {
+            sharedPreferences.userId?.let {
+                viewModel.fetchUserDetails(it)
+            }
+        }
         binding.btnGoogleSignIn.setOnClickListener {
             signIn()
         }
