@@ -14,4 +14,5 @@
     <color name="colorOnSecondaryVariant">#33331C</color>
     <color name="colorSecondary">#fbe59b</color>
     <color name="colorOnSecondary">#efbd40</color>
+    <color name="colorAlert">#FF0000</color>
 </resources>

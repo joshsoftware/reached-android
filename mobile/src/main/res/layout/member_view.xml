@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:id="@+id/containerCardView"
     app:cardBackgroundColor="@color/colorSecondary"
     app:cardCornerRadius="20dp"
     android:layout_marginBottom="12dp"

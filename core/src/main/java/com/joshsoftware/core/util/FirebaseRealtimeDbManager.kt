@@ -19,7 +19,6 @@ class FirebaseRealtimeDbManager {
     private val db = FirebaseDatabase.getInstance()
     val groupReference = db.getReference(FirebaseDatabaseKey.GROUPS.key)
     val userReference = db.getReference(FirebaseDatabaseKey.USERS.key)
-    val sosReference = db.getReference(FirebaseDatabaseKey.SOS.key)
     val dateTimeUtils = DateTimeUtils()
 
     suspend fun addUserWith(id: String, user: User) = suspendCoroutine<User> { continuation ->
@@ -49,21 +48,22 @@ class FirebaseRealtimeDbManager {
 
     }
 
-    suspend fun sendSOS(groupId: String, user: User, userId: String) = suspendCoroutine<String> { continuation ->
-        sosReference.child(groupId).setValue(SosUser(true, userId, user.name)).addOnCompleteListener {
-            if(it.isSuccessful) {
-                continuation.resume(groupId)
-            } else {
-                it.exception?.let { ex ->
-                    continuation.resumeWithException(ex)
+    suspend fun toggleSosState(groupId: String, user: User, userId: String) = suspendCoroutine<Boolean?> { continuation ->
+        groupReference.child(groupId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val group = snapshot.getValue(Group::class.java)
+                val member = group?.members?.get(userId)
+                member?.let {
+                    member.sosState = !member.sosState
+                    groupReference.child(groupId).setValue(group)
                 }
+                continuation.resume(member?.sosState)
             }
-        }
-    }
 
-
-    suspend fun deleteSos(groupId: String) = suspendCoroutine<String> { continuation ->
-        sosReference.child(groupId).removeValue()
+            override fun onCancelled(error: DatabaseError) {
+                continuation.resumeWithException(error.toException())
+            }
+        })
     }
 
     suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double) = suspendCoroutine<Group> { continuation ->
@@ -290,21 +290,6 @@ class FirebaseRealtimeDbManager {
         })
     }
 
-
-    fun observeSos(groupId: String,
-                             onFetch: (SosUser?) -> Unit,
-                             onCancel: (DatabaseError) -> Unit) {
-        sosReference.child(groupId).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val sosUser = snapshot.getValue(SosUser::class.java)
-                onFetch(sosUser)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                onCancel(error)
-            }
-        })
-    }
 
     suspend fun fetchGroupList(user: User) = suspendCoroutine<ArrayList<Group>> { continuation ->
         val groupList = arrayListOf<Group>()

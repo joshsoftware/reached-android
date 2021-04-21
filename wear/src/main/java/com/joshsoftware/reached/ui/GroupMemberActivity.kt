@@ -43,7 +43,6 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 //                fetchLocation()
                 viewModel.fetchGroupDetails(it)
                 groupId = it
-                viewModel.observeSos(groupId)
             }
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
             adapter = MemberAdapter {

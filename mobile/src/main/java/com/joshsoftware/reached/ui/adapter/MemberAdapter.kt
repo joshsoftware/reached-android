@@ -3,6 +3,7 @@ package com.joshsoftware.reached.ui.adapter
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
@@ -33,6 +34,13 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                 } else {
                     nameTextView.text = model.name
                 }
+                if(model.sosState) {
+                    containerCardView.strokeWidth = 4
+                    containerCardView.setStrokeColor(ContextCompat.getColor(context, R.color.colorAlert))
+                } else {
+                    containerCardView.strokeWidth = 0
+                }
+
                 model.lastUpdated?.let { updatedText ->
                     lastUpdatedTextView.text = dateTimeUtils.getLastUpdatedFormatted(updatedText)
                 }

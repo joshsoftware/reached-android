@@ -24,6 +24,7 @@ import com.joshsoftware.core.viewmodel.GroupMemberViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberMobileBinding
 import com.joshsoftware.reached.ui.LoginActivity
+import kotlinx.android.synthetic.main.activity_group_member_mobile.*
 import javax.inject.Inject
 
 
@@ -53,9 +54,9 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
                 it.id?.let { gId ->
                     viewModel.fetchGroupDetails(gId)
                     groupId = gId
-                    viewModel.observeSos(gId)
                 }
             }
+
             setSupportActionBar(bottomAppBar)
 
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
@@ -89,6 +90,11 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     }
 
     private fun sendSos() {
+        if(binding.sosLabel.text == getString(R.string.send_sos)) {
+            binding.sosLabel.text = getString(R.string.mark_safe)
+        } else {
+            binding.sosLabel.text = getString(R.string.send_sos)
+        }
         viewModel.sendSos(groupId, userId = sharedPreferences.userId!!, user = sharedPreferences.userData!!)
     }
 
@@ -136,16 +142,16 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
             }
         })
 
-
-        viewModel.sos.observe(this, Observer { sos ->
-            if (sos != null) {
-                sharedPreferences.userId?.let {
-                    if(it != sos.id) {
-                        showSosDialog(sos)
-                    }
+        viewModel.sos.observe(this, Observer { sosSent ->
+            sosSent?.let {
+                if(it) {
+                    showToastMessage(getString(R.string.sos_sent_successfully))
+                } else {
+                    showToastMessage(getString(R.string.sos_was_stopped))
                 }
             }
         })
+
 
         viewModel.spinner.observe(this, Observer { loading ->
             if(loading != null) {
@@ -186,23 +192,4 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         return super.onCreateOptionsMenu(menu)
     }
 
-    fun showSosDialog(
-        sos: SosUser?,
-    ) {
-        sos?.let {
-            var alertDialog: AlertDialog? = null
-            val builder = AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.sos_alert))
-                    .setMessage("Emergency! this is from ${it.name}. I need help. Press ok to track.")
-                    .setNeutralButton("OK"
-                    ) { p0, p1 ->
-                        startMapActivity(Member(it.id))
-                        viewModel.deleteSos(groupId)
-                    }
-
-            alertDialog = builder.create()
-            alertDialog.show()
-        }
-
-    }
 }

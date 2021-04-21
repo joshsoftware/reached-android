@@ -38,13 +38,10 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     suspend fun updateLocation(groupId: String, userId: String, location: Location): Group? {
         return dbManager.updateLocation(groupId, userId, location)
     }
-    suspend fun sendSos(groupId: String, userId: String, user: User): String? {
-        return dbManager.sendSOS(groupId, user, userId)
+    suspend fun sendSos(groupId: String, userId: String, user: User): Boolean? {
+        return dbManager.toggleSosState(groupId, user, userId)
     }
 
-    suspend fun deleteSos(groupId: String): String? {
-        return dbManager.deleteSos(groupId)
-    }
 
     fun fetchMember(groupId: String, memberId: String,
                     onFetch: (Member?) -> Unit,
@@ -62,12 +59,6 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
                      onFetch: (ArrayList<Member>) -> Unit,
                      onCancel: (DatabaseError) -> Unit) {
         dbManager.fetchMembers(groupId, onFetch, onCancel)
-    }
-
-    fun observeSos(groupId: String,
-                     onFetch: (SosUser?) -> Unit,
-                     onCancel: (DatabaseError) -> Unit) {
-        dbManager.observeSos(groupId, onFetch, onCancel)
     }
 
 }
