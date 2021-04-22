@@ -2,6 +2,7 @@ package com.joshsoftware.reached.ui
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshsoftware.core.AppSharedPreferences
@@ -29,7 +30,7 @@ class WearGroupListActivity : BaseActivity() {
         val view = binding.root
         setContentView(view)
         setupRecyclerView()
-        sharedPreferences.userData?.let {
+        sharedPreferences.userId?.let {
             viewModel.fetchGroups(it)
         }
     }
@@ -52,13 +53,13 @@ class WearGroupListActivity : BaseActivity() {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupListViewModel::class.java]
 
-        viewModel.result.observe(this, { list ->
+        viewModel.result.observe(this, Observer { list ->
             list?.let {
                 adapter.submitList(it)
             }
         })
 
-        viewModel.spinner.observe(this, { loading ->
+        viewModel.spinner.observe(this, Observer { loading ->
 //            loading?.let {
 //                if(it) {
 //                    showProgressView(binding.parentLayout)
@@ -68,7 +69,7 @@ class WearGroupListActivity : BaseActivity() {
 //            }
         })
 
-        viewModel.error.observe(this,  { error ->
+        viewModel.error.observe(this,  Observer { error ->
             error?.let {
                 showErrorMessage(it)
             }

@@ -10,9 +10,9 @@ import javax.inject.Inject
 
 class GroupListViewModel @Inject constructor(var repository: GroupRepository): BaseViewModel<ArrayList<Group>>() {
 
-    fun fetchGroups(user: User) {
+    fun fetchGroups(userId: String) {
         executeRoutine {
-            _result.value = repository.fetchGroupList(user)
+            _result.value = repository.fetchGroupList(userId)
         }
     }
 

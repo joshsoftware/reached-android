@@ -2,6 +2,7 @@ package com.joshsoftware.reached.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
@@ -21,15 +22,16 @@ class WearLoginActivity : BaseLoginActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        checkForLocationPermission()
+
 
         if(sharedPreferences.userData != null) {
             sharedPreferences.userId?.let {
                 viewModel.fetchUserDetails(it)
             }
         }
+
         binding.btnGoogleSignIn.setOnClickListener {
-            signIn()
+            checkForLocationPermission()
         }
 
         registerViewModelObservers()

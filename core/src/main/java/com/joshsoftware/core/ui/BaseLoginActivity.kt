@@ -1,4 +1,4 @@
- package com.joshsoftware.core.ui
+package com.joshsoftware.core.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -67,12 +67,14 @@ open abstract class BaseLoginActivity: PermissionActivity() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             requestPermission(arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)) { backgroundStatus ->
                                 if (backgroundStatus == Status.GRANTED) {
+                                    signIn()
                                     startLocationTrackingService()
                                 } else if (backgroundStatus ==  Status.DENIED) {
                                     checkForLocationPermission()
                                 }
                             }
                         } else {
+                            signIn()
                             startLocationTrackingService()
                         }
                     } else if (fineStatus ==  Status.DENIED) {

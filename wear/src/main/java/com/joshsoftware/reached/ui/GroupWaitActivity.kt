@@ -34,6 +34,7 @@ class GroupWaitActivity : BaseActivity() {
         viewModel.result.observe(this, Observer { hasGroups ->
             if(hasGroups) {
                 startGroupListActivity()
+                finish()
             }
         })
     }

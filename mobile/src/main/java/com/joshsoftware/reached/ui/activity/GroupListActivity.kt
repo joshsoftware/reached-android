@@ -9,6 +9,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.LocationServices
@@ -52,7 +53,7 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
             showJoinGroupAlertDialog(it)
         }
         setSupportActionBar(findViewById(R.id.bottomAppBar))
-        sharedPreferences.userData?.let {
+        sharedPreferences.userId?.let {
             viewModel.fetchGroups(it)
         }
 
@@ -107,13 +108,13 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupListViewModel::class.java]
 
-        viewModel.result.observe(this, { list ->
+        viewModel.result.observe(this, Observer{ list ->
             list?.let {
                 adapter.submitList(it)
             }
         })
 
-        viewModel.spinner.observe(this, { loading ->
+        viewModel.spinner.observe(this, Observer{ loading ->
             loading?.let {
                 if(it) {
                     showProgressView(parentLayout)
@@ -123,7 +124,7 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
             }
         })
 
-        viewModel.error.observe(this,  { error ->
+        viewModel.error.observe(this,  Observer{ error ->
             error?.let {
                 showErrorMessage(it)
             }

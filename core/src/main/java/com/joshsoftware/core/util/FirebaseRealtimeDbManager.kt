@@ -16,7 +16,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class FirebaseRealtimeDbManager {
-    private val db = FirebaseDatabase.getInstance()
+    private val db = FirebaseDatabase.getInstance("https://reached-stage.firebaseio.com/")
     val groupReference = db.getReference(FirebaseDatabaseKey.GROUPS.key)
     val userReference = db.getReference(FirebaseDatabaseKey.USERS.key)
     val dateTimeUtils = DateTimeUtils()
@@ -291,26 +291,38 @@ class FirebaseRealtimeDbManager {
     }
 
 
-    suspend fun fetchGroupList(user: User) = suspendCoroutine<ArrayList<Group>> { continuation ->
+    suspend fun fetchGroupList(userId: String) = suspendCoroutine<ArrayList<Group>> { continuation ->
         val groupList = arrayListOf<Group>()
-        user.groups.forEach { (s, b) ->
-            groupReference.child(s).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val group = snapshot.getValue(Group::class.java)
-                    group?.let {
-                        it.id = s
-                        groupList.add(it)
-                        if(user.groups.size == groupList.size) {
-                            continuation.resume(groupList)
-                        }
+        userReference.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                continuation.resumeWithException(error.toException())
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userObject = snapshot.getValue(User::class.java)
+                userObject?.let { user ->
+                    user.groups.forEach { (s, b) ->
+                        groupReference.child(s).addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                val group = snapshot.getValue(Group::class.java)
+                                group?.let {
+                                    it.id = s
+                                    groupList.add(it)
+                                    if(user.groups.size == groupList.size) {
+                                        continuation.resume(groupList)
+                                    }
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                continuation.resumeWithException(error.toException())
+                            }
+                        })
                     }
                 }
 
-                override fun onCancelled(error: DatabaseError) {
-                    continuation.resumeWithException(error.toException())
-                }
-            })
-        }
+            }
+        })
     }
 
 }
