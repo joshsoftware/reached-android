@@ -11,7 +11,7 @@ import com.joshsoftware.reached.databinding.ActivityLoginBinding
 import timber.log.Timber
 import javax.inject.Inject
 
-class WearLoginActivity : BaseLoginActivity() {
+class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListener {
     lateinit var binding: ActivityLoginBinding
 
     @Inject
@@ -23,16 +23,13 @@ class WearLoginActivity : BaseLoginActivity() {
         val view = binding.root
         setContentView(view)
 
-
-        if(sharedPreferences.userData != null) {
-            sharedPreferences.userId?.let {
-                viewModel.fetchUserDetails(it)
-            }
-        }
+        setListener(this)
 
         binding.btnGoogleSignIn.setOnClickListener {
             checkForLocationPermission()
         }
+
+
 
         registerViewModelObservers()
     }
@@ -81,5 +78,15 @@ class WearLoginActivity : BaseLoginActivity() {
     private fun startGroupListActivity() {
         val intent = Intent(this, WearGroupListActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onPermissionGrant() {
+        if(sharedPreferences.userData != null) {
+            sharedPreferences.userId?.let {
+                viewModel.fetchUserDetails(it)
+            }
+        } else {
+            signIn()
+        }
     }
 }

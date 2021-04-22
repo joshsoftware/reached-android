@@ -12,7 +12,7 @@ import com.joshsoftware.reached.ui.activity.GroupListActivity
 import timber.log.Timber
 import javax.inject.Inject
 
-class LoginActivity : BaseLoginActivity() {
+class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListener {
     lateinit var binding: ActivityLoginMobileBinding
 
     @Inject
@@ -23,13 +23,8 @@ class LoginActivity : BaseLoginActivity() {
         binding = ActivityLoginMobileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
+        setListener(this)
         checkForLocationPermission()
-        if(sharedPreferences.userData != null) {
-            sharedPreferences.userId?.let {
-                viewModel.fetchUserDetails(it)
-            }
-        }
 
         binding.btnGoogleSignIn.setOnClickListener {
             if(sharedPreferences.userData == null) {
@@ -87,5 +82,13 @@ class LoginActivity : BaseLoginActivity() {
     private fun startGroupChoiceActivity() {
         val intent = Intent(this, GroupChoiceActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onPermissionGrant() {
+        if(sharedPreferences.userData != null) {
+            sharedPreferences.userId?.let {
+                viewModel.fetchUserDetails(it)
+            }
+        }
     }
 }
