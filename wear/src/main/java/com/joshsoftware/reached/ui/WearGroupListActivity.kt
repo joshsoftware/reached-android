@@ -31,7 +31,9 @@ class WearGroupListActivity : BaseActivity() {
         setContentView(view)
         setupRecyclerView()
         sharedPreferences.userId?.let {
-            viewModel.fetchGroups(it)
+            isNetWorkAvailable {
+                viewModel.fetchGroups(it)
+            }
         }
     }
 

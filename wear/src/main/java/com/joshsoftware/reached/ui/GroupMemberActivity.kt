@@ -35,7 +35,9 @@ class GroupMemberActivity : BaseActivity() {
         setContentView(view)
         binding.apply {
             intent.extras?.getString(INTENT_GROUP_ID)?.let {
-                viewModel.fetchGroupDetails(it)
+                isNetWorkAvailable {
+                    viewModel.fetchGroupDetails(it)
+                }
                 groupId = it
             }
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
