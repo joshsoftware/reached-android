@@ -16,6 +16,7 @@ class GroupsAdapter(var onClick: (Group) -> Unit): ListAdapter<Group, FamViewHol
         if(model != null) {
             holder.itemView.apply {
                 nameTextView.text = model.name
+                groupCountTextView.text = model.members.size.toString()
             }
             holder.itemView.setOnClickListener {
                 onClick(model)

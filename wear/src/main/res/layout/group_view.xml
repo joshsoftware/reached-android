@@ -35,8 +35,25 @@
             android:layout_marginStart="8dp"
             android:textColor="@color/colorOnSecondaryVariant"
             android:textStyle="bold"
+            android:lines="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintEnd_toStartOf="@id/groupCountTextView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profileImageView"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/groupCountTextView"
+            android:layout_width="24dp"
+            android:text="2"
+            android:gravity="center"
+            android:background="@drawable/group_count_background"
+            android:layout_height="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="16dp"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
