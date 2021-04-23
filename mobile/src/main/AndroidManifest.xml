@@ -70,6 +70,10 @@
             android:name="com.joshsoftware.core.service.LocationUpdateService"
             android:enabled="true"
             android:exported="true"/>
+        <service
+            android:name=".service.ReachedFirebaseService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

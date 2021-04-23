@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.LoginRepository
+import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.model.User
 import com.joshsoftware.core.repository.GroupRepository
 import kotlinx.coroutines.Dispatchers
@@ -25,12 +26,12 @@ class LoginViewModel @Inject constructor(var repository: LoginRepository,
     val user: LiveData<User?>
         get() = _user
 
-    fun signInWithGoogle(account: GoogleSignInAccount) {
+    fun signInWithGoogle(account: GoogleSignInAccount, appType: AppType) {
         _spinner.value = true
 
         executeRoutine {
             withContext(Dispatchers.IO) {
-                val idToUser = repository.signInWithGoogle(account)
+                val idToUser = repository.signInWithGoogle(account, appType)
                 withContext(Dispatchers.Main) {
                     _result.value = idToUser
                 }

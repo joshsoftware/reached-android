@@ -6,6 +6,7 @@ import android.os.Handler
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.databinding.ActivityLoginBinding
 import timber.log.Timber
@@ -35,7 +36,7 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
     }
 
     override fun attemptSignIn(account: GoogleSignInAccount) {
-        viewModel.signInWithGoogle(account)
+        viewModel.signInWithGoogle(account, AppType.WEAR)
     }
 
     private fun registerViewModelObservers() {

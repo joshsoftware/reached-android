@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
@@ -37,7 +38,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
 
 
     override fun attemptSignIn(account: GoogleSignInAccount) {
-        viewModel.signInWithGoogle(account)
+        viewModel.signInWithGoogle(account, AppType.MOBILE)
     }
 
     private fun registerViewModelObservers() {

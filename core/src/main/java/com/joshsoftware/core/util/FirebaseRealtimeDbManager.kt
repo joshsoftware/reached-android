@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
@@ -21,13 +22,23 @@ class FirebaseRealtimeDbManager {
     val userReference = db.getReference(FirebaseDatabaseKey.USERS.key)
     val dateTimeUtils = DateTimeUtils()
 
-    suspend fun addUserWith(id: String, user: User) = suspendCoroutine<User> { continuation ->
+    suspend fun addUserWith(id: String, user: User, token: String, appType: AppType) = suspendCoroutine<User> { continuation ->
         userReference.child(id).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val requestedUser = snapshot.getValue(User::class.java)
                 if(requestedUser != null) {
+                    if(appType == AppType.MOBILE) {
+                        requestedUser.token.phone = token
+                    } else {
+                        requestedUser.token.watch = token
+                    }
                     continuation.resume(requestedUser)
                 } else {
+                    if(appType == AppType.MOBILE) {
+                        user.token.phone = token
+                    } else {
+                        user.token.watch = token
+                    }
                     userReference.child(id).setValue(user).addOnCompleteListener {
                         if(it.isSuccessful) {
                             continuation.resume(user)
@@ -38,14 +49,12 @@ class FirebaseRealtimeDbManager {
                         }
                     }
                 }
-
             }
 
             override fun onCancelled(error: DatabaseError) {
                 continuation.resumeWithException(error.toException())
             }
         })
-
     }
 
     suspend fun toggleSosState(groupId: String, user: User, userId: String) = suspendCoroutine<Boolean?> { continuation ->
@@ -323,6 +332,14 @@ class FirebaseRealtimeDbManager {
 
             }
         })
+    }
+
+    fun updateUserPhoneToken(userId: String, token: String) {
+        userReference.child(userId).child("token").child("phone").setValue(token)
+    }
+
+    fun updateUserWatchToken(userId: String, token: String) {
+        userReference.child(userId).child("token").child("watch").setValue(token)
     }
 
 }
