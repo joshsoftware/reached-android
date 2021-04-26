@@ -10,6 +10,7 @@ import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.core.viewmodel.GroupListViewModel
 import com.joshsoftware.reached.databinding.ActivityGroupMemberBinding
+import com.joshsoftware.reached.databinding.ActivityWearGroupListBinding
 import com.joshsoftware.reached.ui.adapter.GroupsAdapter
 import javax.inject.Inject
 
@@ -22,11 +23,11 @@ class WearGroupListActivity : BaseActivity() {
 
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
-    lateinit var binding: ActivityGroupMemberBinding
+    lateinit var binding: ActivityWearGroupListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityGroupMemberBinding.inflate(layoutInflater)
+        binding = ActivityWearGroupListBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
         setupRecyclerView()
