@@ -34,6 +34,7 @@
             android:value="AIzaSyDacw9al4jpEeuFw4UxOaPSU4ON7a_gMjE" />
 
         <activity
+            android:launchMode="singleTask"
             android:name=".ui.activity.GroupMemberActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -60,6 +61,7 @@
             android:screenOrientation="fullSensor"
             tools:replace="screenOrientation" />
         <activity
+            android:launchMode="singleTask"
             android:name=".ui.activity.MapActivity"
             android:screenOrientation="portrait" />
         <activity

@@ -38,7 +38,7 @@ class GroupMemberActivity : BaseActivity() {
     lateinit var binding: ActivityGroupMemberMobileBinding
     lateinit var groupId: String
     lateinit var createdBy: String
-
+    var sosSent: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGroupMemberMobileBinding.inflate(layoutInflater)
@@ -92,13 +92,23 @@ class GroupMemberActivity : BaseActivity() {
         super.onNewIntent(intent)
         println("new intent")
     }
+
     private fun sendSos() {
         if(binding.sosLabel.text == getString(R.string.send_sos)) {
             binding.sosLabel.text = getString(R.string.mark_safe)
         } else {
             binding.sosLabel.text = getString(R.string.send_sos)
         }
-        viewModel.sendSos(groupId, userId = sharedPreferences.userId!!, user = sharedPreferences.userData!!)
+        sosSent = !sosSent
+        viewModel.sendSos(groupId, userId = sharedPreferences.userId!!, user = sharedPreferences.userData!!, sosSent = sosSent)
+    }
+
+    private fun setSosLabel(sosSent: Boolean) {
+        if(sosSent) {
+            binding.sosLabel.text = getString(R.string.mark_safe)
+        } else {
+            binding.sosLabel.text = getString(R.string.send_sos)
+        }
     }
 
     private fun toggleFabMenu() {
@@ -140,6 +150,12 @@ class GroupMemberActivity : BaseActivity() {
             group?.let {
                 supportActionBar?.title = it.name
                 val util = ConversionUtil()
+                sharedPreferences.userId?.let { userId ->
+                    group.members[userId]?.sosState?.let { sosSent ->
+                        this.sosSent = sosSent
+                        setSosLabel(sosSent)
+                    }
+                }
                 val members = util.getMemberListFromMap(group.members)
                 adapter.submitList(members)
             }

@@ -33,9 +33,9 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
         }
     }
 
-    fun sendSos(groupId: String, userId: String, user: User) {
+    fun sendSos(groupId: String, userId: String, user: User, sosSent: Boolean) {
         executeRoutine {
-            _sos.value = repository.sendSos(groupId, userId, user)
+            _sos.value = repository.sendSos(groupId, userId, user, sosSent)
         }
     }
 

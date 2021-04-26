@@ -36,7 +36,7 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                 }
                 if(model.sosState) {
                     containerCardView.strokeWidth = 4
-                    containerCardView.setStrokeColor(ContextCompat.getColor(context, R.color.colorAlert))
+                    containerCardView.strokeColor = ContextCompat.getColor(context, R.color.colorAlert)
                 } else {
                     containerCardView.strokeWidth = 0
                 }

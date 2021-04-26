@@ -17,7 +17,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class FirebaseRealtimeDbManager {
-    private val db = FirebaseDatabase.getInstance("https://reached-stage.firebaseio.com/")
+    private val db = FirebaseDatabase.getInstance()
     val groupReference = db.getReference(FirebaseDatabaseKey.GROUPS.key)
     val userReference = db.getReference(FirebaseDatabaseKey.USERS.key)
     val dateTimeUtils = DateTimeUtils()
@@ -57,13 +57,13 @@ class FirebaseRealtimeDbManager {
         })
     }
 
-    suspend fun toggleSosState(groupId: String, user: User, userId: String) = suspendCoroutine<Boolean?> { continuation ->
+    suspend fun toggleSosState(groupId: String, user: User, userId: String, sosSent: Boolean) = suspendCoroutine<Boolean?> { continuation ->
         groupReference.child(groupId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
                 val member = group?.members?.get(userId)
                 member?.let {
-                    member.sosState = !member.sosState
+                    member.sosState = sosSent
                     groupReference.child(groupId).setValue(group)
                 }
                 continuation.resume(member?.sosState)
