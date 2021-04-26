@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".MainActivity"
+    tools:context=".ui.WearGroupListActivity"
     tools:deviceIds="wear">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/parentLayout"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         app:boxedEdges="top|bottom">

@@ -12,7 +12,9 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:src="@drawable/ic_profile_placeholder"
+            android:src="@drawable/ic_group"
+            app:contentPadding="6dp"
+            android:background="@color/colorPrimary"
             android:id="@+id/profileImageView"
             app:shapeAppearanceOverlay="@style/CircularImage"
             android:layout_width="60dp"

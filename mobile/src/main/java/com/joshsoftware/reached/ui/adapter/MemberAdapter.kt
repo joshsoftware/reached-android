@@ -45,7 +45,9 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                     lastUpdatedTextView.text = dateTimeUtils.getLastUpdatedFormatted(updatedText)
                 }
                 model.profileUrl?.let {
-                    Glide.with(this).load(it).into(profileImageView);
+                    if(it.isNotEmpty()) {
+                        Glide.with(this).load(it).into(profileImageView);
+                    }
                 }
             }
             holder.itemView.setOnClickListener {

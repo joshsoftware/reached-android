@@ -23,9 +23,17 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
         binding = ActivityLoginBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
         setListener(this)
 
+        if(sharedPreferences.userData != null) {
+            sharedPreferences.userId?.let {
+                if (sharedPreferences.userData!!.groups.isEmpty()) {
+                    startGroupWaitActivity()
+                } else {
+                    startGroupListActivity()
+                }
+            }
+        }
         binding.btnGoogleSignIn.setOnClickListener {
             checkForLocationPermission()
         }
@@ -84,7 +92,12 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
     override fun onPermissionGrant() {
         if(sharedPreferences.userData != null) {
             sharedPreferences.userId?.let {
-                viewModel.fetchUserDetails(it)
+                if (sharedPreferences.userData!!.groups.isEmpty()) {
+                    startGroupWaitActivity()
+                } else {
+                    startGroupListActivity()
+                }
+                finish()
             }
         } else {
             signIn()

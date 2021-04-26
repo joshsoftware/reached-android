@@ -88,7 +88,12 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
     override fun onPermissionGrant() {
         if(sharedPreferences.userData != null) {
             sharedPreferences.userId?.let {
-                viewModel.fetchUserDetails(it)
+                if (sharedPreferences.userData!!.groups.isEmpty()) {
+                    startGroupChoiceActivity()
+                } else {
+                    startGroupListActivity()
+                }
+                finish()
             }
         }
     }

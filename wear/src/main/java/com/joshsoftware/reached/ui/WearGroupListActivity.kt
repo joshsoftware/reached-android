@@ -62,13 +62,13 @@ class WearGroupListActivity : BaseActivity() {
         })
 
         viewModel.spinner.observe(this, Observer { loading ->
-//            loading?.let {
-//                if(it) {
-//                    showProgressView(binding.parentLayout)
-//                } else {
-//                    hideProgressView()
-//                }
-//            }
+            loading?.let {
+                if(it) {
+                    showProgressView(binding.parentLayout)
+                } else {
+                    hideProgressView()
+                }
+            }
         })
 
         viewModel.error.observe(this,  Observer { error ->

@@ -103,6 +103,8 @@ abstract class BaseActivity: AppCompatActivity(), Injectable {
                 rootView.addView(progressLayout)
             } else if (rootView is CoordinatorLayout) {
                 rootView.addView(progressLayout)
+            } else if (rootView is FrameLayout) {
+                rootView.addView(progressLayout)
             }
         } else {
             progressLayout?.visibility = View.VISIBLE
