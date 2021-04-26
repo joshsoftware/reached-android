@@ -9,14 +9,15 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import com.joshsoftware.core.AppSharedPreferences
-import com.joshsoftware.core.BuildConfig
 import com.joshsoftware.core.LoginRepository
+import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.NotificationPayload
+import com.joshsoftware.core.model.NotificationType
 import com.joshsoftware.reached.R
-import com.joshsoftware.reached.ui.activity.GroupMemberActivity
+import com.joshsoftware.reached.ui.activity.*
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -57,14 +58,12 @@ class ReachedFirebaseService: FirebaseMessagingService() {
 
         // Check if message contains a data payload.
         if (remoteMessage.data.isNotEmpty()) {
-            if(BuildConfig.DEBUG) {
-                Timber.d( "Message data payload: ${remoteMessage.data}")
-            }
+            Timber.d( "Message data payload: ${remoteMessage.data}")
 
-            val textContent = remoteMessage.data["message"]
-            val expenseJson = remoteMessage.data["data"]
+            val data = remoteMessage.data["payload"]
+            val type = remoteMessage.data["type"]
 
-            sendNotification(textContent, "testing", getPendingIntent())
+            sendNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, getPendingIntent(data, type))
 
         }
     }
@@ -82,8 +81,39 @@ class ReachedFirebaseService: FirebaseMessagingService() {
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(1, builder.build())
     }
-    private fun getPendingIntent(): PendingIntent? {
+    private fun getPendingIntent(data: String?, type: String?): PendingIntent? {
+        return when(type) {
+            NotificationType.JOIN_GROUP.key -> {
+               getGroupJoinPendingIntent(data)
+            } else -> {
+                getSosIntent(data)
+            }
+        }
+
+    }
+
+    private fun getGroupJoinPendingIntent(data: String?): PendingIntent? {
         val intent = Intent(this, GroupMemberActivity::class.java)
+        getNotificationPayload(data)?.let {
+            intent.putExtra(INTENT_GROUP, Group(it.groupId))
+        }
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        return PendingIntent.getActivity(this, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+
+    private fun getNotificationPayload(data: String?): NotificationPayload? {
+        return Gson().fromJson(data, NotificationPayload::class.java)
+    }
+
+
+    private fun getSosIntent(data: String?): PendingIntent? {
+        val intent = Intent(this, MapActivity::class.java)
+        getNotificationPayload(data)?.let {
+            intent.putExtra(INTENT_GROUP_ID, it.groupId)
+            intent.putExtra(INTENT_MEMBER_ID, it.memberId)
+        }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         return PendingIntent.getActivity(this, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT)

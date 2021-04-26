@@ -33,8 +33,8 @@ class ReachedWearFirebaseService: FirebaseMessagingService() {
 
 
     override fun onCreate() {
-        super.onCreate()
         AndroidInjection.inject(this)
+        super.onCreate()
     }
 
     override fun onNewToken(fcmToken: String) {

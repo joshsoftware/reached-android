@@ -88,6 +88,10 @@ class GroupMemberActivity : BaseActivity() {
 
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        println("new intent")
+    }
     private fun sendSos() {
         if(binding.sosLabel.text == getString(R.string.send_sos)) {
             binding.sosLabel.text = getString(R.string.mark_safe)
