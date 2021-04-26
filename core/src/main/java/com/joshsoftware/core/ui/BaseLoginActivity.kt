@@ -106,15 +106,21 @@ open abstract class BaseLoginActivity: PermissionActivity() {
                         } else {
                             showAlert("Permission Required", "You have to Allow location access all the time", 21)
                         }
-                    }
+                    } else {
+                        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                            // If User Checked 'Don't Show Again' checkbox for runtime permission, then navigate user to Settings
+                            showAlert("Permission Required", "You have to Allow permission to access user location", 22)
+                        }                    }
                 } else {
                     if (grantResults[0] === PackageManager.PERMISSION_GRANTED
                             && grantResults[1] === PackageManager.PERMISSION_GRANTED) {
                         listener?.onPermissionGrant()
                         startLocationTrackingService()
                     } else {
-                        showAlert("Permission Required", "You have to Allow permission to access user location", 22)
-                    }
+                        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                            // If User Checked 'Don't Show Again' checkbox for runtime permission, then navigate user to Settings
+                            showAlert("Permission Required", "You have to Allow permission to access user location", 22)
+                        }                    }
                 }
 
             } else {

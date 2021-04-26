@@ -52,7 +52,7 @@ class ReachedWearFirebaseService: FirebaseMessagingService() {
                 user.token.phone = fcmToken
                 preferences.saveUserData(user)
                 preferences.userId?.let {
-                    repository.updateUserPhoneToken(it, fcmToken)
+                    repository.updateUserWatchToken(it, fcmToken)
                 }
             }
         }

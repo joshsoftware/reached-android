@@ -32,7 +32,15 @@ class FirebaseRealtimeDbManager {
                     } else {
                         requestedUser.token.watch = token
                     }
-                    continuation.resume(requestedUser)
+                    userReference.child(id).setValue(requestedUser).addOnCompleteListener {
+                        if(it.isSuccessful) {
+                            continuation.resume(user)
+                        } else {
+                            it.exception?.let { ex ->
+                                continuation.resumeWithException(ex)
+                            }
+                        }
+                    }
                 } else {
                     if(appType == AppType.MOBILE) {
                         user.token.phone = token
@@ -107,14 +115,36 @@ class FirebaseRealtimeDbManager {
         onComplete: () -> Unit,
         onError: (Exception) -> Unit
     ) {
-        user.groups[groupId] = true
-        userReference.child(userId).setValue(user).addOnCompleteListener {
-            if(it.isSuccessful) {
-                onComplete()
-            } else {
-                it.exception?.let(onError)
+        userReference.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                onError(error.toException())
             }
-        }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val requestedUser = snapshot.getValue(User::class.java)
+                if(requestedUser != null) {
+                    requestedUser.groups[groupId] = true
+                    userReference.child(userId).setValue(requestedUser).addOnCompleteListener {
+                        if(it.isSuccessful) {
+                            onComplete()
+                        } else {
+                            it.exception?.let(onError)
+                        }
+                    }
+                } else {
+                    user.groups[groupId] = true
+                    userReference.child(userId).setValue(user).addOnCompleteListener {
+                        if(it.isSuccessful) {
+                            onComplete()
+                        } else {
+                            it.exception?.let(onError)
+                        }
+                    }
+                }
+
+            }
+
+        })
     }
 
     suspend fun joinGroupWith(id: String, userId: String, user: User, lat: Double, long: Double) = suspendCoroutine<String> { continuation ->
