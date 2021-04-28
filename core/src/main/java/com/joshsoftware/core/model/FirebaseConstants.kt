@@ -1,5 +1,8 @@
 package com.joshsoftware.core.model
 
+import androidx.annotation.Keep
+
+@Keep
 object FirebaseConstants {
     // Analytics
     object EVENTS {

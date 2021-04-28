@@ -52,7 +52,7 @@
         -->
         <meta-data
             android:name="com.google.android.wearable.standalone"
-            android:value="true" />
+            android:value="false" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDacw9al4jpEeuFw4UxOaPSU4ON7a_gMjE" />

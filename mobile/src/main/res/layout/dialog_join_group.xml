@@ -63,8 +63,7 @@
         app:backgroundTint="@color/colorOnPrimary"
         android:textColor="@color/colorOnSecondaryVariant"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonPositive"
-        app:layout_constraintTop_toBottomOf="@+id/noteLayout" />
+        app:layout_constraintEnd_toStartOf="@+id/buttonPositive" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonPositive"
