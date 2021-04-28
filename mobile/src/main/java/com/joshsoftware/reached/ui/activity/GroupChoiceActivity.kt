@@ -136,6 +136,7 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         val intent = Intent(this, GroupMemberActivity::class.java)
         intent.putExtra(INTENT_GROUP, Group(groupId))
         startActivity(intent)
+        finish()
     }
 
     @Inject

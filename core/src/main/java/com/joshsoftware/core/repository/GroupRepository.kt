@@ -12,11 +12,11 @@ import kotlin.collections.ArrayList
 
 class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManager) {
 
-    suspend fun createGroup(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double): Group {
+    suspend fun createGroup(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double): Pair<Group, User> {
         return dbManager.createGroupWith(id, userId, user, groupName, lat, long)
     }
 
-    suspend fun joinGroup(id: String, userId: String, user: User, lat: Double, long: Double): String {
+    suspend fun joinGroup(id: String, userId: String, user: User, lat: Double, long: Double): Pair<String, User> {
         return dbManager.joinGroupWith(id, userId, user, lat, long)
     }
 

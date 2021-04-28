@@ -83,7 +83,7 @@ class FirebaseRealtimeDbManager {
         })
     }
 
-    suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double) = suspendCoroutine<Group> { continuation ->
+    suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double) = suspendCoroutine<Pair<Group, User>> { continuation ->
         val map = hashMapOf<String, Member>()
         map[userId] = Member(name = user.name, profileUrl = user.profileUrl, lat = lat, long = long, lastUpdated = dateTimeUtils.getCurrentTime())
         val group = Group(
@@ -93,13 +93,12 @@ class FirebaseRealtimeDbManager {
         )
         groupReference.child(id).setValue(group).addOnCompleteListener {
             if(it.isSuccessful) {
-                updateUserWithGroup(id, user, userId,  {
+                updateUserWithGroup(id, user, userId,  { responseUser ->
                     group.id = id
-                    continuation.resume(group)
+                    continuation.resume(group to responseUser)
                 },  { ex ->
                     continuation.resumeWithException(ex)
                 })
-
             } else {
                 it.exception?.let { ex ->
                     continuation.resumeWithException(ex)
@@ -112,7 +111,7 @@ class FirebaseRealtimeDbManager {
         groupId: String,
         user: User,
         userId: String,
-        onComplete: () -> Unit,
+        onComplete: (User) -> Unit,
         onError: (Exception) -> Unit
     ) {
         userReference.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
@@ -126,7 +125,7 @@ class FirebaseRealtimeDbManager {
                     requestedUser.groups[groupId] = true
                     userReference.child(userId).setValue(requestedUser).addOnCompleteListener {
                         if(it.isSuccessful) {
-                            onComplete()
+                            onComplete(requestedUser)
                         } else {
                             it.exception?.let(onError)
                         }
@@ -135,7 +134,7 @@ class FirebaseRealtimeDbManager {
                     user.groups[groupId] = true
                     userReference.child(userId).setValue(user).addOnCompleteListener {
                         if(it.isSuccessful) {
-                            onComplete()
+                            onComplete(user)
                         } else {
                             it.exception?.let(onError)
                         }
@@ -147,7 +146,7 @@ class FirebaseRealtimeDbManager {
         })
     }
 
-    suspend fun joinGroupWith(id: String, userId: String, user: User, lat: Double, long: Double) = suspendCoroutine<String> { continuation ->
+    suspend fun joinGroupWith(id: String, userId: String, user: User, lat: Double, long: Double) = suspendCoroutine<Pair<String, User>> { continuation ->
         groupReference.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 continuation.resumeWithException(error.toException())
@@ -160,8 +159,8 @@ class FirebaseRealtimeDbManager {
                 }
                 groupReference.child(id).setValue(group).addOnCompleteListener {
                     if(it.isSuccessful) {
-                        updateUserWithGroup(id, user, userId,  {
-                            continuation.resume(id)
+                        updateUserWithGroup(id, user, userId,  {responseUser ->
+                            continuation.resume(id to responseUser)
                         },  { ex ->
                             continuation.resumeWithException(ex)
                         })

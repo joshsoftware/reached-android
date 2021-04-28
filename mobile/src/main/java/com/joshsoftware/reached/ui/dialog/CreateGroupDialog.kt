@@ -121,6 +121,7 @@ class CreateGroupDialog: BaseDialogFragment() {
             val intent = Intent(activity, GroupMemberActivity::class.java)
             intent.putExtra(INTENT_GROUP, group)
             startActivity(intent)
+            listener?.onCreate()
         }
     }
 
