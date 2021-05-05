@@ -10,9 +10,9 @@
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 3,
+      "versionCode": 5,
       "versionName": "1.0",
-      "outputFile": "mobile-release.apk"
+      "outputFile": "wear-release.apk"
     }
   ]
 }
