@@ -37,7 +37,7 @@ class GroupMemberActivity : BaseActivity() {
     lateinit var adapter: MemberAdapter
     lateinit var binding: ActivityGroupMemberMobileBinding
     lateinit var groupId: String
-    lateinit var createdBy: String
+    var group: Group? = null
     var sosSent: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +77,11 @@ class GroupMemberActivity : BaseActivity() {
                 sendSos()
             }
 
+            fabLeave.setOnClickListener {
+                toggleFabMenu()
+                leaveOrDeleteGroup()
+            }
+
             bottomAppBar.setNavigationOnClickListener {
                 finish()
             }
@@ -86,6 +91,18 @@ class GroupMemberActivity : BaseActivity() {
             }
         }
 
+    }
+
+    private fun leaveOrDeleteGroup() {
+        group?.let { nonNullGroup ->
+            sharedPreferences.userId?.let {
+                if(it == group.created_by) {
+                    viewModel.deleteGroup(groupId, it)
+                } else {
+                    viewModel.leaveGroup(groupId, it)
+                }
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -148,6 +165,7 @@ class GroupMemberActivity : BaseActivity() {
 
         viewModel.result.observe(this, Observer { group ->
             group?.let {
+                this.group = it
                 supportActionBar?.title = it.name
                 val util = ConversionUtil()
                 sharedPreferences.userId?.let { userId ->
@@ -168,6 +186,22 @@ class GroupMemberActivity : BaseActivity() {
                 } else {
                     showToastMessage(getString(R.string.sos_was_stopped))
                 }
+            }
+        })
+
+
+        viewModel.deleteGroup.observe(this, Observer { groupDeleted ->
+            groupDeleted?.let {
+                showToastMessage("You have deleted the group successfully!")
+                finish()
+            }
+        })
+
+
+        viewModel.leaveGroup.observe(this, Observer { groupLeft ->
+            groupLeft?.let {
+                showToastMessage("You have left the group successfully!")
+                finish()
             }
         })
 

@@ -10,6 +10,7 @@ import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.model.User
+import com.joshsoftware.core.util.FirebaseDatabaseKey.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.coroutines.resume
@@ -18,8 +19,8 @@ import kotlin.coroutines.suspendCoroutine
 
 class FirebaseRealtimeDbManager {
     private val db = FirebaseDatabase.getInstance()
-    val groupReference = db.getReference(FirebaseDatabaseKey.GROUPS.key)
-    val userReference = db.getReference(FirebaseDatabaseKey.USERS.key)
+    val groupReference = db.getReference(GROUPS.key)
+    val userReference = db.getReference(USERS.key)
     val dateTimeUtils = DateTimeUtils()
 
     suspend fun addUserWith(id: String, user: User, token: String, appType: AppType) = suspendCoroutine<User> { continuation ->
@@ -203,7 +204,7 @@ class FirebaseRealtimeDbManager {
     suspend fun fetchUserDetails(userId: String) = suspendCoroutine<User?> { continuation ->
         userReference.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                   continuation.resume(snapshot.getValue(User::class.java))
+                continuation.resume(snapshot.getValue(User::class.java))
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -248,8 +249,8 @@ class FirebaseRealtimeDbManager {
     }
 
     fun fetchMember(groupId: String, memberId: String,
-                            onFetch: (Member?) -> Unit,
-                            onCancel: (DatabaseError) -> Unit) {
+                    onFetch: (Member?) -> Unit,
+                    onCancel: (DatabaseError) -> Unit) {
         groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
@@ -274,16 +275,16 @@ class FirebaseRealtimeDbManager {
                           onFetch: (Group?) -> Unit,
                           onCancel: (DatabaseError) -> Unit
     ) {
-            groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val group = snapshot.getValue(Group::class.java)
-                    onFetch(group)
-                }
+        groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val group = snapshot.getValue(Group::class.java)
+                onFetch(group)
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    onCancel(error)
-                }
-            })
+            override fun onCancelled(error: DatabaseError) {
+                onCancel(error)
+            }
+        })
 
     }
 
@@ -293,10 +294,10 @@ class FirebaseRealtimeDbManager {
                 val group = snapshot.getValue(Group::class.java)
                 val member = group?.members?.get(userId)
                 member?.let {
-                        member.lat = location.latitude
-                        member.long = location.longitude
-                        member.lastUpdated = dateTimeUtils.getCurrentTime()
-                        groupReference.child(groupId).setValue(group)
+                    member.lat = location.latitude
+                    member.long = location.longitude
+                    member.lastUpdated = dateTimeUtils.getCurrentTime()
+                    groupReference.child(groupId).setValue(group)
                 }
 
 
@@ -310,8 +311,8 @@ class FirebaseRealtimeDbManager {
     }
 
     fun fetchMembers(groupId: String,
-                             onFetch: (ArrayList<Member>) -> Unit,
-                             onCancel: (DatabaseError) -> Unit) {
+                     onFetch: (ArrayList<Member>) -> Unit,
+                     onCancel: (DatabaseError) -> Unit) {
         groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
@@ -364,11 +365,58 @@ class FirebaseRealtimeDbManager {
     }
 
     fun updateUserPhoneToken(userId: String, token: String) {
-        userReference.child(userId).child("token").child("phone").setValue(token)
+        userReference.child(userId).child(TOKEN.key).child(PHONE.key).setValue(token)
     }
 
     fun updateUserWatchToken(userId: String, token: String) {
-        userReference.child(userId).child("token").child("watch").setValue(token)
+        userReference.child(userId).child(TOKEN.key).child(WATCH.key).setValue(token)
     }
 
+    suspend fun leaveGroup(groupId: String, userId: String) = suspendCoroutine<Boolean>{ continuation ->
+        groupReference.child(groupId).child(MEMBERS.key).child(userId).removeValue().addOnCompleteListener {
+            if(it.isSuccessful) {
+                removeGroupFromUserRef(groupId, userId,  {
+                    continuation.resume(true)
+                }, { ex ->
+                    continuation.resumeWithException(ex)
+                })
+            } else {
+                it.exception?.let {
+                    continuation.resumeWithException(it)
+                }
+            }
+        }
+    }
+
+    suspend fun deleteGroup(groupId: String, userId: String) = suspendCoroutine<Boolean> { continuation ->
+        groupReference.child(groupId).child(MEMBERS.key).removeValue().addOnCompleteListener {
+            if(it.isSuccessful) {
+                removeGroupFromUserRef(groupId, userId,  {
+                    continuation.resume(true)
+                }, { ex ->
+                    continuation.resumeWithException(ex)
+
+                })
+            } else {
+                it.exception?.let {
+                    continuation.resumeWithException(it)
+                }
+            }
+        }
+    }
+
+    private fun removeGroupFromUserRef(
+        groupId: String,
+        userId: String,
+        onFinish: () -> Unit,
+        onError:(Exception) -> Unit
+    ) {
+        userReference.child(userId).child("groups").child(groupId).removeValue().addOnCompleteListener {
+            if(it.isSuccessful) {
+                onFinish()
+            } else {
+                it.exception?.let(onError)
+            }
+        }
+    }
 }

@@ -43,6 +43,29 @@
             app:layout_constraintBottom_toTopOf="@+id/add"
             >
             <TextView
+                android:id="@+id/leaveOrDeleteGroupLabel"
+                android:text="@string/send_sos"
+                android:layout_marginEnd="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/fabLeave"
+                app:layout_constraintTop_toTopOf="@id/fabLeave"
+                app:layout_constraintBottom_toBottomOf="@id/fabLeave"
+                />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabLeave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fabSize="mini"
+                android:src="@drawable/ic_sos"
+                app:tint="@color/white"
+                app:backgroundTint="@color/colorPrimary"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toTopOf="@id/fabSos"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+            <TextView
                 android:id="@+id/sosLabel"
                 android:text="@string/send_sos"
                 android:layout_marginEnd="4dp"

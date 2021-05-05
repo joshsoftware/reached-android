@@ -18,6 +18,12 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
     private var _sos = MutableLiveData<Boolean?>()
     val sos: LiveData<Boolean?>
         get() = _sos
+    private var _deleteGroup = MutableLiveData<Boolean?>()
+    val deleteGroup: LiveData<Boolean?>
+        get() = _deleteGroup
+    private var _leaveGroup = MutableLiveData<Boolean?>()
+    val leaveGroup: LiveData<Boolean?>
+        get() = _leaveGroup
 
     fun fetchGroupDetails(groupId: String) {
             repository.fetchGroupDetails(groupId, {
@@ -36,6 +42,18 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
     fun sendSos(groupId: String, userId: String, user: User, sosSent: Boolean) {
         executeRoutine {
             _sos.value = repository.sendSos(groupId, userId, user, sosSent)
+        }
+    }
+
+    fun deleteGroup(groupId: String, userId: String) {
+        executeRoutine {
+            _deleteGroup.value = repository.deleteGroup(groupId, userId)
+        }
+    }
+
+    fun leaveGroup(groupId: String, userId: String) {
+        executeRoutine {
+            _leaveGroup.value = repository.leaveGroup(groupId, userId)
         }
     }
 
