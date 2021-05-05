@@ -96,8 +96,8 @@ class GroupMemberActivity : BaseActivity() {
     private fun leaveOrDeleteGroup() {
         group?.let { nonNullGroup ->
             sharedPreferences.userId?.let {
-                if(it == group.created_by) {
-                    viewModel.deleteGroup(groupId, it)
+                if(it == nonNullGroup.created_by) {
+                    viewModel.deleteGroup(nonNullGroup, it)
                 } else {
                     viewModel.leaveGroup(groupId, it)
                 }

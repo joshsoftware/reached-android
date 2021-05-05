@@ -1,6 +1,7 @@
 package com.joshsoftware.core.util
 
 import android.location.Location
+import com.google.android.gms.common.api.Response
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -11,6 +12,7 @@ import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.model.User
 import com.joshsoftware.core.util.FirebaseDatabaseKey.*
+import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.coroutines.resume
@@ -388,20 +390,27 @@ class FirebaseRealtimeDbManager {
         }
     }
 
-    suspend fun deleteGroup(groupId: String, userId: String) = suspendCoroutine<Boolean> { continuation ->
-        groupReference.child(groupId).child(MEMBERS.key).removeValue().addOnCompleteListener {
-            if(it.isSuccessful) {
-                removeGroupFromUserRef(groupId, userId,  {
+    suspend fun deleteGroup(group: Group, userId: String) = suspendCoroutine<Boolean> { continuation ->
+        group.id?.let { gId ->
+            groupReference.child(gId).removeValue().addOnCompleteListener {
+                if(it.isSuccessful) {
+                    group.members.forEach { s, member ->
+                        deleteGroupFromUser(group, s)
+                    }
                     continuation.resume(true)
-                }, { ex ->
-                    continuation.resumeWithException(ex)
-
-                })
-            } else {
-                it.exception?.let {
-                    continuation.resumeWithException(it)
+                } else {
+                    it.exception?.let { ex ->
+                        continuation.resumeWithException(ex)
+                    }
                 }
             }
+        }
+
+    }
+
+    fun deleteGroupFromUser(group: Group, userId: String){
+        group.id?.let {
+            userReference.child(userId).child(GROUPS.key).child(it).removeValue()
         }
     }
 

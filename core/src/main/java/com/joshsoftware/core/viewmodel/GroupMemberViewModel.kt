@@ -45,9 +45,9 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
         }
     }
 
-    fun deleteGroup(groupId: String, userId: String) {
+    fun deleteGroup(group: Group, userId: String) {
         executeRoutine {
-            _deleteGroup.value = repository.deleteGroup(groupId, userId)
+            _deleteGroup.value = repository.deleteGroup(group, userId)
         }
     }
 
