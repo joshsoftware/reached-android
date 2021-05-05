@@ -5,16 +5,15 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.GroupListActivity
-import com.joshsoftware.reached.ui.activity.GroupMemberActivity
-import com.joshsoftware.reached.ui.activity.INTENT_GROUP_ID
 import timber.log.Timber
 import javax.inject.Inject
 
-class LoginActivity : BaseLoginActivity() {
+class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListener {
     lateinit var binding: ActivityLoginMobileBinding
 
     @Inject
@@ -25,12 +24,8 @@ class LoginActivity : BaseLoginActivity() {
         binding = ActivityLoginMobileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        if(sharedPreferences.userData != null) {
-            sharedPreferences.userId?.let {
-                viewModel.fetchUserDetails(it)
-            }
-        }
+        setListener(this)
+        checkForLocationPermission()
 
         binding.btnGoogleSignIn.setOnClickListener {
             if(sharedPreferences.userData == null) {
@@ -41,8 +36,9 @@ class LoginActivity : BaseLoginActivity() {
         registerViewModelObservers()
     }
 
+
     override fun attemptSignIn(account: GoogleSignInAccount) {
-        viewModel.signInWithGoogle(account)
+        viewModel.signInWithGoogle(account, AppType.MOBILE)
     }
 
     private fun registerViewModelObservers() {
@@ -87,5 +83,18 @@ class LoginActivity : BaseLoginActivity() {
     private fun startGroupChoiceActivity() {
         val intent = Intent(this, GroupChoiceActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onPermissionGrant() {
+        if(sharedPreferences.userData != null) {
+            sharedPreferences.userId?.let {
+                if (sharedPreferences.userData!!.groups.isEmpty()) {
+                    startGroupChoiceActivity()
+                } else {
+                    startGroupListActivity()
+                }
+                finish()
+            }
+        }
     }
 }

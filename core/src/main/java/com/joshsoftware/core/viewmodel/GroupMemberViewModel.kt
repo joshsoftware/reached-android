@@ -15,16 +15,16 @@ import javax.inject.Inject
 
 class GroupMemberViewModel @Inject constructor(var repository: GroupRepository): BaseViewModel<Group?>() {
 
-    private var _sos = MutableLiveData<SosUser?>()
-    val sos: LiveData<SosUser?>
+    private var _sos = MutableLiveData<Boolean?>()
+    val sos: LiveData<Boolean?>
         get() = _sos
 
     fun fetchGroupDetails(groupId: String) {
-        repository.fetchGroupDetails(groupId, {
-            _result.value = it
-        }, {
-            _error.value = it.message
-        })
+            repository.fetchGroupDetails(groupId, {
+                _result.value = it
+            }, {
+                _error.value = it.message
+            })
     }
 
     fun updateLocationForMember(groupId: String, userId: String, location: Location) {
@@ -33,24 +33,11 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
         }
     }
 
-    fun sendSos(groupId: String, userId: String, user: User) {
+    fun sendSos(groupId: String, userId: String, user: User, sosSent: Boolean) {
         executeRoutine {
-            repository.sendSos(groupId, userId, user)
+            _sos.value = repository.sendSos(groupId, userId, user, sosSent)
         }
     }
 
-    fun deleteSos(groupId: String) {
-        viewModelScope.launch {
-            repository.deleteSos(groupId)
-        }
-    }
-
-    fun observeSos(groupId: String) {
-        repository.observeSos(groupId, {
-            _sos.value = it
-        }, {
-            _error.value = it.message
-        })
-    }
 
 }

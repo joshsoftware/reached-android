@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.joshsoftware.core.FamViewHolder
 import com.joshsoftware.core.model.Group
-import com.joshsoftware.reached.R
 import kotlinx.android.synthetic.main.group_view.view.*
 
 class GroupsAdapter(var onClick: (Group) -> Unit): ListAdapter<Group, FamViewHolder>(DIFF_CALLBACK) {
@@ -16,6 +15,7 @@ class GroupsAdapter(var onClick: (Group) -> Unit): ListAdapter<Group, FamViewHol
         if(model != null) {
             holder.itemView.apply {
                 nameTextView.text = model.name
+                groupCountTextView.text = model.members.size.toString()
             }
             holder.itemView.setOnClickListener {
                 onClick(model)
@@ -37,7 +37,7 @@ class GroupsAdapter(var onClick: (Group) -> Unit): ListAdapter<Group, FamViewHol
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FamViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.group_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(com.joshsoftware.reached.R.layout.group_view, parent, false)
         return FamViewHolder(view)
     }
 }

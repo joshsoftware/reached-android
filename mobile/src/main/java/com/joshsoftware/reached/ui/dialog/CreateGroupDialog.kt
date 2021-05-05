@@ -10,12 +10,15 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseDialogFragment
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.DialogCreateGroupBinding
 import com.joshsoftware.reached.ui.activity.GroupMemberActivity
+import com.joshsoftware.reached.ui.activity.INTENT_GROUP
 import com.joshsoftware.reached.ui.activity.INTENT_GROUP_ID
 import com.joshsoftware.reached.viewmodel.CreateGroupViewModel
 import java.util.*
@@ -33,6 +36,9 @@ class CreateGroupDialog: BaseDialogFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var viewModel: CreateGroupViewModel
+
+    var listener: CreateGroupDialogListener? = null
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         initializeViewModel()
@@ -52,13 +58,21 @@ class CreateGroupDialog: BaseDialogFragment() {
                         showToastMessage(getString(R.string.valid_please_enter_group_name))
                         return@setOnClickListener
                     }
-
                     val groupId = UUID.randomUUID().toString()
                     val id = sharedPreferences.userId
                     val user = sharedPreferences.userData
                     if (user != null) {
                         if (id != null) {
-                            viewModel.createGroup(groupId, id, user, groupName)
+                            val client = LocationServices.getFusedLocationProviderClient(context)
+                            client.lastLocation.addOnSuccessListener { location ->
+                                var lat = 0.0
+                                var long = 0.0
+                                if(location != null) {
+                                    lat = location.latitude
+                                    long = location.longitude
+                                }
+                                viewModel.createGroup(groupId, id, user, groupName, lat, long)
+                            }
                         }
                     }
                 }
@@ -102,11 +116,12 @@ class CreateGroupDialog: BaseDialogFragment() {
         })
     }
 
-    private fun startGroupMemberActivity(groupId: String) {
+    private fun startGroupMemberActivity(group: Group) {
         if (activity != null) {
             val intent = Intent(activity, GroupMemberActivity::class.java)
-            intent.putExtra(INTENT_GROUP_ID, groupId)
+            intent.putExtra(INTENT_GROUP, group)
             startActivity(intent)
+            listener?.onCreate()
         }
     }
 
@@ -137,5 +152,11 @@ class CreateGroupDialog: BaseDialogFragment() {
         }
     }
 
+    fun setDialogListener(listener: CreateGroupDialogListener) {
+        this.listener = listener
+    }
 
+    interface CreateGroupDialogListener {
+        fun onCreate()
+    }
 }

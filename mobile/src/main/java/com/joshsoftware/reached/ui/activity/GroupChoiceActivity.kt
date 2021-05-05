@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.location.LocationServices
 import com.google.zxing.integration.android.IntentIntegrator
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseLocationActivity
 import com.joshsoftware.reached.databinding.ActivityGroupChoiceBinding
 import com.joshsoftware.reached.ui.dialog.CreateGroupDialog
@@ -40,6 +42,11 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         binding.apply {
             createButton.setOnClickListener {
                 val dialog = CreateGroupDialog()
+                dialog.setDialogListener(object: CreateGroupDialog.CreateGroupDialogListener {
+                    override fun onCreate() {
+                        finish()
+                    }
+                })
                 dialog.show(supportFragmentManager, dialog.tag)
             }
 
@@ -99,9 +106,20 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
                 val user = sharedPreferences.userData
                 if (user != null) {
                     if (id != null) {
-                        viewModel.joinGroup(groupId, id, user).observe(this, androidx.lifecycle.Observer {
-                            startGroupMembersActivity(result.contents)
-                        })
+
+                        val client = LocationServices.getFusedLocationProviderClient(applicationContext)
+                        client.lastLocation.addOnSuccessListener { location ->
+                            var lat = 0.0
+                            var long = 0.0
+                            if(location != null) {
+                                lat = location.latitude
+                                long = location.longitude
+                            }
+                            viewModel.joinGroup(groupId, id, user, lat, long)
+                                .observe(this, androidx.lifecycle.Observer {
+                                    startGroupMembersActivity(result.contents)
+                                })
+                        }
                     }
                 }
             }
@@ -116,8 +134,9 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
     private fun startGroupMembersActivity(groupId: String) {
         val intent = Intent(this, GroupMemberActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, groupId)
+        intent.putExtra(INTENT_GROUP, Group(groupId))
         startActivity(intent)
+        finish()
     }
 
     @Inject

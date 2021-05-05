@@ -12,12 +12,12 @@ import kotlin.collections.ArrayList
 
 class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManager) {
 
-    suspend fun createGroup(id: String, userId: String, user: User, groupName: String): String {
-        return dbManager.createGroupWith(id, userId, user, groupName)
+    suspend fun createGroup(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double): Pair<Group, User> {
+        return dbManager.createGroupWith(id, userId, user, groupName, lat, long)
     }
 
-    suspend fun joinGroup(id: String, userId: String, user: User): String {
-        return dbManager.joinGroupWith(id, userId, user)
+    suspend fun joinGroup(id: String, userId: String, user: User, lat: Double, long: Double): Pair<String, User> {
+        return dbManager.joinGroupWith(id, userId, user, lat, long)
     }
 
     suspend fun fetchGroup(userId: String): String? {
@@ -25,8 +25,8 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     }
 
 
-    suspend fun fetchGroupList(user: User): ArrayList<Group> {
-        return dbManager.fetchGroupList(user)
+    suspend fun fetchGroupList(userId: String): ArrayList<Group> {
+        return dbManager.fetchGroupList( userId)
     }
 
     fun fetchGroupDetails(groupId: String,
@@ -38,13 +38,10 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     suspend fun updateLocation(groupId: String, userId: String, location: Location): Group? {
         return dbManager.updateLocation(groupId, userId, location)
     }
-    suspend fun sendSos(groupId: String, userId: String, user: User): String? {
-        return dbManager.sendSOS(groupId, user, userId)
+    suspend fun sendSos(groupId: String, userId: String, user: User, sosSent: Boolean): Boolean? {
+        return dbManager.toggleSosState(groupId, user, userId, sosSent)
     }
 
-    suspend fun deleteSos(groupId: String): String? {
-        return dbManager.deleteSos(groupId)
-    }
 
     fun fetchMember(groupId: String, memberId: String,
                     onFetch: (Member?) -> Unit,
@@ -53,7 +50,7 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     }
 
     fun isGroupCreated(userId: String,
-                       onFetch: (String?) -> Unit,
+                       onFetch: (Boolean) -> Unit,
                        onCancel: (DatabaseError) -> Unit) {
         dbManager.isGroupCreated(userId, onFetch, onCancel)
     }
@@ -62,12 +59,6 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
                      onFetch: (ArrayList<Member>) -> Unit,
                      onCancel: (DatabaseError) -> Unit) {
         dbManager.fetchMembers(groupId, onFetch, onCancel)
-    }
-
-    fun observeSos(groupId: String,
-                     onFetch: (SosUser?) -> Unit,
-                     onCancel: (DatabaseError) -> Unit) {
-        dbManager.observeSos(groupId, onFetch, onCancel)
     }
 
 }

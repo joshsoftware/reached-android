@@ -1,32 +1,30 @@
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
-import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.OvershootInterpolator
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
-import com.joshsoftware.core.model.SosUser
-import com.joshsoftware.core.ui.BaseLocationActivity
-import com.joshsoftware.core.ui.adapter.MemberAdapter
+import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.core.util.ConversionUtil
 import com.joshsoftware.core.viewmodel.GroupMemberViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberMobileBinding
 import com.joshsoftware.reached.ui.LoginActivity
+import com.joshsoftware.reached.ui.adapter.MemberAdapter
 import javax.inject.Inject
 
 
-class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.LocationChangeListener {
+class GroupMemberActivity : BaseActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -40,27 +38,29 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     lateinit var binding: ActivityGroupMemberMobileBinding
     lateinit var groupId: String
     lateinit var createdBy: String
-
+    var sosSent: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGroupMemberMobileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        setLocationChangeListener(this)
         binding.apply {
-            setUpBottomAppBarShapeAppearance(add, bottomAppBar)
-            intent.extras?.getString(INTENT_GROUP_ID)?.let {
-                fetchLocation()
-                viewModel.fetchGroupDetails(it)
-                groupId = it
-                viewModel.observeSos(groupId)
+            intent.extras?.getParcelable<Group>(INTENT_GROUP)?.let {
+                it.id?.let { gId ->
+                    viewModel.fetchGroupDetails(gId)
+                    groupId = gId
+                }
             }
+
             setSupportActionBar(bottomAppBar)
 
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
-            adapter = MemberAdapter {
+            adapter = MemberAdapter(
+                sharedPreferences
+            ) {
                 startMapActivity(it)
             }
+
             recyclerView.adapter = adapter
 
             add.setOnClickListener {
@@ -80,12 +80,35 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
             bottomAppBar.setNavigationOnClickListener {
                 finish()
             }
+
+            showOnMapLayout.setOnClickListener {
+                startMapActivity(Member(""))
+            }
         }
 
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        println("new intent")
+    }
+
     private fun sendSos() {
-        viewModel.sendSos(groupId, userId = sharedPreferences.userId!!, user = sharedPreferences.userData!!)
+        if(binding.sosLabel.text == getString(R.string.send_sos)) {
+            binding.sosLabel.text = getString(R.string.mark_safe)
+        } else {
+            binding.sosLabel.text = getString(R.string.send_sos)
+        }
+        sosSent = !sosSent
+        viewModel.sendSos(groupId, userId = sharedPreferences.userId!!, user = sharedPreferences.userData!!, sosSent = sosSent)
+    }
+
+    private fun setSosLabel(sosSent: Boolean) {
+        if(sosSent) {
+            binding.sosLabel.text = getString(R.string.mark_safe)
+        } else {
+            binding.sosLabel.text = getString(R.string.send_sos)
+        }
     }
 
     private fun toggleFabMenu() {
@@ -108,17 +131,13 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     }
 
     private fun onAddMemberClick() {
-        intent.extras?.getString(INTENT_GROUP_ID)?.let {
+        intent.extras?.getParcelable<Group>(INTENT_GROUP)?.let {
             startQrCodeActivity(it)
         }
     }
     private fun startMapActivity(member: Member) {
         val intent = Intent(this, MapActivity::class.java)
-        if(member.id == null) {
-            intent.putExtra(INTENT_MEMBER_ID, "")
-        } else {
-            intent.putExtra(INTENT_MEMBER_ID, member.id)
-        }
+        intent.putExtra(INTENT_MEMBER_ID, member.id)
         intent.putExtra(INTENT_GROUP_ID, groupId)
         startActivity(intent)
     }
@@ -129,23 +148,29 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
         viewModel.result.observe(this, Observer { group ->
             group?.let {
+                supportActionBar?.title = it.name
                 val util = ConversionUtil()
+                sharedPreferences.userId?.let { userId ->
+                    group.members[userId]?.sosState?.let { sosSent ->
+                        this.sosSent = sosSent
+                        setSosLabel(sosSent)
+                    }
+                }
                 val members = util.getMemberListFromMap(group.members)
-                members.add(Member(name = "All members"))
                 adapter.submitList(members)
             }
         })
 
-
-        viewModel.sos.observe(this, Observer { sos ->
-            if (sos != null) {
-                sharedPreferences.userId?.let {
-                    if(it != sos.id) {
-                        showSosDialog(sos)
-                    }
+        viewModel.sos.observe(this, Observer { sosSent ->
+            sosSent?.let {
+                if(it) {
+                    showToastMessage(getString(R.string.sos_sent_successfully))
+                } else {
+                    showToastMessage(getString(R.string.sos_was_stopped))
                 }
             }
         })
+
 
         viewModel.spinner.observe(this, Observer { loading ->
             if(loading != null) {
@@ -158,18 +183,10 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         })
     }
 
-    private fun startQrCodeActivity(id: String) {
+    private fun startQrCodeActivity(group: Group) {
         val intent = Intent(this, QrCodeActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, id)
+        intent.putExtra(INTENT_GROUP, group)
         startActivity(intent)
-    }
-
-    override fun onLocationChange(location: Location) {
-        intent.extras?.getString(INTENT_GROUP_ID)?.let { gId ->
-            preferences.userId?.let {
-                viewModel.updateLocationForMember(gId, it, location)
-            }
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -184,26 +201,6 @@ class GroupMemberActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.group_members_menu, menu)
         return super.onCreateOptionsMenu(menu)
-    }
-
-    fun showSosDialog(
-        sos: SosUser?,
-    ){
-        sos?.let {
-            var alertDialog: AlertDialog? = null
-            val builder = AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.sos_alert))
-                    .setMessage("Emergency! this is from ${it.name}. I need help. Press ok to track.")
-                    .setNeutralButton("OK"
-                    ) { p0, p1 ->
-                        startMapActivity(Member(it.id))
-                        viewModel.deleteSos(groupId)
-                    }
-
-            alertDialog = builder.create()
-            alertDialog.show()
-        }
-
     }
 
 }

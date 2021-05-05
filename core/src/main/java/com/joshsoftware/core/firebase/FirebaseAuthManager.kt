@@ -3,6 +3,8 @@ package com.joshsoftware.core.firebase
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.messaging.FirebaseMessaging
+import com.joshsoftware.core.model.Token
 import com.joshsoftware.core.model.User
 import timber.log.Timber
 import kotlin.coroutines.resume
@@ -12,7 +14,7 @@ import kotlin.coroutines.suspendCoroutine
 class FirebaseAuthManager {
     private var mAuth = FirebaseAuth.getInstance()
 
-    suspend fun firebaseAuthWithGoogle(account: GoogleSignInAccount?): Pair<String, User> = suspendCoroutine { continuation ->
+    suspend fun firebaseAuthWithGoogle(account: GoogleSignInAccount?): Triple<String, User, String> = suspendCoroutine { continuation ->
 
         account?.let {
             Timber.d("firebaseAuthWithGoogle: %s", account.id!!)
@@ -21,14 +23,14 @@ class FirebaseAuthManager {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Timber.d("signInWithCredential:success")
-                            task.result?.user?.let {
-                                val user = User(it.displayName, it.email, it.photoUrl?.toString())
-                                continuation.resume(it.uid to user)
-                            }
-                            task.result?.user?.getIdToken(true)?.addOnSuccessListener {
-                                it.token?.let { token ->
-                                    Timber.i("Token $token")
+                            FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+                                token?.let { fcmToken ->
+                                    task.result?.user?.let { fUser ->
+                                        val user = User(fUser.displayName, fUser.email, profileUrl = fUser.photoUrl?.toString())
+                                        continuation.resume(Triple(fUser.uid, user, fcmToken))
+                                    }
                                 }
+
                             }
                         } else {
                             // If sign in fails, display a message to the user.

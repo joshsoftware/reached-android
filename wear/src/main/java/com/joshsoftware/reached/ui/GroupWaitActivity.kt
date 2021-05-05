@@ -31,17 +31,16 @@ class GroupWaitActivity : BaseActivity() {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupWaitViewModel::class.java]
 
-        viewModel.result.observe(this, Observer { id ->
-            if(id != null) {
-                startGroupMembersActivity(id)
+        viewModel.result.observe(this, Observer { hasGroups ->
+            if(hasGroups) {
+                startGroupListActivity()
+                finish()
             }
         })
     }
 
-    private fun startGroupMembersActivity(id: String) {
-        val intent = Intent(this, GroupMemberActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, id)
+    private fun startGroupListActivity() {
+        val intent = Intent(this, WearGroupListActivity::class.java)
         startActivity(intent)
     }
-
 }

@@ -12,4 +12,14 @@
     <string name="button_text_cancel">cancel</string>
     <string name="enter_name">Enter name..</string>
     <string name="valid_please_enter_group_name">Please enter group name</string>
+    <string name="my_groups">Groups</string>
+    <string name="button_text_invite">INVITE</string>
+    <string name="greetings">Greetings!</string>
+    <string name="you_have_been_invited_to_the_group_join_to_proceed">You have been invited to the group %1$s. You can join to proceed.</string>
+    <string name="joining_group">Joining group...</string>
+    <string name="send_sos">Send SOS</string>
+    <string name="mark_safe">Mark Safe</string>
+    <string name="add_member">Add member</string>
+    <string name="sos_sent_successfully">SOS sent successfully!</string>
+    <string name="sos_was_stopped">SOS was stopped!</string>
 </resources>

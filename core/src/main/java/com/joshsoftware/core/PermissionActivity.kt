@@ -17,7 +17,7 @@ abstract class PermissionActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
     }
     protected fun requestPermission(permission: Array<out String>, action: (Status) -> Unit) {
-        val permissionName = getPermissionLastComponent(permission[0])
+        val permissionName = getPermissionLastComponent(permission[FIRST_GROUP_PERMISSION_INDEX])
         permissionToActionMap[permissionName] = action
 
         if(ContextCompat.checkSelfPermission(applicationContext,

@@ -2,15 +2,17 @@ package com.joshsoftware.reached.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.databinding.ActivityLoginBinding
 import timber.log.Timber
 import javax.inject.Inject
 
-class WearLoginActivity : BaseLoginActivity() {
+class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListener {
     lateinit var binding: ActivityLoginBinding
 
     @Inject
@@ -21,32 +23,47 @@ class WearLoginActivity : BaseLoginActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        setListener(this)
 
-        binding.btnGoogleSignIn.setOnClickListener {
-            signIn()
+        if(sharedPreferences.userData != null) {
+            sharedPreferences.userId?.let {
+                if (sharedPreferences.userData!!.groups.isEmpty()) {
+                    startGroupWaitActivity()
+                } else {
+                    startGroupListActivity()
+                }
+            }
         }
+        binding.btnGoogleSignIn.setOnClickListener {
+            checkForLocationPermission()
+        }
+
+
 
         registerViewModelObservers()
     }
 
     override fun attemptSignIn(account: GoogleSignInAccount) {
-        viewModel.signInWithGoogle(account)
+        viewModel.signInWithGoogle(account, AppType.WEAR)
     }
 
     private fun registerViewModelObservers() {
         viewModel.result.observe(this, Observer { (id, user) ->
             sharedPreferences.saveUserId(id)
             sharedPreferences.saveUserData(user)
-            viewModel.fetchGroup(id)
+            viewModel.fetchUserDetails(id)
         })
 
-        viewModel.groupId.observe(this, Observer { id ->
-            if(id != null) {
-                startGroupMembersActivity(id)
-            } else {
-                startGroupWaitActivity()
+        viewModel.user.observe(this, Observer { user ->
+            user?.let {
+                sharedPreferences.saveUserData(user)
+                if (user.groups.isEmpty()) {
+                    startGroupWaitActivity()
+                } else {
+                    startGroupListActivity()
+                }
+                finish()
             }
-            finish()
         })
 
         viewModel.error.observe(this, Observer { error ->
@@ -67,9 +84,23 @@ class WearLoginActivity : BaseLoginActivity() {
         startActivity(intent)
     }
 
-    private fun startGroupMembersActivity(id: String) {
-        val intent = Intent(this, GroupMemberActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, id)
+    private fun startGroupListActivity() {
+        val intent = Intent(this, WearGroupListActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onPermissionGrant() {
+        if(sharedPreferences.userData != null) {
+            sharedPreferences.userId?.let {
+                if (sharedPreferences.userData!!.groups.isEmpty()) {
+                    startGroupWaitActivity()
+                } else {
+                    startGroupListActivity()
+                }
+                finish()
+            }
+        } else {
+            signIn()
+        }
     }
 }

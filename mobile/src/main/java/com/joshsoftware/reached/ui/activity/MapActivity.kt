@@ -87,7 +87,7 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
         val bounds = builder.build()
         val width = resources.displayMetrics.widthPixels
         val height = resources.displayMetrics.heightPixels
-        val padding = (width * 0.4).toInt() // offset from edges of the map 10% of screen
+        val padding = (width * 0.1).toInt() // offset from edges of the map 10% of screen
 
 
         val cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.joshsoftware.core.di.viewmodel.ViewModelKey
 import com.joshsoftware.reached.ui.activity.GroupChoiceViewModel
 import com.joshsoftware.reached.viewmodel.CreateGroupViewModel
-import com.joshsoftware.reached.viewmodel.GroupListViewModel
+import com.joshsoftware.core.viewmodel.GroupListViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -21,9 +21,5 @@ abstract class ViewModelModule {
     @ViewModelKey(CreateGroupViewModel::class)
     abstract fun buildCreateGroupViewModel(viewModel: CreateGroupViewModel): ViewModel
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(GroupListViewModel::class)
-    abstract fun buildGroupListViewModel(viewModel: GroupListViewModel): ViewModel
 
 }
