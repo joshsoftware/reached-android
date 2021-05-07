@@ -101,7 +101,9 @@ class GroupMemberActivity : BaseActivity() {
                 if(it == nonNullGroup.created_by) {
                     viewModel.deleteGroup(nonNullGroup, it)
                 } else {
-                    viewModel.leaveGroup(groupId, it)
+                    nonNullGroup.created_by?.let {createdBy ->
+                        viewModel.leaveGroup(groupId, it, createdBy)
+                    }
                 }
             }
         }
@@ -205,8 +207,7 @@ class GroupMemberActivity : BaseActivity() {
 
         viewModel.leaveGroup.observe(this, Observer { groupLeft ->
             groupLeft?.let {
-                showToastMessage("You have left the group successfully!")
-                finish()
+                showToastMessage("Your request to leave the group has been sent successfully!")
             }
         })
 

@@ -7,14 +7,13 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.joshsoftware.core.di.AppType
-import com.joshsoftware.core.model.Group
-import com.joshsoftware.core.model.Member
-import com.joshsoftware.core.model.SosUser
-import com.joshsoftware.core.model.User
+import com.joshsoftware.core.model.*
 import com.joshsoftware.core.util.FirebaseDatabaseKey.*
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -23,6 +22,7 @@ class FirebaseRealtimeDbManager {
     private val db = FirebaseDatabase.getInstance("https://reached-stage.firebaseio.com/")
     val groupReference = db.getReference(GROUPS.key)
     val userReference = db.getReference(USERS.key)
+    val requestReference = db.getReference(REQUESTS.key)
     val dateTimeUtils = DateTimeUtils()
 
     suspend fun addUserWith(id: String, user: User, token: String, appType: AppType) = suspendCoroutine<User> { continuation ->
@@ -430,6 +430,29 @@ class FirebaseRealtimeDbManager {
                 onFinish()
             } else {
                 it.exception?.let(onError)
+            }
+        }
+    }
+
+    suspend fun requestLeaveGroup(
+        groupId: String,
+        userId: String,
+        createdBy: String
+    ) = suspendCoroutine<Boolean> { continuation ->
+        requestReference.push().setValue(Request(
+            RequestType.LEAVE,
+            LeaveRequestData(
+                groupId = groupId,
+                from = userId,
+                to = createdBy
+            )
+        )).addOnCompleteListener {
+            if(it.isSuccessful) {
+                continuation.resume(true)
+            } else {
+                it.exception?.let {ex ->
+                    continuation.resumeWithException(ex)
+                }
             }
         }
     }

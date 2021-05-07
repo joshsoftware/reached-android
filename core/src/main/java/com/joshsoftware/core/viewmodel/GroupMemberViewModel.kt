@@ -51,9 +51,9 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
         }
     }
 
-    fun leaveGroup(groupId: String, userId: String) {
+    fun leaveGroup(groupId: String, userId: String, createdBy: String) {
         executeRoutine {
-            _leaveGroup.value = repository.leaveGroup(groupId, userId)
+            _leaveGroup.value = repository.leaveGroup(groupId, userId, createdBy)
         }
     }
 
