@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:fabSize="mini"
-                android:src="@drawable/ic_sos"
+                android:src="@drawable/ic_leave"
                 app:tint="@color/white"
                 app:backgroundTint="@color/colorPrimary"
                 android:layout_marginBottom="16dp"
@@ -67,7 +67,7 @@
                 />
             <TextView
                 android:id="@+id/sosLabel"
-                android:text="@string/send_sos"
+                android:text="@string/leave_group"
                 android:layout_marginEnd="4dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

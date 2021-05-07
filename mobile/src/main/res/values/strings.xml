@@ -22,4 +22,7 @@
     <string name="add_member">Add member</string>
     <string name="sos_sent_successfully">SOS sent successfully!</string>
     <string name="sos_was_stopped">SOS was stopped!</string>
+    <string name="leave_group">Leave group</string>
+    <string name="no_groups_please_create_or_join_a_new_group">No groups. Please create or join a new group</string>
+    <string name="delete_group">Delete group</string>
 </resources>

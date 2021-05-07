@@ -1,5 +1,6 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -21,6 +22,7 @@ import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberMobileBinding
 import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.reached.ui.adapter.MemberAdapter
+import kotlinx.android.synthetic.main.activity_group_member_mobile.*
 import javax.inject.Inject
 
 
@@ -165,6 +167,7 @@ class GroupMemberActivity : BaseActivity() {
 
         viewModel.result.observe(this, Observer { group ->
             group?.let {
+                it.id = groupId
                 this.group = it
                 supportActionBar?.title = it.name
                 val util = ConversionUtil()
@@ -173,6 +176,7 @@ class GroupMemberActivity : BaseActivity() {
                         this.sosSent = sosSent
                         setSosLabel(sosSent)
                     }
+                    setLeaveGroupLabel(it.created_by, userId)
                 }
                 val members = util.getMemberListFromMap(group.members)
                 adapter.submitList(members)
@@ -193,6 +197,7 @@ class GroupMemberActivity : BaseActivity() {
         viewModel.deleteGroup.observe(this, Observer { groupDeleted ->
             groupDeleted?.let {
                 showToastMessage("You have deleted the group successfully!")
+                setResult(Activity.RESULT_OK)
                 finish()
             }
         })
@@ -215,6 +220,14 @@ class GroupMemberActivity : BaseActivity() {
                 }
             }
         })
+    }
+
+    private fun setLeaveGroupLabel(createdBy: String?, userId: String){
+        if(createdBy == userId) {
+            leaveOrDeleteGroupLabel.text = getString(R.string.delete_group)
+        } else {
+            leaveOrDeleteGroupLabel.text = getString(R.string.leave_group)
+        }
     }
 
     private fun startQrCodeActivity(group: Group) {
