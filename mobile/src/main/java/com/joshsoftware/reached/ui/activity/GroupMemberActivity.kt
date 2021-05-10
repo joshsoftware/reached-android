@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.core.util.ConversionUtil
@@ -53,6 +54,7 @@ class GroupMemberActivity : BaseActivity() {
                     groupId = gId
                 }
             }
+            handleLeaveRequest(intent)
 
             setSupportActionBar(bottomAppBar)
 
@@ -102,7 +104,11 @@ class GroupMemberActivity : BaseActivity() {
                     viewModel.deleteGroup(nonNullGroup, it)
                 } else {
                     nonNullGroup.created_by?.let {createdBy ->
-                        viewModel.leaveGroup(groupId, it, createdBy)
+                        sharedPreferences.userData?.name?.let {name ->
+                            nonNullGroup.name?.let { groupName ->
+                                viewModel.requestLeaveGroup(groupId, it, createdBy, name, groupName)
+                            }
+                        }
                     }
                 }
             }
@@ -111,7 +117,21 @@ class GroupMemberActivity : BaseActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        println("new intent")
+        handleLeaveRequest(intent)
+    }
+
+    private fun handleLeaveRequest(intent: Intent?) {
+        val requestId = intent?.extras?.getString(IntentConstant.INTENT_REQUEST_ID.name)
+        val groupId = intent?.extras?.getString(IntentConstant.INTENT_GROUP_ID.name)
+        val memberId = intent?.extras?.getString(IntentConstant.INTENT_MEMBER_ID.name)
+        val message = intent?.extras?.getString(IntentConstant.INTENT_MESSAGE.name)
+        if(requestId != null && groupId != null && memberId != null && message != null) {
+            showChoiceDialog(message,  {
+                viewModel.leaveGroup(requestId, groupId, memberId)
+            }, {
+                viewModel.declineGroupLeaveRequest(requestId)
+            })
+        }
     }
 
     private fun sendSos() {
@@ -201,6 +221,13 @@ class GroupMemberActivity : BaseActivity() {
                 showToastMessage("You have deleted the group successfully!")
                 setResult(Activity.RESULT_OK)
                 finish()
+            }
+        })
+
+
+        viewModel.leaveGroupRequest.observe(this, Observer { groupLeft ->
+            groupLeft?.let {
+                showToastMessage("Your request to leave the group has been sent successfully!")
             }
         })
 

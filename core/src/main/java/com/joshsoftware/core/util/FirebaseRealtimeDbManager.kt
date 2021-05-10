@@ -379,11 +379,15 @@ class FirebaseRealtimeDbManager {
         userReference.child(userId).child(TOKEN.key).child(WATCH.key).setValue(token)
     }
 
-    suspend fun leaveGroup(groupId: String, userId: String) = suspendCoroutine<Boolean>{ continuation ->
+    suspend fun leaveGroup(requestId: String, groupId: String, userId: String) = suspendCoroutine<Boolean>{ continuation ->
         groupReference.child(groupId).child(MEMBERS.key).child(userId).removeValue().addOnCompleteListener {
             if(it.isSuccessful) {
                 removeGroupFromUserRef(groupId, userId,  {
-                    continuation.resume(true)
+                    deleteRequestWith(requestId, {
+                        continuation.resume(true)
+                    }, { ex ->
+                        continuation.resumeWithException(ex)
+                    })
                 }, { ex ->
                     continuation.resumeWithException(ex)
                 })
@@ -391,6 +395,20 @@ class FirebaseRealtimeDbManager {
                 it.exception?.let {
                     continuation.resumeWithException(it)
                 }
+            }
+        }
+    }
+
+    private fun deleteRequestWith(
+        requestId: String,
+        onComplete: (String) -> Unit,
+        onError: (Exception) -> Unit,
+    ) {
+        requestReference.child(requestId).removeValue().addOnCompleteListener {
+            if(it.isSuccessful) {
+                onComplete(requestId)
+            } else {
+                it.exception?.let(onError)
             }
         }
     }
@@ -437,13 +455,15 @@ class FirebaseRealtimeDbManager {
     suspend fun requestLeaveGroup(
         groupId: String,
         userId: String,
-        createdBy: String
+        createdBy: String,
+        name: String,
+        groupName: String
     ) = suspendCoroutine<Boolean> { continuation ->
         requestReference.push().setValue(Request(
             RequestType.LEAVE,
             LeaveRequestData(
-                groupId = groupId,
-                from = userId,
+                group = RequestParam(groupId, groupName),
+                from = RequestParam(userId, name),
                 to = createdBy
             )
         )).addOnCompleteListener {

@@ -1,7 +1,7 @@
 package com.joshsoftware.core.model
 
 data class LeaveRequestData (
-    var from: String,
+    var from: RequestParam,
     var to: String,
-    var groupId: String
+    var group: RequestParam
 )

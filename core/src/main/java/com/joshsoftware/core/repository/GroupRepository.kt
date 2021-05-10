@@ -61,8 +61,12 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
         dbManager.fetchMembers(groupId, onFetch, onCancel)
     }
 
-    suspend fun leaveGroup(groupId: String, userId: String, createdBy: String): Boolean? {
-        return dbManager.requestLeaveGroup(groupId, userId, createdBy)
+    suspend fun requestLeaveGroup(groupId: String, userId: String, createdBy: String, name: String, groupName: String): Boolean? {
+        return dbManager.requestLeaveGroup(groupId, userId, createdBy, name, groupName)
+    }
+
+    suspend fun leaveGroup(requestId: String, groupId: String, userId: String): Boolean? {
+        return dbManager.leaveGroup(requestId, groupId, userId)
     }
 
     suspend fun deleteGroup(group: Group, userId: String): Boolean? {

@@ -21,6 +21,9 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
     private var _deleteGroup = MutableLiveData<Boolean?>()
     val deleteGroup: LiveData<Boolean?>
         get() = _deleteGroup
+    private var _leaveGroupRequest = MutableLiveData<Boolean?>()
+    val leaveGroupRequest: LiveData<Boolean?>
+        get() = _leaveGroupRequest
     private var _leaveGroup = MutableLiveData<Boolean?>()
     val leaveGroup: LiveData<Boolean?>
         get() = _leaveGroup
@@ -51,9 +54,21 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
         }
     }
 
-    fun leaveGroup(groupId: String, userId: String, createdBy: String) {
+    fun requestLeaveGroup(groupId: String, userId: String, createdBy: String, name: String, groupName: String) {
         executeRoutine {
-            _leaveGroup.value = repository.leaveGroup(groupId, userId, createdBy)
+            _leaveGroupRequest.value = repository.requestLeaveGroup(groupId, userId, createdBy, name, groupName)
+        }
+    }
+
+    fun leaveGroup(requestId: String, groupId: String, userId: String) {
+        executeRoutine {
+            _leaveGroup.value = repository.leaveGroup(requestId, groupId, userId)
+        }
+    }
+
+    fun declineGroupLeaveRequest(requestId: String) {
+        executeRoutine {
+//           repository.leaveGroup(groupId, userId)
         }
     }
 
