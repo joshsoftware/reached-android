@@ -55,7 +55,6 @@ class GroupMemberActivity : BaseActivity() {
                 }
             }
             handleLeaveRequest(intent)
-
             setSupportActionBar(bottomAppBar)
 
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
@@ -103,13 +102,18 @@ class GroupMemberActivity : BaseActivity() {
                 if(it == nonNullGroup.created_by) {
                     viewModel.deleteGroup(nonNullGroup, it)
                 } else {
-                    nonNullGroup.created_by?.let {createdBy ->
-                        sharedPreferences.userData?.name?.let {name ->
-                            nonNullGroup.name?.let { groupName ->
-                                viewModel.requestLeaveGroup(groupId, it, createdBy, name, groupName)
+                    if(leaveOrDeleteGroupLabel.text != getString(R.string.request_sent)) {
+                        nonNullGroup.created_by?.let {createdBy ->
+                            sharedPreferences.userData?.name?.let {name ->
+                                nonNullGroup.name?.let { groupName ->
+                                    viewModel.requestLeaveGroup(groupId, it, createdBy, name, groupName)
+                                }
                             }
                         }
+                    } else {
+                        showToastMessage(getString(R.string.leave_request_already_sent_message))
                     }
+
                 }
             }
         }
@@ -194,6 +198,7 @@ class GroupMemberActivity : BaseActivity() {
                 supportActionBar?.title = it.name
                 val util = ConversionUtil()
                 sharedPreferences.userId?.let { userId ->
+                    viewModel.leaveRequestExists(userId, groupId)
                     group.members[userId]?.sosState?.let { sosSent ->
                         this.sosSent = sosSent
                         setSosLabel(sosSent)
@@ -234,7 +239,14 @@ class GroupMemberActivity : BaseActivity() {
 
         viewModel.leaveGroup.observe(this, Observer { groupLeft ->
             groupLeft?.let {
+                leaveOrDeleteGroupLabel.text = getString(R.string.request_sent)
                 showToastMessage("Your request to leave the group has been sent successfully!")
+            }
+        })
+
+        viewModel.requestExists.observe(this, Observer { exists ->
+            if(exists) {
+                leaveOrDeleteGroupLabel.text = getString(R.string.request_sent)
             }
         })
 

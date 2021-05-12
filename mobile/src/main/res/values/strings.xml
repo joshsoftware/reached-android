@@ -25,4 +25,6 @@
     <string name="leave_group">Leave group</string>
     <string name="no_groups_please_create_or_join_a_new_group">No groups. Please create or join a new group</string>
     <string name="delete_group">Delete group</string>
+    <string name="request_sent">Request sent</string>
+    <string name="leave_request_already_sent_message">You have already sent a request to leave the group!</string>
 </resources>

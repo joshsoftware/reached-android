@@ -73,4 +73,8 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
         return dbManager.deleteGroup(group, userId)
     }
 
+    suspend fun leaveRequestExists(userId: String, groupId: String): Boolean {
+        return dbManager.checkIfLeaveRequestExists(userId, groupId)
+    }
+
 }

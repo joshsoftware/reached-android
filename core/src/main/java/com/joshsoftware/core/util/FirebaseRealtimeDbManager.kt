@@ -2,10 +2,8 @@ package com.joshsoftware.core.util
 
 import android.location.Location
 import com.google.android.gms.common.api.Response
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
+import com.google.gson.Gson
 import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.model.*
 import com.joshsoftware.core.util.FirebaseDatabaseKey.*
@@ -14,6 +12,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -459,11 +458,11 @@ class FirebaseRealtimeDbManager {
         name: String,
         groupName: String
     ) = suspendCoroutine<Boolean> { continuation ->
-        requestReference.push().setValue(Request(
-            RequestType.LEAVE,
+        requestReference.child(userId).push().setValue(Request(
+            RequestType.LEAVE.key,
             LeaveRequestData(
                 group = RequestParam(groupId, groupName),
-                from = RequestParam(userId, name),
+                from = name,
                 to = createdBy
             )
         )).addOnCompleteListener {
@@ -476,4 +475,22 @@ class FirebaseRealtimeDbManager {
             }
         }
     }
+
+    suspend fun checkIfLeaveRequestExists(userId: String, groupId: String) = suspendCoroutine<Boolean>{ continuation ->
+        requestReference.child(userId).orderByChild("data/group/id").equalTo(groupId).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                continuation.resumeWithException(error.toException())
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.children.count() > 0) {
+                    continuation.resume(true)
+                } else {
+                    continuation.resume(false)
+                }
+
+            }
+        })
+    }
+
 }
