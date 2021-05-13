@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.LeaveRequestData
 import com.joshsoftware.core.model.SosUser
 import com.joshsoftware.core.model.User
 import com.joshsoftware.core.repository.GroupRepository
@@ -27,9 +28,14 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
     private var _leaveGroup = MutableLiveData<Boolean?>()
     val leaveGroup: LiveData<Boolean?>
         get() = _leaveGroup
+
     private var _requestExists = MutableLiveData<Boolean>()
     val requestExists: LiveData<Boolean>
         get() = _requestExists
+
+    private var _leaveRequests = MutableLiveData<List<LeaveRequestData>>()
+    val leaveRequests: LiveData<List<LeaveRequestData>>
+        get() = _leaveRequests
 
     fun fetchGroupDetails(groupId: String) {
             repository.fetchGroupDetails(groupId, {
@@ -69,15 +75,21 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
         }
     }
 
-    fun declineGroupLeaveRequest(requestId: String) {
+    fun declineGroupLeaveRequest(requestId: String, userId: String) {
         executeRoutine {
-//           repository.leaveGroup(groupId, userId)
+           repository.deleteRequestWith(requestId, userId)
         }
     }
 
     fun leaveRequestExists(userId: String, groupId: String) {
         executeRoutine {
             _requestExists.value = repository.leaveRequestExists(userId, groupId)
+        }
+    }
+
+    fun getLeaveRequests(groupId: String) {
+        executeRoutine {
+            _leaveRequests.value = repository.getLeaveRequests(groupId)
         }
     }
 

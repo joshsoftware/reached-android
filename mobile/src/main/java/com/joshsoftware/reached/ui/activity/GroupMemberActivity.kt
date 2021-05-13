@@ -96,6 +96,15 @@ class GroupMemberActivity : BaseActivity() {
 
     }
 
+    private fun getLeaveRequests() {
+        group?.let { nonNullGroup ->
+            sharedPreferences.userId?.let {
+                if (it == nonNullGroup.created_by) {
+                    nonNullGroup.id?.let { it1 -> viewModel.getLeaveRequests(it1) }
+                }
+            }
+        }
+    }
     private fun leaveOrDeleteGroup() {
         group?.let { nonNullGroup ->
             sharedPreferences.userId?.let {
@@ -129,11 +138,20 @@ class GroupMemberActivity : BaseActivity() {
         val groupId = intent?.extras?.getString(IntentConstant.INTENT_GROUP_ID.name)
         val memberId = intent?.extras?.getString(IntentConstant.INTENT_MEMBER_ID.name)
         val message = intent?.extras?.getString(IntentConstant.INTENT_MESSAGE.name)
+        showLeaveRequestDialog(requestId, groupId, memberId, message)
+    }
+
+    private fun showLeaveRequestDialog(
+        requestId: String?,
+        groupId: String?,
+        memberId: String?,
+        message: String?
+    ) {
         if(requestId != null && groupId != null && memberId != null && message != null) {
             showChoiceDialog(message,  {
                 viewModel.leaveGroup(requestId, groupId, memberId)
             }, {
-                viewModel.declineGroupLeaveRequest(requestId)
+                viewModel.declineGroupLeaveRequest(requestId, memberId)
             })
         }
     }
@@ -199,6 +217,7 @@ class GroupMemberActivity : BaseActivity() {
                 val util = ConversionUtil()
                 sharedPreferences.userId?.let { userId ->
                     viewModel.leaveRequestExists(userId, groupId)
+                    getLeaveRequests()
                     group.members[userId]?.sosState?.let { sosSent ->
                         this.sosSent = sosSent
                         setSosLabel(sosSent)
@@ -232,6 +251,7 @@ class GroupMemberActivity : BaseActivity() {
 
         viewModel.leaveGroupRequest.observe(this, Observer { groupLeft ->
             groupLeft?.let {
+                leaveOrDeleteGroupLabel.text = getString(R.string.request_sent)
                 showToastMessage("Your request to leave the group has been sent successfully!")
             }
         })
@@ -239,14 +259,25 @@ class GroupMemberActivity : BaseActivity() {
 
         viewModel.leaveGroup.observe(this, Observer { groupLeft ->
             groupLeft?.let {
-                leaveOrDeleteGroupLabel.text = getString(R.string.request_sent)
-                showToastMessage("Your request to leave the group has been sent successfully!")
+                showToastMessage("Removed successfully!")
             }
         })
 
         viewModel.requestExists.observe(this, Observer { exists ->
             if(exists) {
                 leaveOrDeleteGroupLabel.text = getString(R.string.request_sent)
+            }
+        })
+
+
+        viewModel.leaveRequests.observe(this, Observer { requests ->
+                requests?.forEach { leaveRequest ->
+                showLeaveRequestDialog(
+                    leaveRequest.requestId,
+                    leaveRequest.group?.id,
+                    leaveRequest.from?.id,
+                    "${leaveRequest.from?.name} wants to leave the group. Remove from group?"
+                )
             }
         })
 
