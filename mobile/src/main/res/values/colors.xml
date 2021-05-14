@@ -8,4 +8,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="boxTextColor">#3D2321</color>
+
+    <!-- Styles -->
+    <color name="onboarding_background">#FFFFFF</color>
+    <color name="onboarding_button_text_color">#FFFFFF</color>
+    <color name="onboarding_text_color">#000000</color>
+    <color name="onboarding_button_background_tint">#000000</color>
 </resources>

@@ -17,6 +17,18 @@
         <item name="toolbarStyle">@style/ToolbarStyle</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="OnboardingTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="materialButtonStyle">@style/OnboardingButton</item>
+        <item name="fontFamily">@font/sora_regular</item>
+        <item name="android:textColor">@color/onboarding_text_color</item>
+    </style>
+
+    <style name="OnboardingButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/onboarding_button_background_tint</item>
+        <item name="android:textColor">@color/onboarding_button_text_color</item>
+    </style>
+
     <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/colorPrimaryDark</item>

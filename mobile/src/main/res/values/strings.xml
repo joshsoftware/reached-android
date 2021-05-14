@@ -27,4 +27,5 @@
     <string name="delete_group">Delete group</string>
     <string name="request_sent">Request sent</string>
     <string name="leave_request_already_sent_message">You have already sent a request to leave the group!</string>
+    <string name="button_text_continue">Continue</string>
 </resources>
