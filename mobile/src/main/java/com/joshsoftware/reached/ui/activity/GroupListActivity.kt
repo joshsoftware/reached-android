@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.activity_group_list.*
 import kotlinx.android.synthetic.main.activity_groups.*
 import javax.inject.Inject
 
+const val REQUEST_CODE_MEMBERS = 1
 class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
 
     lateinit var adapter: GroupsAdapter
@@ -53,9 +54,7 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
             showJoinGroupAlertDialog(it)
         }
         setSupportActionBar(findViewById(R.id.bottomAppBar))
-        sharedPreferences.userId?.let {
-            viewModel.fetchGroups(it)
-        }
+        fetchGroups()
 
         add.setOnClickListener {
             toggleFabMenu()
@@ -64,21 +63,30 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
         fabCreate.setOnClickListener {
             val dialog = CreateGroupDialog()
             dialog.show(supportFragmentManager, dialog.tag)
+            toggleFabMenu()
         }
         fabJoin.setOnClickListener {
             requestPermission(arrayOf(android.Manifest.permission.CAMERA), action = {
                 if(it == PermissionActivity.Status.GRANTED) {
                     IntentIntegrator(this@GroupListActivity)
-                            .setCaptureActivity(CaptureActivity::class.java)
-                            .setOrientationLocked(false)
-                            .setBeepEnabled(false)
-                            .setPrompt("Scan QR code to join a group")
-                            .initiateScan(); // `this` is the current Activity
+                        .setCaptureActivity(CaptureActivity::class.java)
+                        .setOrientationLocked(false)
+                        .setBeepEnabled(false)
+                        .setPrompt("Scan QR code to join a group")
+                        .initiateScan(); // `this` is the current Activity
                 }
             })
+            toggleFabMenu()
         }
     }
 
+    private fun fetchGroups() {
+        isNetWorkAvailable {
+            sharedPreferences.userId?.let {
+                viewModel.fetchGroups(it)
+            }
+        }
+    }
     private fun showJoinGroupAlertDialog(group: Group) {
         val dialog = JoinGroupDialog.newInstance(group)
         dialog.show(supportFragmentManager, dialog.tag)
@@ -96,7 +104,7 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
     private fun startGroupMembersActivity(group: Group) {
         val intent = Intent(this, GroupMemberActivity::class.java)
         intent.putExtra(INTENT_GROUP, group)
-        startActivity(intent)
+        startActivityForResult(intent, REQUEST_CODE_MEMBERS)
     }
 
     private fun startGroupMembersActivity(groupId: String) {
@@ -108,9 +116,12 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupListViewModel::class.java]
 
-        viewModel.result.observe(this, Observer{ list ->
-            list?.let {
-                adapter.submitList(it)
+        viewModel.result.observe(this, Observer { list ->
+            if(list.isNullOrEmpty()) {
+                showPlaceHolder(true)
+            } else {
+                showPlaceHolder(false)
+                adapter.submitList(list)
             }
         })
 
@@ -147,16 +158,16 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
         return super.onCreateOptionsMenu(menu)
     }
     private fun toggleFabMenu() {
-            if(dialogLayout.visibility == View.VISIBLE) {
-                rotateFabWithAnimation(add, 0f)
-                fabMenuLayout.visibility = View.GONE
-                dialogLayout.visibility = View.GONE
-            } else {
-                rotateFabWithAnimation(add, 135f)
-                fabMenuLayout.visibility = View.VISIBLE
-                dialogLayout.visibility = View.VISIBLE
-                dialogLayout.alpha = 0.1f
-            }
+        if(dialogLayout.visibility == View.VISIBLE) {
+            rotateFabWithAnimation(add, 0f)
+            fabMenuLayout.visibility = View.GONE
+            dialogLayout.visibility = View.GONE
+        } else {
+            rotateFabWithAnimation(add, 135f)
+            fabMenuLayout.visibility = View.VISIBLE
+            dialogLayout.visibility = View.VISIBLE
+            dialogLayout.alpha = 0.1f
+        }
     }
     private fun rotateFabWithAnimation(fab: FloatingActionButton, degree: Float) {
         val interpolator = OvershootInterpolator()
@@ -175,39 +186,57 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
         resultCode: Int,
         data: Intent?
     ) {
-        val result =
-            IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null) {
-            if (result.contents == null) {
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
-            } else {
-                val groupId = result.contents
+        if(requestCode == REQUEST_CODE_MEMBERS) {
+            fetchGroups()
+        } else {
+            val result =
+                IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result != null) {
+                if (result.contents == null) {
+                    Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
+                } else {
+                    val groupId = result.contents
 
-                val id = sharedPreferences.userId
-                val user = sharedPreferences.userData
-                if (user != null) {
-                    if (id != null) {
+                    val id = sharedPreferences.userId
+                    val user = sharedPreferences.userData
+                    if (user != null) {
+                        if (id != null) {
 
-                        val client = LocationServices.getFusedLocationProviderClient(applicationContext)
-                        client.lastLocation.addOnSuccessListener { location ->
-                            var lat = 0.0
-                            var long = 0.0
-                            if(location != null) {
-                                lat = location.latitude
-                                long = location.longitude
-                            }
+                            val client = LocationServices.getFusedLocationProviderClient(applicationContext)
+                            client.lastLocation.addOnSuccessListener { location ->
+                                var lat = 0.0
+                                var long = 0.0
+                                if(location != null) {
+                                    lat = location.latitude
+                                    long = location.longitude
+                                }
                                 viewModel.joinGroup(groupId, id, user, lat, long)
                                     .observe(this, androidx.lifecycle.Observer {
                                         startGroupMembersActivity(result.contents)
                                     })
 
+                            }
                         }
                     }
                 }
+            } else {
+                super.onActivityResult(requestCode, resultCode, data)
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
         }
+
     }
 
+    private fun showPlaceHolder(show: Boolean) {
+        if(show) {
+            placeHolderLayout.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            placeHolderLayout.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        fetchGroups()
+    }
 }

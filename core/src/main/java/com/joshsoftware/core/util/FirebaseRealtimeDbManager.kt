@@ -1,25 +1,27 @@
 package com.joshsoftware.core.util
 
 import android.location.Location
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.android.gms.common.api.Response
+import com.google.firebase.database.*
+import com.google.gson.Gson
 import com.joshsoftware.core.di.AppType
-import com.joshsoftware.core.model.Group
-import com.joshsoftware.core.model.Member
-import com.joshsoftware.core.model.SosUser
-import com.joshsoftware.core.model.User
+import com.joshsoftware.core.model.*
+import com.joshsoftware.core.util.FirebaseDatabaseKey.*
+import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class FirebaseRealtimeDbManager {
-    private val db = FirebaseDatabase.getInstance()
-    val groupReference = db.getReference(FirebaseDatabaseKey.GROUPS.key)
-    val userReference = db.getReference(FirebaseDatabaseKey.USERS.key)
+    private val db = FirebaseDatabase.getInstance("https://reached-stage.firebaseio.com/")
+    val groupReference = db.getReference(GROUPS.key)
+    val userReference = db.getReference(USERS.key)
+    val requestReference = db.getReference(REQUESTS.key)
     val dateTimeUtils = DateTimeUtils()
 
     suspend fun addUserWith(id: String, user: User, token: String, appType: AppType) = suspendCoroutine<User> { continuation ->
@@ -203,7 +205,7 @@ class FirebaseRealtimeDbManager {
     suspend fun fetchUserDetails(userId: String) = suspendCoroutine<User?> { continuation ->
         userReference.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                   continuation.resume(snapshot.getValue(User::class.java))
+                continuation.resume(snapshot.getValue(User::class.java))
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -248,8 +250,8 @@ class FirebaseRealtimeDbManager {
     }
 
     fun fetchMember(groupId: String, memberId: String,
-                            onFetch: (Member?) -> Unit,
-                            onCancel: (DatabaseError) -> Unit) {
+                    onFetch: (Member?) -> Unit,
+                    onCancel: (DatabaseError) -> Unit) {
         groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
@@ -274,16 +276,16 @@ class FirebaseRealtimeDbManager {
                           onFetch: (Group?) -> Unit,
                           onCancel: (DatabaseError) -> Unit
     ) {
-            groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val group = snapshot.getValue(Group::class.java)
-                    onFetch(group)
-                }
+        groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val group = snapshot.getValue(Group::class.java)
+                onFetch(group)
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    onCancel(error)
-                }
-            })
+            override fun onCancelled(error: DatabaseError) {
+                onCancel(error)
+            }
+        })
 
     }
 
@@ -293,10 +295,10 @@ class FirebaseRealtimeDbManager {
                 val group = snapshot.getValue(Group::class.java)
                 val member = group?.members?.get(userId)
                 member?.let {
-                        member.lat = location.latitude
-                        member.long = location.longitude
-                        member.lastUpdated = dateTimeUtils.getCurrentTime()
-                        groupReference.child(groupId).setValue(group)
+                    member.lat = location.latitude
+                    member.long = location.longitude
+                    member.lastUpdated = dateTimeUtils.getCurrentTime()
+                    groupReference.child(groupId).setValue(group)
                 }
 
 
@@ -310,8 +312,8 @@ class FirebaseRealtimeDbManager {
     }
 
     fun fetchMembers(groupId: String,
-                             onFetch: (ArrayList<Member>) -> Unit,
-                             onCancel: (DatabaseError) -> Unit) {
+                     onFetch: (ArrayList<Member>) -> Unit,
+                     onCancel: (DatabaseError) -> Unit) {
         groupReference.child(groupId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = snapshot.getValue(Group::class.java)
@@ -339,24 +341,29 @@ class FirebaseRealtimeDbManager {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val userObject = snapshot.getValue(User::class.java)
                 userObject?.let { user ->
-                    user.groups.forEach { (s, b) ->
-                        groupReference.child(s).addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                val group = snapshot.getValue(Group::class.java)
-                                group?.let {
-                                    it.id = s
-                                    groupList.add(it)
-                                    if(user.groups.size == groupList.size) {
-                                        continuation.resume(groupList)
+                    if(user.groups.isNotEmpty()) {
+                        user.groups.forEach { (s, b) ->
+                            groupReference.child(s).addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    val group = snapshot.getValue(Group::class.java)
+                                    group?.let {
+                                        it.id = s
+                                        groupList.add(it)
+                                        if(user.groups.size == groupList.size) {
+                                            continuation.resume(groupList)
+                                        }
                                     }
                                 }
-                            }
 
-                            override fun onCancelled(error: DatabaseError) {
-                                continuation.resumeWithException(error.toException())
-                            }
-                        })
+                                override fun onCancelled(error: DatabaseError) {
+                                    continuation.resumeWithException(error.toException())
+                                }
+                            })
+                        }
+                    } else {
+                        continuation.resume(arrayListOf<Group>())
                     }
+
                 }
 
             }
@@ -364,11 +371,223 @@ class FirebaseRealtimeDbManager {
     }
 
     fun updateUserPhoneToken(userId: String, token: String) {
-        userReference.child(userId).child("token").child("phone").setValue(token)
+        userReference.child(userId).child(TOKEN.key).child(PHONE.key).setValue(token)
     }
 
     fun updateUserWatchToken(userId: String, token: String) {
-        userReference.child(userId).child("token").child("watch").setValue(token)
+        userReference.child(userId).child(TOKEN.key).child(WATCH.key).setValue(token)
+    }
+
+    suspend fun leaveGroup(requestId: String, groupId: String, userId: String) = suspendCoroutine<Boolean>{ continuation ->
+        deleteRequestWith(requestId, userId, {
+            removeRequestFromUser(requestId, userId, {
+                groupReference.child(groupId).child(MEMBERS.key).child(userId).removeValue().addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        removeGroupFromUserRef(groupId, userId,  {
+                            continuation.resume(true)
+                        }, { ex ->
+                            continuation.resumeWithException(ex)
+                        })
+                    } else {
+                        it.exception?.let {
+                            continuation.resumeWithException(it)
+                        }
+                    }
+                }
+            }, {ex ->
+                continuation.resumeWithException(ex)
+            })
+
+        }, { ex ->
+            continuation.resumeWithException(ex)
+        })
+
+    }
+
+    fun removeRequestFromUser(
+        requestId: String,
+        userId: String,
+        onComplete: (String) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        userReference.child(userId).child("requests").child(requestId)
+                .removeValue().addOnCompleteListener {
+            if(it.isSuccessful) {
+                onComplete(requestId)
+            } else {
+                it.exception?.let(onError)
+            }
+        }
+    }
+
+    suspend fun deleteRequestWith(requestId: String, userId: String) = suspendCoroutine<Boolean> { continuation ->
+        deleteRequestWith(requestId, userId,  {
+            removeRequestFromUser(requestId, userId, {
+                continuation.resume(true)
+            }, {
+                continuation.resumeWithException(it)
+            })
+        }, {
+            continuation.resumeWithException(it)
+        })
+    }
+
+    private fun deleteRequestWith(
+        requestId: String,
+        userId: String,
+        onComplete: (String) -> Unit,
+        onError: (Exception) -> Unit,
+    ) {
+        requestReference.child(requestId).removeValue().addOnCompleteListener {
+            if(it.isSuccessful) {
+                onComplete(requestId)
+            } else {
+                it.exception?.let(onError)
+            }
+        }
+    }
+
+    suspend fun deleteGroup(group: Group, userId: String) = suspendCoroutine<Boolean> { continuation ->
+        group.id?.let { gId ->
+            groupReference.child(gId).removeValue().addOnCompleteListener {
+                if(it.isSuccessful) {
+                    group.members.forEach { s, member ->
+                        deleteGroupFromUser(group, s)
+                    }
+                    continuation.resume(true)
+                } else {
+                    it.exception?.let { ex ->
+                        continuation.resumeWithException(ex)
+                    }
+                }
+            }
+        }
+
+    }
+
+    fun deleteGroupFromUser(group: Group, userId: String){
+        group.id?.let {
+            userReference.child(userId).child(GROUPS.key).child(it).removeValue()
+        }
+    }
+
+    private fun removeGroupFromUserRef(
+        groupId: String,
+        userId: String,
+        onFinish: () -> Unit,
+        onError:(Exception) -> Unit
+    ) {
+        userReference.child(userId).child("groups").child(groupId).removeValue().addOnCompleteListener {
+            if(it.isSuccessful) {
+                onFinish()
+            } else {
+                it.exception?.let(onError)
+            }
+        }
+    }
+
+    suspend fun requestLeaveGroup(
+        groupId: String,
+        userId: String,
+        createdBy: String,
+        name: String,
+        groupName: String
+    ) = suspendCoroutine<Boolean> { continuation ->
+        val newRef = requestReference.push()
+        newRef.setValue(Request(
+            RequestType.LEAVE.key,
+            LeaveRequestData(
+                group = RequestParam(groupId, groupName),
+                from = RequestParam(userId, name),
+                to = createdBy
+            )
+        )).addOnCompleteListener {
+            if(it.isSuccessful) {
+                updateUserWithRequest(userId, newRef.key.toString(), {
+                    continuation.resumeWithException(it)
+                }, {
+                    continuation.resume(true)
+                })
+            } else {
+                it.exception?.let {ex ->
+                    continuation.resumeWithException(ex)
+                }
+            }
+        }
+    }
+
+    fun updateUserWithRequest(
+        userId: String,
+        requestId: String,
+        onError: (Exception) -> Unit,
+        onComplete: (User) -> Unit
+    ) {
+        userReference.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                onError(error.toException())
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val requestedUser = snapshot.getValue(User::class.java)
+                if(requestedUser != null) {
+                    requestedUser.requests[requestId] = true
+                    userReference.child(userId).setValue(requestedUser).addOnCompleteListener {
+                        if(it.isSuccessful) {
+                            onComplete(requestedUser)
+                        } else {
+                            it.exception?.let(onError)
+                        }
+                    }
+                }
+
+            }
+
+        })
+    }
+
+    suspend fun checkIfLeaveRequestExists(userId: String, groupId: String) = suspendCoroutine<Boolean>{ continuation ->
+        requestReference.orderByChild("data/from/id").equalTo(userId).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                continuation.resumeWithException(error.toException())
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.children.count() > 0) {
+                    snapshot.children.forEach {
+                        val t = object: GenericTypeIndicator<Request<LeaveRequestData>>(){}
+                        val request = it.getValue(t)
+                        if(request?.data?.group?.id == groupId) {
+                            continuation.resume(true)
+                            return@forEach
+                        }
+                    }
+                } else {
+                    continuation.resume(false)
+                }
+            }
+        })
+    }
+
+    suspend fun getRequests(groupId: String) = suspendCoroutine<List<LeaveRequestData>> { continuation ->
+        requestReference.orderByChild("data/group/id").equalTo(groupId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val result = LinkedList<LeaveRequestData>()
+                snapshot.children.forEach {
+                    val requestData = it.getValue(object: GenericTypeIndicator<Request<LeaveRequestData>>(){})
+                    requestData?.data?.let { data ->
+                        data.fromId = snapshot.key
+                        data.requestId = it.key
+                        result.add(data)
+                    }
+                }
+                continuation.resume(result)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                continuation.resumeWithException(error.toException())
+            }
+
+        })
     }
 
 }

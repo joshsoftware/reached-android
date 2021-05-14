@@ -1,5 +1,6 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.core.util.ConversionUtil
@@ -21,6 +23,7 @@ import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupMemberMobileBinding
 import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.reached.ui.adapter.MemberAdapter
+import kotlinx.android.synthetic.main.activity_group_member_mobile.*
 import javax.inject.Inject
 
 
@@ -37,7 +40,7 @@ class GroupMemberActivity : BaseActivity() {
     lateinit var adapter: MemberAdapter
     lateinit var binding: ActivityGroupMemberMobileBinding
     lateinit var groupId: String
-    lateinit var createdBy: String
+    var group: Group? = null
     var sosSent: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +54,7 @@ class GroupMemberActivity : BaseActivity() {
                     groupId = gId
                 }
             }
-
+            handleLeaveRequest(intent)
             setSupportActionBar(bottomAppBar)
 
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
@@ -77,6 +80,11 @@ class GroupMemberActivity : BaseActivity() {
                 sendSos()
             }
 
+            fabLeave.setOnClickListener {
+                toggleFabMenu()
+                leaveOrDeleteGroup()
+            }
+
             bottomAppBar.setNavigationOnClickListener {
                 finish()
             }
@@ -88,9 +96,64 @@ class GroupMemberActivity : BaseActivity() {
 
     }
 
+    private fun getLeaveRequests() {
+        group?.let { nonNullGroup ->
+            sharedPreferences.userId?.let {
+                if (it == nonNullGroup.created_by) {
+                    nonNullGroup.id?.let { it1 -> viewModel.getLeaveRequests(it1) }
+                }
+            }
+        }
+    }
+    private fun leaveOrDeleteGroup() {
+        group?.let { nonNullGroup ->
+            sharedPreferences.userId?.let {
+                if(it == nonNullGroup.created_by) {
+                    viewModel.deleteGroup(nonNullGroup, it)
+                } else {
+                    if(leaveOrDeleteGroupLabel.text != getString(R.string.request_sent)) {
+                        nonNullGroup.created_by?.let {createdBy ->
+                            sharedPreferences.userData?.name?.let {name ->
+                                nonNullGroup.name?.let { groupName ->
+                                    viewModel.requestLeaveGroup(groupId, it, createdBy, name, groupName)
+                                }
+                            }
+                        }
+                    } else {
+                        showToastMessage(getString(R.string.leave_request_already_sent_message))
+                    }
+
+                }
+            }
+        }
+    }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        println("new intent")
+        handleLeaveRequest(intent)
+    }
+
+    private fun handleLeaveRequest(intent: Intent?) {
+        val requestId = intent?.extras?.getString(IntentConstant.INTENT_REQUEST_ID.name)
+        val groupId = intent?.extras?.getString(IntentConstant.INTENT_GROUP_ID.name)
+        val memberId = intent?.extras?.getString(IntentConstant.INTENT_MEMBER_ID.name)
+        val message = intent?.extras?.getString(IntentConstant.INTENT_MESSAGE.name)
+        showLeaveRequestDialog(requestId, groupId, memberId, message)
+    }
+
+    private fun showLeaveRequestDialog(
+        requestId: String?,
+        groupId: String?,
+        memberId: String?,
+        message: String?
+    ) {
+        if(requestId != null && groupId != null && memberId != null && message != null) {
+            showChoiceDialog(message,  {
+                viewModel.leaveGroup(requestId, groupId, memberId)
+            }, {
+                viewModel.declineGroupLeaveRequest(requestId, memberId)
+            })
+        }
     }
 
     private fun sendSos() {
@@ -148,13 +211,18 @@ class GroupMemberActivity : BaseActivity() {
 
         viewModel.result.observe(this, Observer { group ->
             group?.let {
+                it.id = groupId
+                this.group = it
                 supportActionBar?.title = it.name
                 val util = ConversionUtil()
                 sharedPreferences.userId?.let { userId ->
+                    viewModel.leaveRequestExists(userId, groupId)
+                    getLeaveRequests()
                     group.members[userId]?.sosState?.let { sosSent ->
                         this.sosSent = sosSent
                         setSosLabel(sosSent)
                     }
+                    setLeaveGroupLabel(it.created_by, userId)
                 }
                 val members = util.getMemberListFromMap(group.members)
                 adapter.submitList(members)
@@ -172,6 +240,48 @@ class GroupMemberActivity : BaseActivity() {
         })
 
 
+        viewModel.deleteGroup.observe(this, Observer { groupDeleted ->
+            groupDeleted?.let {
+                showToastMessage("You have deleted the group successfully!")
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+        })
+
+
+        viewModel.leaveGroupRequest.observe(this, Observer { groupLeft ->
+            groupLeft?.let {
+                leaveOrDeleteGroupLabel.text = getString(R.string.request_sent)
+                showToastMessage("Your request to leave the group has been sent successfully!")
+            }
+        })
+
+
+        viewModel.leaveGroup.observe(this, Observer { groupLeft ->
+            groupLeft?.let {
+                showToastMessage("Removed successfully!")
+            }
+        })
+
+        viewModel.requestExists.observe(this, Observer { exists ->
+            if(exists) {
+                leaveOrDeleteGroupLabel.text = getString(R.string.request_sent)
+            }
+        })
+
+
+        viewModel.leaveRequests.observe(this, Observer { requests ->
+                requests?.forEach { leaveRequest ->
+                showLeaveRequestDialog(
+                    leaveRequest.requestId,
+                    leaveRequest.group?.id,
+                    leaveRequest.from?.id,
+                    "${leaveRequest.from?.name} wants to leave the group. Remove from group?"
+                )
+            }
+        })
+
+
         viewModel.spinner.observe(this, Observer { loading ->
             if(loading != null) {
                 if (loading) {
@@ -181,6 +291,14 @@ class GroupMemberActivity : BaseActivity() {
                 }
             }
         })
+    }
+
+    private fun setLeaveGroupLabel(createdBy: String?, userId: String){
+        if(createdBy == userId) {
+            leaveOrDeleteGroupLabel.text = getString(R.string.delete_group)
+        } else {
+            leaveOrDeleteGroupLabel.text = getString(R.string.leave_group)
+        }
     }
 
     private fun startQrCodeActivity(group: Group) {

@@ -6,5 +6,9 @@ import androidx.annotation.Keep
 enum class FirebaseDatabaseKey(var key: String) {
     GROUPS ("groups"),
     USERS ("users"),
-    SOS ("sos")
+    REQUESTS ("requests"),
+    MEMBERS ("members"),
+    TOKEN ("token"),
+    WATCH ("watch"),
+    PHONE ("phone"),
 }

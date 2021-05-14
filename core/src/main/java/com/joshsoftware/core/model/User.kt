@@ -8,7 +8,8 @@ data class User (
     var email: String? = null,
     var token: Token = Token(),
     var profileUrl: String? = null,
-    var groups: HashMap<String, Boolean> = hashMapOf()
+    var groups: HashMap<String, Boolean> = hashMapOf(),
+    var requests: HashMap<String, Boolean> = hashMapOf()
 )
 
 @Keep

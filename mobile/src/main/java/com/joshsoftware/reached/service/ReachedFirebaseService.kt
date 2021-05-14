@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.LoginRepository
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.NotificationPayload
 import com.joshsoftware.core.model.NotificationType
 import com.joshsoftware.reached.R
@@ -63,7 +64,11 @@ class ReachedFirebaseService: FirebaseMessagingService() {
             val data = remoteMessage.data["payload"]
             val type = remoteMessage.data["type"]
 
-            sendNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, getPendingIntent(data, type))
+            sendNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, getPendingIntent(
+                data,
+                type,
+                remoteMessage.notification?.body
+            ))
 
         }
     }
@@ -79,18 +84,36 @@ class ReachedFirebaseService: FirebaseMessagingService() {
         val notificationManager = NotificationManagerCompat.from(this)
 
         // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(1, builder.build())
+        notificationManager.notify(2, builder.build())
     }
-    private fun getPendingIntent(data: String?, type: String?): PendingIntent? {
+    private fun getPendingIntent(data: String?, type: String?, message: String?): PendingIntent? {
         return when(type) {
             NotificationType.JOIN_GROUP.key -> {
                getGroupJoinPendingIntent(data)
+            }
+            NotificationType.LEAVE.key -> {
+                getGroupLeaveRequestPendingIntent(data, message)
             } else -> {
                 getSosIntent(data)
             }
         }
 
     }
+
+    private fun getGroupLeaveRequestPendingIntent(data: String?, message: String?): PendingIntent? {
+        val intent = Intent(this, GroupMemberActivity::class.java)
+        getNotificationPayload(data)?.let {
+            intent.putExtra(IntentConstant.INTENT_GROUP_ID.name, it.groupId)
+            intent.putExtra(INTENT_GROUP, Group(it.groupId))
+            intent.putExtra(IntentConstant.INTENT_REQUEST_ID.name, it.requestId)
+            intent.putExtra(IntentConstant.INTENT_MEMBER_ID.name, it.memberId)
+            intent.putExtra(IntentConstant.INTENT_MESSAGE.name, message)
+        }
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        return PendingIntent.getActivity(this, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
 
     private fun getGroupJoinPendingIntent(data: String?): PendingIntent? {
         val intent = Intent(this, GroupMemberActivity::class.java)
