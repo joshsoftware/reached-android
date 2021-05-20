@@ -1,20 +1,27 @@
 package com.joshsoftware.reached.ui.dialog
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import androidx.fragment.app.DialogFragment
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
 import androidx.viewpager2.widget.ViewPager2.SCREEN_STATE_ON
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.DialogBottomSheetOnboardingBinding
 import com.joshsoftware.reached.model.OnboardingData
+import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.reached.ui.adapter.OnboardingAdapter
 import kotlinx.android.synthetic.main.dialog_bottom_sheet_onboarding.*
 
@@ -28,7 +35,11 @@ class OnboardingBottomSheetDialogFragment: BottomSheetDialogFragment()  {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = DialogBottomSheetOnboardingBinding.inflate(LayoutInflater.from(context), null, false)
 
-        binding?.apply {
+        binding.apply {
+            context?.let { ctx ->
+                AppSharedPreferences(ctx).setOnboardingShown(true)
+            }
+
             viewPagerOnboarding.orientation = ORIENTATION_HORIZONTAL
             adapter = OnboardingAdapter()
             viewPagerOnboarding.adapter = adapter
@@ -42,12 +53,18 @@ class OnboardingBottomSheetDialogFragment: BottomSheetDialogFragment()  {
                     if(!isDetached) {
                         if (viewPagerOnboarding.currentItem < 4) {
                             viewPagerOnboarding.currentItem++
-                            handler.postDelayed(this, 2 * 1000)
+                            if(viewPagerOnboarding.currentItem != 3) {
+                                handler.postDelayed(this, 2 * 1000)
+                            }
                         }
                     }
                 }
             }
             handler.postDelayed(pageCounter!!, 2 * 1000)
+
+            btnContinue.setOnClickListener {
+                startLoginActivity()
+            }
         }
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         bottomSheetDialog.setContentView(binding.root)
@@ -57,5 +74,11 @@ class OnboardingBottomSheetDialogFragment: BottomSheetDialogFragment()  {
         bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
         return bottomSheetDialog
     }
+
+    private fun startLoginActivity() {
+        val intent = Intent(context, LoginActivity::class.java)
+        startActivity(intent)
+    }
+
 
 }

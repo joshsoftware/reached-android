@@ -7,4 +7,5 @@
     <dimen name="dimen_onboarding_btn_bottom_margin">16dp</dimen>
     <dimen name="dimen_onboarding_text_bottom_margin">32dp</dimen>
     <dimen name="dimen_onboarding_image_bottom_margin">64dp</dimen>
+    <dimen name="dimen_button_padding">8dp</dimen>
 </resources>
