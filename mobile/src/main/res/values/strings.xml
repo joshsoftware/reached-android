@@ -28,4 +28,8 @@
     <string name="request_sent">Request sent</string>
     <string name="leave_request_already_sent_message">You have already sent a request to leave the group!</string>
     <string name="button_text_continue">Continue</string>
+    <string name="onboarding_text_one">Locating your all Family members is now easy.</string>
+    <string name="onboarding_text_two">Locating your friends is now easy.</string>
+    <string name="onboarding_text_three">Create safe circles for kids at multiple locations.</string>
+    <string name="onboarding_text_four">Get timely alerts of your loved ones whereabouts.</string>
 </resources>

@@ -16,6 +16,7 @@ class OnboardingAdapter: ListAdapter<OnboardingData, ViewHolder>(DIFF_UTIL) {
         val model = getItem(position)
         if(model != null) {
             holder.itemView.apply {
+                imgBackground.setImageResource(model.backgroundImageId)
                 imgOnboarding.setImageResource(model.imageId)
                 txtOnboarding.text = model.text
             }
