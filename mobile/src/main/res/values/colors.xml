@@ -14,4 +14,8 @@
     <color name="onboarding_button_text_color">#FFFFFF</color>
     <color name="onboarding_text_color">#000000</color>
     <color name="onboarding_button_background_tint">#000000</color>
+
+    <!-- Group choice=   -->
+    <color name="slider_background_color">#898989</color>
+    <color name="group_choice_hint_color">#DCDCDC</color>
 </resources>

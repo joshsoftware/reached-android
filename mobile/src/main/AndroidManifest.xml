@@ -48,18 +48,21 @@
             android:name=".ui.activity.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
+        </activity>
+        <activity
+            android:name=".ui.activity.QrCodeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:theme="@style/GroupChoiceTheme"
+            android:name=".ui.activity.GroupChoiceActivity"
+            android:screenOrientation="portrait" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.activity.QrCodeActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activity.GroupChoiceActivity"
-            android:screenOrientation="portrait" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
