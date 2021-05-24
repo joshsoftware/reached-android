@@ -35,4 +35,5 @@
     <string name="show_this_qr_code_to_your_family_member">Show this QR code to your\nfamily member</string>
     <string name="button_text_send_invite">SEND INVITE</string>
     <string name="button_text_skip">SKIP</string>
+    <string name="e_g_home_school_and_classes">e.g. Home, School and CLasses</string>
 </resources>

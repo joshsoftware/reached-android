@@ -44,6 +44,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="Get timely alerts of your loved \nones whereabouts" />
+            <TextView
+                android:id="@+id/txtSubOnboarding"
+                android:text="@string/e_g_home_school_and_classes"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/txtOnboarding"/>
+
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline2"

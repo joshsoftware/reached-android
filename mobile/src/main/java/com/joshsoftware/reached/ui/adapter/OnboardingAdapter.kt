@@ -1,6 +1,7 @@
 package com.joshsoftware.reached.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -19,6 +20,11 @@ class OnboardingAdapter: ListAdapter<OnboardingData, ViewHolder>(DIFF_UTIL) {
                 imgBackground.setImageResource(model.backgroundImageId)
                 imgOnboarding.setImageResource(model.imageId)
                 txtOnboarding.text = model.text
+                if(position == 2) {
+                    txtSubOnboarding.visibility = View.VISIBLE
+                } else {
+                    txtSubOnboarding.visibility = View.GONE
+                }
             }
         }
     }
