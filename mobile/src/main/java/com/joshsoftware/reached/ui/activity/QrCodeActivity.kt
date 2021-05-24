@@ -28,10 +28,10 @@ class QrCodeActivity : AppCompatActivity() {
         intent.extras?.getParcelable<Group>(INTENT_GROUP)?.let { group ->
             group.id?.let { gId ->
                 generateQrCode(gId)
-                binding.viewListButton.setOnClickListener {
+                binding.skipButton.setOnClickListener {
                     startGroupMemberActivity(gId)
                 }
-                binding.inviteButton.setOnClickListener {
+                binding.sendInviteButton.setOnClickListener {
                     val linkUtils = InviteLinkUtils()
                     group.name?.let { name -> linkUtils.getInviteLinkFor(gId, groupName = name) { shortInvitedLink ->
                         shortInvitedLink?.let { uri ->

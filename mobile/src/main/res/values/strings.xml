@@ -32,4 +32,7 @@
     <string name="onboarding_text_two">Locating your Friends\nis now easy.</string>
     <string name="onboarding_text_three">Create safe circles for\nkids at multiple locations.</string>
     <string name="onboarding_text_four">Get timely alerts of your loved\nones whereabouts.</string>
+    <string name="show_this_qr_code_to_your_family_member">Show this QR code to your\nfamily member</string>
+    <string name="button_text_send_invite">SEND INVITE</string>
+    <string name="button_text_skip">SKIP</string>
 </resources>

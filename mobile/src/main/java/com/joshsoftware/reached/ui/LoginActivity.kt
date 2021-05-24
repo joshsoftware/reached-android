@@ -51,6 +51,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
 //        }
         binding.apply {
             imgSkip.setOnClickListener {
+                showLoginComponents(true)
                 hideOnboarding()
             }
 
@@ -206,6 +207,13 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
                 }
                 finish()
             }
+        }
+    }
+
+    private fun showLoginComponents(show: Boolean) {
+        binding.apply {
+            loginGroup.visibility = if(show) View.VISIBLE else View.GONE
+            imgLogo.visibility = if(!show) View.VISIBLE else View.GONE
         }
     }
 }

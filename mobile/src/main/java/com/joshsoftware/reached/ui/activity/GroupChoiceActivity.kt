@@ -3,7 +3,12 @@ package com.joshsoftware.reached.ui.activity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.transition.ChangeBounds
+import android.transition.TransitionManager
+import android.view.View
+import android.view.animation.AnticipateOvershootInterpolator
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.LocationServices
@@ -12,12 +17,10 @@ import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseLocationActivity
 import com.joshsoftware.reached.databinding.ActivityGroupChoiceBinding
-import com.joshsoftware.reached.ui.dialog.CreateGroupDialog
 import com.journeyapps.barcodescanner.CaptureActivity
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
-import java.util.*
 import javax.inject.Inject
 
 
@@ -41,15 +44,19 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
         binding.apply {
             createButton.setOnClickListener {
-                val dialog = CreateGroupDialog()
-                dialog.setDialogListener(object: CreateGroupDialog.CreateGroupDialogListener {
-                    override fun onCreate() {
-                        finish()
-                    }
-                })
-                dialog.show(supportFragmentManager, dialog.tag)
+//                val dialog = CreateGroupDialog()
+//                dialog.setDialogListener(object: CreateGroupDialog.CreateGroupDialogListener {
+//                    override fun onCreate() {
+//                        finish()
+//                    }
+//                })
+//                dialog.show(supportFragmentManager, dialog.tag)
+                showCreateGroupLayout()
             }
 
+            imgSliderTop.setOnClickListener {
+                hideCreateGroup()
+            }
             joinButton.setOnClickListener {
                 requestPermission(arrayOf(android.Manifest.permission.CAMERA), action = {
                     if(it == Status.GRANTED) {
@@ -143,6 +150,40 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
         return dispatchingAndroidInjector
+    }
+
+    private fun showCreateGroupLayout() {
+        binding.apply {
+            val set = ConstraintSet()
+            set.clone(parent)
+            set.setVisibility(createButton.id, View.GONE)
+            set.setVisibility(joinButton.id, View.GONE)
+            set.clear(bottomConstraintLayout.id, ConstraintSet.TOP)
+            set.connect(bottomConstraintLayout.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            val transition = ChangeBounds()
+            transition.interpolator = AnticipateOvershootInterpolator(0.5f)
+            transition.duration = 500
+            TransitionManager.beginDelayedTransition(parent, transition)
+            set.applyTo(parent)
+        }
+    }
+
+
+
+    private fun hideCreateGroup() {
+        binding.apply {
+            val set = ConstraintSet()
+            set.clone(parent)
+            set.connect(bottomConstraintLayout.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            set.clear(bottomConstraintLayout.id, ConstraintSet.BOTTOM)
+            set.setVisibility(createButton.id, View.VISIBLE)
+            set.setVisibility(joinButton.id, View.VISIBLE)
+            val transition = ChangeBounds()
+            transition.interpolator = AnticipateOvershootInterpolator(0.5f)
+            transition.duration = 200
+            TransitionManager.beginDelayedTransition(parent, transition)
+            set.applyTo(parent)
+        }
     }
 
 }
