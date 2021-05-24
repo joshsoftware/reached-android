@@ -11,14 +11,14 @@
         android:id="@+id/createButton"
         style="@style/ChoiceButton"
         android:layout_width="200dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="16dp"
         android:text="@string/button_text_create"
         android:textColor="@color/black"
         app:backgroundTint="#efbd41"
         app:cornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerCard"/>
+        app:layout_constraintTop_toBottomOf="@id/headerCard" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/joinButton"
@@ -66,14 +66,25 @@
 
     <ImageView
         android:id="@+id/imgBackground"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/group_choice_background"
-        app:layout_constraintBottom_toTopOf="@+id/bottomConstraintLayout"
+        app:layout_constraintBottom_toTopOf="@+id/imgSliderTop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
+    <ImageView
+        android:id="@+id/imgSliderTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:src="@drawable/slider_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomConstraintLayout"
+        app:tint="@color/slider_background_color" />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomConstraintLayout"
         android:layout_width="match_parent"
@@ -83,23 +94,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent">
 
-        <ImageView
-            android:id="@+id/imgSliderTop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:src="@drawable/slider_image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/slider_background_color" />
 
         <View
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:background="@color/slider_background_color"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgSliderTop" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/edtGroupNameLayout"
