@@ -118,11 +118,10 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
                 }
             })
             btnContinue.setOnClickListener {
-                if(viewPagerOnboarding.currentItem == 3) {
                     hideOnboarding()
-                } else {
-                    viewPagerOnboarding.setCurrentItem(viewPagerOnboarding.currentItem + 1, true)
-                }
+            }
+            imgContinue.setOnClickListener {
+                viewPagerOnboarding.setCurrentItem(viewPagerOnboarding.currentItem + 1, true)
             }
         }
 
