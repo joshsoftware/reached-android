@@ -27,6 +27,7 @@ class QrCodeActivity : AppCompatActivity() {
 
         intent.extras?.getParcelable<Group>(INTENT_GROUP)?.let { group ->
             group.id?.let { gId ->
+                binding.txtGroupName.text = group.name
                 generateQrCode(gId)
                 binding.skipButton.setOnClickListener {
                     startGroupMemberActivity(gId)

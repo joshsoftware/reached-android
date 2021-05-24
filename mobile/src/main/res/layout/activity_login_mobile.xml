@@ -34,40 +34,55 @@
                 android:id="@+id/viewPagerOnboarding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/btnContinue"
+                app:layout_constraintBottom_toTopOf="@id/continueLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnContinue"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/continueLayout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/dimen_onboarding_btn_bottom_margin"
-                android:backgroundTint="@color/black"
-                android:paddingStart="0dp"
-                android:paddingEnd="0dp"
-                android:textColor="@color/white"
-                app:icon="@drawable/ic_onboarding_arrow"
-                app:iconGravity="textEnd"
-                app:iconPadding="0dp"
-                app:iconTint="@null"
+                android:layout_height="60dp"
                 app:layout_constraintBottom_toTopOf="@id/dotsIndicator"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
+                app:layout_constraintStart_toStartOf="parent">
+            <ImageView
+                android:id="@+id/imgContinue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_onboarding_arrow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContinue"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/black"
+                android:text="@string/button_text_continue"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
                 android:id="@+id/dotsIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                app:dotsColor="@color/onboarding_button_text_color"
+                app:dotsColor="@color/group_choice_hint_color"
                 app:dotsCornerRadius="8dp"
                 app:dotsSize="12dp"
                 app:dotsSpacing="4dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:progressMode="true"
+                app:dotsWidthFactor="1"
                 app:selectedDotColor="@color/onboarding_button_background_tint" />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <ImageView

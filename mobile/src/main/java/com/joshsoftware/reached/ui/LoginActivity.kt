@@ -43,18 +43,29 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
         setContentView(view)
         setListener(this)
 
-//        if(!sharedPreferences.onboardingShown) {
+        if(!sharedPreferences.onboardingShown) {
             Handler().postDelayed({
                 showOnboardingLayout()
             }, 200)
             sharedPreferences.setOnboardingShown(true)
-//        }
-        binding.apply {
-            imgSkip.setOnClickListener {
-                showLoginComponents(true)
-                hideOnboarding()
+        } else {
+            sharedPreferences.userData?.let {
+                if (it.groups.isEmpty()) {
+                    startGroupChoiceActivity()
+                } else {
+                    startGroupListActivity()
+                }
+                finish()
             }
 
+        }
+        binding.apply {
+            imgSkip.setOnClickListener {
+                hideOnboarding()
+            }
+            imgSliderToggle.setOnClickListener {
+                hideOnboarding()
+            }
             btnGoogleSignIn.setOnClickListener {
                 if(sharedPreferences.userData == null) {
                     signIn()
@@ -97,14 +108,12 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     if(position == 3) {
-                        btnContinue.text = getString(R.string.button_text_continue)
-                        val padding = resources.getDimensionPixelOffset(R.dimen.dimen_button_padding)
-                        btnContinue.setPadding(padding, 0, padding, 0)
-                        btnContinue.icon = null
+                        btnContinue.visibility = View.VISIBLE
+                        imgContinue.visibility = View.GONE
                     } else {
-                        btnContinue.text = ""
-                        btnContinue.setPadding(0, 0, 0, 0)
-                        btnContinue.icon = getDrawable(R.drawable.ic_onboarding_arrow)
+
+                        btnContinue.visibility = View.GONE
+                        imgContinue.visibility = View.VISIBLE
                     }
                 }
             })
@@ -185,6 +194,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
             TransitionManager.beginDelayedTransition(parent, transition)
             set.applyTo(parent)
             checkForLocationPermission()
+            showLoginComponents(true)
         }
     }
     private fun startGroupListActivity() {

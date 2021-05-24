@@ -52,29 +52,7 @@ class CreateGroupDialog: BaseDialogFragment() {
                 }
 
                 buttonPositive.setOnClickListener {
-                    val groupName = groupEditText.text.toString()
 
-                    if(TextUtils.isEmpty(groupName)) {
-                        showToastMessage(getString(R.string.valid_please_enter_group_name))
-                        return@setOnClickListener
-                    }
-                    val groupId = UUID.randomUUID().toString()
-                    val id = sharedPreferences.userId
-                    val user = sharedPreferences.userData
-                    if (user != null) {
-                        if (id != null) {
-                            val client = LocationServices.getFusedLocationProviderClient(context)
-                            client.lastLocation.addOnSuccessListener { location ->
-                                var lat = 0.0
-                                var long = 0.0
-                                if(location != null) {
-                                    lat = location.latitude
-                                    long = location.longitude
-                                }
-                                viewModel.createGroup(groupId, id, user, groupName, lat, long)
-                            }
-                        }
-                    }
                 }
             }
 

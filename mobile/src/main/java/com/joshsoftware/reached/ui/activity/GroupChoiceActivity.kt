@@ -3,6 +3,7 @@ package com.joshsoftware.reached.ui.activity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.text.TextUtils
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.View
@@ -16,11 +17,13 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseLocationActivity
+import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupChoiceBinding
 import com.journeyapps.barcodescanner.CaptureActivity
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
+import java.util.*
 import javax.inject.Inject
 
 
@@ -44,16 +47,33 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
         binding.apply {
             createButton.setOnClickListener {
-//                val dialog = CreateGroupDialog()
-//                dialog.setDialogListener(object: CreateGroupDialog.CreateGroupDialogListener {
-//                    override fun onCreate() {
-//                        finish()
-//                    }
-//                })
-//                dialog.show(supportFragmentManager, dialog.tag)
                 showCreateGroupLayout()
             }
+            btnCreate.setOnClickListener {
+                val groupName = groupEditText.text.toString()
 
+                if(TextUtils.isEmpty(groupName)) {
+                    showToastMessage(getString(R.string.valid_please_enter_group_name))
+                    return@setOnClickListener
+                }
+                val groupId = UUID.randomUUID().toString()
+                val id = sharedPreferences.userId
+                val user = sharedPreferences.userData
+                if (user != null) {
+                    if (id != null) {
+                        val client = LocationServices.getFusedLocationProviderClient(applicationContext)
+                        client.lastLocation.addOnSuccessListener { location ->
+                            var lat = 0.0
+                            var long = 0.0
+                            if(location != null) {
+                                lat = location.latitude
+                                long = location.longitude
+                            }
+                            viewModel.createGroup(groupId, id, user, groupName, lat, long)
+                        }
+                    }
+                }
+            }
             imgSliderTop.setOnClickListener {
                 hideCreateGroup()
             }
@@ -74,13 +94,14 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupChoiceViewModel::class.java]
 
-        viewModel.result.observe(this, { id ->
+        viewModel.result.observe(this, androidx.lifecycle.Observer{ id ->
             id?.let {
-                startQrCodeActivity(it)
+                startGroupMemberActivity(it)
+                finish()
             }
         })
 
-        viewModel.spinner.observe(this, { loading ->
+        viewModel.spinner.observe(this, androidx.lifecycle.Observer { loading ->
             if(loading) {
                 showProgressView(binding.parent)
             } else {
@@ -89,6 +110,11 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         })
     }
 
+    private fun startGroupMemberActivity(group: Group) {
+            val intent = Intent(this, GroupMemberActivity::class.java)
+            intent.putExtra(INTENT_GROUP, group)
+            startActivity(intent)
+    }
     private fun startQrCodeActivity(id: String) {
         val intent = Intent(this, QrCodeActivity::class.java)
         intent.putExtra(INTENT_GROUP_ID, id)
