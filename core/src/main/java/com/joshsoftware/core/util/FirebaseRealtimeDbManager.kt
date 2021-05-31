@@ -331,11 +331,13 @@ class FirebaseRealtimeDbManager {
     }
 
 
-    suspend fun fetchGroupList(userId: String) = suspendCoroutine<ArrayList<Group>> { continuation ->
+    fun fetchGroupList(userId: String,
+                               onSuccess: (ArrayList<Group>) -> Unit,
+                               onError: (Exception) -> Unit) {
         val groupList = arrayListOf<Group>()
-        userReference.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+        userReference.child(userId).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
-                continuation.resumeWithException(error.toException())
+                onError(error.toException())
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -343,25 +345,31 @@ class FirebaseRealtimeDbManager {
                 userObject?.let { user ->
                     if(user.groups.isNotEmpty()) {
                         user.groups.forEach { (s, b) ->
-                            groupReference.child(s).addListenerForSingleValueEvent(object : ValueEventListener {
+                            groupReference.child(s).addValueEventListener(object : ValueEventListener {
                                 override fun onDataChange(snapshot: DataSnapshot) {
                                     val group = snapshot.getValue(Group::class.java)
                                     group?.let {
                                         it.id = s
-                                        groupList.add(it)
+                                        val idx = groupList.indexOfFirst { gid -> gid.id == s }
+                                        if(idx != -1) {
+                                            groupList.removeAt(idx)
+                                            groupList.add(idx, it)
+                                        } else {
+                                            groupList.add(it)
+                                        }
                                         if(user.groups.size == groupList.size) {
-                                            continuation.resume(groupList)
+                                            onSuccess(groupList)
                                         }
                                     }
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {
-                                    continuation.resumeWithException(error.toException())
+                                    onError(error.toException())
                                 }
                             })
                         }
                     } else {
-                        continuation.resume(arrayListOf<Group>())
+                        onSuccess(arrayListOf<Group>())
                     }
 
                 }

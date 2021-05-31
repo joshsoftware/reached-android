@@ -96,7 +96,7 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
         viewModel.result.observe(this, androidx.lifecycle.Observer{ id ->
             id?.let {
-                startGroupMemberActivity(it)
+//                startGroupMemberActivity(it)
                 finish()
             }
         })
@@ -110,11 +110,11 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         })
     }
 
-    private fun startGroupMemberActivity(group: Group) {
-            val intent = Intent(this, GroupMemberActivity::class.java)
-            intent.putExtra(INTENT_GROUP, group)
+    private fun startGroupMemberActivity() {
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
     }
+
     private fun startQrCodeActivity(id: String) {
         val intent = Intent(this, QrCodeActivity::class.java)
         intent.putExtra(INTENT_GROUP_ID, id)

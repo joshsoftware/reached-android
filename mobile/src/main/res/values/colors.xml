@@ -18,4 +18,8 @@
     <!-- Group choice=   -->
     <color name="slider_background_color">#898989</color>
     <color name="group_choice_hint_color">#DCDCDC</color>
+
+    <color name="reached_yellow">#EFBD41</color>
+    <color name="reached_card_color">#fafafa</color>
+    <color name="reached_header_primary">#575730</color>
 </resources>

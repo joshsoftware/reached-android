@@ -12,10 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ui.activity.OnboardingActivity"
-            android:theme="@style/OnboardingTheme">
-
-        </activity>
+        <activity android:name=".ui.activity.HomeActivity"></activity>
+        <activity
+            android:name=".ui.activity.OnboardingActivity"
+            android:theme="@style/OnboardingTheme"></activity>
         <activity android:name=".ui.activity.GroupListActivity">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -58,10 +58,9 @@
             android:name=".ui.activity.QrCodeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:theme="@style/GroupChoiceTheme"
             android:name=".ui.activity.GroupChoiceActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/GroupChoiceTheme"></activity>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
@@ -72,7 +71,7 @@
         <activity
             android:name=".ui.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/LoginTheme"/>
+            android:theme="@style/LoginTheme" />
 
         <service
             android:name="com.joshsoftware.core.service.LocationUpdateService"

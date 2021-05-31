@@ -1,6 +1,6 @@
-package com.joshsoftware.core.viewmodel
+package com.joshsoftware.reached.viewmodel
 
-import android.location.Location
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
@@ -9,30 +9,19 @@ import com.joshsoftware.core.repository.GroupRepository
 import com.joshsoftware.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
-class GroupListViewModel @Inject constructor(var repository: GroupRepository,
-                                             var sharedPreferences: AppSharedPreferences
-): BaseViewModel<ArrayList<Group>>() {
+class HomeViewModel @Inject constructor(val sharedPreferences: AppSharedPreferences,
+                                        val repository: GroupRepository)
+    : BaseViewModel<MutableList<Group>>() {
 
     fun fetchGroups(userId: String) {
         executeRoutine {
-            repository.fetchGroupList(userId, { groups ->
-                sharedPreferences.userData?.let {
-                    it.groups.clear()
-                    groups.forEach { group ->
-                        group.id?.let {gId ->
-                            it.groups[gId] = true
-                        }
-                    }
-                    sharedPreferences.saveUserData(it)
-                }
-                _result.value = groups
+            repository.fetchGroupList(userId, {
+                _result.value = it
             }, {
                 _error.value = it.localizedMessage
             })
-
         }
     }
-
 
     fun joinGroup(id: String, userId: String, user: User, lat: Double, long: Double): MutableLiveData<String> {
         val liveData = MutableLiveData<String>()
@@ -43,6 +32,19 @@ class GroupListViewModel @Inject constructor(var repository: GroupRepository,
                 sharedPreferences.saveUserData(it)
             }
             liveData.value = id
+        }
+        return liveData
+    }
+
+    fun createGroup(id: String, userId: String, user: User, groupName: String, lat: Double, long: Double): LiveData<Group> {
+        val liveData = MutableLiveData<Group>()
+        executeRoutine {
+            val (group, user) = repository.createGroup(id, userId, user, groupName, lat, long)
+            sharedPreferences.userData?.let {
+                it.groups = user.groups
+                sharedPreferences.saveUserData(it)
+            }
+            liveData.value = group
         }
         return liveData
     }

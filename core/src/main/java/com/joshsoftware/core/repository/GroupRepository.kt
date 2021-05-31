@@ -4,6 +4,7 @@ import android.location.Location
 import com.google.firebase.database.DatabaseError
 import com.joshsoftware.core.model.*
 import com.joshsoftware.core.util.FirebaseRealtimeDbManager
+import java.lang.Exception
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
@@ -22,8 +23,10 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     }
 
 
-    suspend fun fetchGroupList(userId: String): ArrayList<Group> {
-        return dbManager.fetchGroupList( userId)
+    fun fetchGroupList(userId: String,
+                               onSuccess: (ArrayList<Group>) -> Unit,
+                               onError: (Exception) -> Unit) {
+        dbManager.fetchGroupList(userId, onSuccess, onError)
     }
 
     fun fetchGroupDetails(groupId: String,

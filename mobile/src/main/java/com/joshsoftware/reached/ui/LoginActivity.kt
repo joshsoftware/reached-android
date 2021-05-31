@@ -21,6 +21,7 @@ import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
 import com.joshsoftware.reached.model.OnboardingData
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.GroupListActivity
+import com.joshsoftware.reached.ui.activity.HomeActivity
 import com.joshsoftware.reached.ui.adapter.OnboardingAdapter
 import timber.log.Timber
 import javax.inject.Inject
@@ -197,7 +198,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
         }
     }
     private fun startGroupListActivity() {
-        val intent = Intent(this, GroupListActivity::class.java)
+        val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
     }
 

@@ -42,7 +42,7 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                 }
 
                 model.lastUpdated?.let { updatedText ->
-                    lastUpdatedTextView.text = dateTimeUtils.getLastUpdatedFormatted(updatedText)
+//                    lastUpdatedTextView.text = dateTimeUtils.getLastUpdatedFormatted(updatedText)
                 }
                 model.profileUrl?.let {
                     if(it.isNotEmpty()) {
