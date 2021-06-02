@@ -15,16 +15,18 @@ import com.joshsoftware.reached.ui.viewholder.ViewHolder
 import kotlinx.android.synthetic.main.home_view.view.*
 
 class HomeAdapter(val sharedPreferences: AppSharedPreferences,
-                  val onMemberClick: (Member) -> Unit,
-                  val onAddMember: (String) -> Unit): ListAdapter<Group, ViewHolder>(DIFF_CALLBACK) {
+                  val onMemberClick: (Member, String) -> Unit,
+                  val onAddMember: (Group) -> Unit): ListAdapter<Group, ViewHolder>(DIFF_CALLBACK) {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model = getItem(position)
         if(model != null) {
-            val adapter = MemberAdapter(sharedPreferences, onMemberClick)
+            val adapter = MemberAdapter(sharedPreferences) {
+                onMemberClick(it, model.id!!)
+            }
             holder.itemView.apply {
                 nameTextView.text = model.name
-                imgAddMember.setOnClickListener {  onAddMember(model.id!!) }
+                imgAddMember.setOnClickListener {  onAddMember(model) }
                 memberRecyclerView.layoutManager  = LinearLayoutManager(context)
                 memberRecyclerView.adapter = adapter
                 val util = ConversionUtil()

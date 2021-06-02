@@ -1,3 +1,4 @@
+
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
@@ -12,6 +13,7 @@ import com.joshsoftware.core.model.Group
 import com.joshsoftware.reached.databinding.ActivityQrCodeBinding
 import com.joshsoftware.reached.utils.InviteLinkUtils
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import kotlinx.android.synthetic.main.activity_qr_code.*
 import timber.log.Timber
 
 const val INTENT_GROUP_ID = "INTENT_GROUP_ID"

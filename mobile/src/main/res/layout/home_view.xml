@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         app:cardBackgroundColor="@color/reached_card_color"
         app:cardCornerRadius="12dp"
-        android:layout_margin="16dp"
+        android:layout_margin="20dp"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

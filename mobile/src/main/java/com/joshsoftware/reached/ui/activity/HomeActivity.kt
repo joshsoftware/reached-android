@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.LocationServices
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.adapter.HomeAdapter
@@ -83,8 +84,8 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun setupViewPager() {
-        adapter = HomeAdapter(sharedPreferences, {
-
+        adapter = HomeAdapter(sharedPreferences, { member, id ->
+            startMapActivity(member, id)
         }) {
             startQrCodeActivity(it)
         }
@@ -103,6 +104,13 @@ class HomeActivity : BaseActivity() {
                 page.translationX = myOffset
             }
         }
+    }
+
+    private fun startMapActivity(member: Member, groupId: String) {
+        val intent = Intent(this, MapActivity::class.java)
+        intent.putExtra(INTENT_MEMBER_ID, member.id)
+        intent.putExtra(INTENT_GROUP_ID, groupId)
+        startActivity(intent)
     }
 
     override fun initializeViewModel() {
@@ -139,9 +147,9 @@ class HomeActivity : BaseActivity() {
         set.applyTo(parentLayout)
     }
 
-    private fun startQrCodeActivity(id: String) {
+    private fun startQrCodeActivity(group: Group) {
         val intent = Intent(this, QrCodeActivity::class.java)
-        intent.putExtra(INTENT_GROUP, Group(id))
+        intent.putExtra(INTENT_GROUP, group)
         startActivity(intent)
     }
 }
