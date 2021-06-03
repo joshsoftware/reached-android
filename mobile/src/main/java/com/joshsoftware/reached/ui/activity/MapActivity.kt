@@ -1,13 +1,19 @@
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
@@ -20,6 +26,10 @@ import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityMapMobileBinding
 import kotlinx.android.synthetic.main.activity_map_mobile.*
 import kotlinx.android.synthetic.main.member_view.view.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -85,11 +95,16 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
         group?.apply {
             txtGroupName.text = name
             removeMarkers()
-            members.forEach { (k, v) ->
-                members[k]?.id = k
-                addMarkerToMapFor(members[k]!!)
+            val deferreds = mutableListOf<Deferred<Boolean>>()
+            lifecycleScope.launch {
+                members.forEach { (k, v) ->
+                    members[k]?.id = k
+                    deferreds.add(addMarkerToMapFor(members[k]!!))
+                }
+                val list = deferreds.awaitAll()
+                updateCamera()
             }
-            updateCamera()
+
         }
     }
 
@@ -154,13 +169,32 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
         }
     }
 
-    private fun addMarkerToMapFor(member: Member) {
+    private fun addMarkerToMapFor(member: Member): CompletableDeferred<Boolean> {
+        val deferred = CompletableDeferred<Boolean>()
         val view = (getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
                 .inflate(R.layout.marker_view, null)
         val imageView = view.findViewById<ImageView>(R.id.imgProfile)
         if(member.profileUrl != null) {
-            Glide.with(this).load(member.profileUrl).into(imageView);
+            Glide.with(this).load(member.profileUrl).listener( object: RequestListener<Drawable?> {
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable?>?, isFirstResource: Boolean): Boolean {
+                    createMarkerFrom(view, member)
+                    deferred.complete(true)
+                    return true
+                }
+                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable?>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    createMarkerFrom(view, member)
+                    deferred.complete(true)
+                    return true
+                }
+            }).into(imageView);
+        } else {
+            createMarkerFrom(view, member)
+            deferred.complete(true)
         }
+        return deferred
+    }
+
+    private fun createMarkerFrom(view: View, member: Member) {
         try {
             val bitmap = createDrawableFromView(view)
             val memberPos = LatLng(member.lat!!, member.long!!)
