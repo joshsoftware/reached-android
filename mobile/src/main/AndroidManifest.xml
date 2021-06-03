@@ -12,10 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ui.activity.HomeActivity"></activity>
+        <activity android:name=".ui.activity.ProfileActvity"></activity>
+        <activity android:name=".ui.activity.HomeActivity" />
         <activity
             android:name=".ui.activity.OnboardingActivity"
-            android:theme="@style/OnboardingTheme"></activity>
+            android:theme="@style/OnboardingTheme" />
         <activity android:name=".ui.activity.GroupListActivity">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -60,7 +61,7 @@
         <activity
             android:name=".ui.activity.GroupChoiceActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/GroupChoiceTheme"></activity>
+            android:theme="@style/GroupChoiceTheme" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
