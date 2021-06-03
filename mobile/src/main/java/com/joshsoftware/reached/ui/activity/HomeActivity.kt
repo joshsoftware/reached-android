@@ -73,7 +73,12 @@ class HomeActivity : BaseActivity() {
             }
             hideCreateGroup()
         }
+
+        txtShowOnMap.setOnClickListener {
+            startMapActivity()
+        }
     }
+
 
     private fun fetchGroups() {
         isNetWorkAvailable {
@@ -110,6 +115,12 @@ class HomeActivity : BaseActivity() {
         val intent = Intent(this, MapActivity::class.java)
         intent.putExtra(INTENT_MEMBER_ID, member.id)
         intent.putExtra(INTENT_GROUP_ID, groupId)
+        startActivity(intent)
+    }
+
+
+    private fun startMapActivity() {
+        val intent = Intent(this, MapActivity::class.java)
         startActivity(intent)
     }
 

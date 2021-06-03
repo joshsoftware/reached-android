@@ -29,6 +29,12 @@
         <item name="colorSurface">@color/login_surface_color</item>
         <item name="android:statusBarColor">@color/login_status_bar_color</item>
     </style>
+    <style name="MapTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/sora_regular</item>
+        <item name="android:textColor">@color/map_text_color</item>
+        <item name="colorSurface">@color/map_surface_color</item>
+        <item name="android:statusBarColor">@color/login_status_bar_color</item>
+    </style>
     <style name="LoginCardShapeAppearance" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopLeft">0dp</item>

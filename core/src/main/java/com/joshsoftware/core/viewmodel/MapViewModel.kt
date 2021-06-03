@@ -2,16 +2,20 @@ package com.joshsoftware.core.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.repository.GroupRepository
 import javax.inject.Inject
 
 class MapViewModel @Inject constructor(var repository: GroupRepository)
     : BaseViewModel<Member?>() {
-    protected var _members = MutableLiveData<ArrayList<Member>>()
-
+    protected val _members = MutableLiveData<ArrayList<Member>>()
     val members: LiveData<ArrayList<Member>>
         get() = _members
+
+    protected val _groups = MutableLiveData<MutableList<Group>>()
+    val groups: LiveData<MutableList<Group>>
+        get() = _groups
 
     fun observeLocationChanges(groupId: String, memberId: String) {
         executeRoutine {
@@ -25,11 +29,21 @@ class MapViewModel @Inject constructor(var repository: GroupRepository)
     }
 
     fun observeMembersForChanges(groupId: String) {
-            repository.fetchMembers(groupId, {
-                _members.value = it
+        repository.fetchMembers(groupId, {
+            _members.value = it
+        }, {
+            _error.value = it.message
+        })
+    }
+
+    fun fetchGroups(userId: String) {
+        executeRoutine {
+            repository.fetchGroupList(userId, {
+                _groups.value = it
             }, {
-                _error.value = it.message
+                _error.value = it.localizedMessage
             })
+        }
     }
 
 }
