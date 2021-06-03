@@ -1,15 +1,16 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.BaseMapActivity
 import com.joshsoftware.core.model.Group
@@ -18,6 +19,7 @@ import com.joshsoftware.core.viewmodel.MapViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityMapMobileBinding
 import kotlinx.android.synthetic.main.activity_map_mobile.*
+import kotlinx.android.synthetic.main.member_view.view.*
 import javax.inject.Inject
 
 
@@ -153,14 +155,26 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
     }
 
     private fun addMarkerToMapFor(member: Member) {
-        val memberPos = LatLng(member.lat!!, member.long!!)
-        var marker = map?.addMarker(
-            MarkerOptions()
-                    .position(memberPos)
-                    .title(member.name!!)
-        )
-        marker?.let { m ->
-            markers.add(m)
+        val view = (getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+                .inflate(R.layout.marker_view, null)
+        val imageView = view.findViewById<ImageView>(R.id.imgProfile)
+        if(member.profileUrl != null) {
+            Glide.with(this).load(member.profileUrl).into(imageView);
+        }
+        try {
+            val bitmap = createDrawableFromView(view)
+            val memberPos = LatLng(member.lat!!, member.long!!)
+            val marker = map?.addMarker(
+                    MarkerOptions()
+                            .position(memberPos)
+                            .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                            .title(member.name!!)
+            )
+            marker?.let { m ->
+                markers.add(m)
+            }
+        } catch (e: Exception) {
+            println("Exception ${e.localizedMessage}")
         }
     }
 }
