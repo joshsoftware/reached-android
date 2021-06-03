@@ -80,6 +80,10 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
                 setCurrentGroup(groups[--currentPosition])
             }
         }
+
+        txtShowList.setOnClickListener {
+            finish()
+        }
     }
 
     private fun handleIntentArguments() {
@@ -184,6 +188,7 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable?>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     createMarkerFrom(view, member)
                     deferred.complete(true)
+                    imageView.setImageDrawable(resource)
                     return true
                 }
             }).into(imageView);
