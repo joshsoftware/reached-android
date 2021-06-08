@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.LocationServices
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
@@ -89,8 +90,8 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun setupViewPager() {
-        adapter = HomeAdapter(sharedPreferences, { member, id ->
-            startMapActivity(member, id)
+        adapter = HomeAdapter(sharedPreferences, { member, groupId ->
+            startProfileActivity(member, groupId)
         }) {
             startQrCodeActivity(it)
         }
@@ -111,9 +112,9 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-    private fun startMapActivity(member: Member, groupId: String) {
-        val intent = Intent(this, MapActivity::class.java)
-        intent.putExtra(INTENT_MEMBER_ID, member.id)
+    private fun startProfileActivity(member: Member, groupId: String) {
+        val intent = Intent(this, ProfileActivity::class.java)
+        intent.putExtra(IntentConstant.INTENT_MEMBER.name, member)
         intent.putExtra(INTENT_GROUP_ID, groupId)
         startActivity(intent)
     }

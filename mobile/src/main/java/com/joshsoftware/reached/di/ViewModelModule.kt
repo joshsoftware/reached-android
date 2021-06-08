@@ -6,6 +6,7 @@ import com.joshsoftware.reached.ui.activity.GroupChoiceViewModel
 import com.joshsoftware.reached.viewmodel.CreateGroupViewModel
 import com.joshsoftware.core.viewmodel.GroupListViewModel
 import com.joshsoftware.reached.viewmodel.HomeViewModel
+import com.joshsoftware.reached.viewmodel.ProfileViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -27,6 +28,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(HomeViewModel::class)
     abstract fun buildHomeViewModel(viewModel: HomeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ProfileViewModel::class)
+    abstract fun buildHProfileViewModel(viewModel: ProfileViewModel): ViewModel
 
 
 }

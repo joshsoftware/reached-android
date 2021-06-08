@@ -132,9 +132,13 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
                 showProgress = false
             }
             removeMarkers()
+
             member?.let {
-                addMarkerToMapFor(it)
-                updateCamera()
+                lifecycleScope.launch {
+                    val result = addMarkerToMapFor(it)
+                    result.await()
+                    updateCamera()
+                }
             }
         })
     }
@@ -158,6 +162,9 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
     override fun mapReady() {
         showProgressView(binding.parent)
         if(memberId != null && groupId != null) {
+            groupCard.visibility = View.GONE
+            viewModel.observeLocationChanges(groupId!!, memberId!!)
+        } else if(memberId != null) {
             groupCard.visibility = View.GONE
             viewModel.observeLocationChanges(groupId!!, memberId!!)
         } else {

@@ -23,6 +23,9 @@ abstract class ActivityModule {
     @ContributesAndroidInjector
     abstract fun contributeHomeActivity(): HomeActivity
 
+    @ContributesAndroidInjector
+    abstract fun contributeProfileActivity(): ProfileActivity
+
     @ContributesAndroidInjector(modules = [GroupListModule::class])
     abstract fun contributeGroupListActivity(): GroupListActivity
 }
