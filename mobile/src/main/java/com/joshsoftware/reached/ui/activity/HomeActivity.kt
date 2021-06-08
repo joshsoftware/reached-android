@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
-import android.view.View
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.ViewModelProvider
@@ -114,7 +113,7 @@ class HomeActivity : BaseActivity() {
 
     private fun startProfileActivity(member: Member, groupId: String) {
         val intent = Intent(this, ProfileActivity::class.java)
-        intent.putExtra(IntentConstant.INTENT_MEMBER.name, member)
+        intent.putExtra(IntentConstant.MEMBER.name, member)
         intent.putExtra(INTENT_GROUP_ID, groupId)
         startActivity(intent)
     }
@@ -131,6 +130,10 @@ class HomeActivity : BaseActivity() {
             adapter.submitList(it)
             adapter.notifyDataSetChanged()
             dotsIndicator.refreshDots()
+        })
+
+        viewModel.spinner.observe(this, {
+            if(it) showProgressView() else hideProgressView()
         })
     }
 

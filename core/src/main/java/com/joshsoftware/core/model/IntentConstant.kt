@@ -1,9 +1,13 @@
 package com.joshsoftware.core.model
 
 enum class IntentConstant {
-    INTENT_REQUEST_ID,
-    INTENT_MEMBER_ID,
-    INTENT_MEMBER,
-    INTENT_GROUP_ID,
-    INTENT_MESSAGE,
+    REQUEST_ID,
+    MEMBER_ID,
+    MEMBER,
+    GROUP_ID,
+    MESSAGE,
+    ADDRESS,
+}
+enum class RequestCodes(val code: Int) {
+    PICK_LOCATION(1)
 }

@@ -2,11 +2,13 @@ package com.joshsoftware.reached.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.User
 import com.joshsoftware.core.repository.GroupRepository
 import com.joshsoftware.core.viewmodel.BaseViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(val sharedPreferences: AppSharedPreferences,
@@ -14,13 +16,17 @@ class HomeViewModel @Inject constructor(val sharedPreferences: AppSharedPreferen
     : BaseViewModel<MutableList<Group>>() {
 
     fun fetchGroups(userId: String) {
-        executeRoutine {
+        viewModelScope.launch {
+            _spinner.value = true
             repository.fetchGroupList(userId, {
                 _result.value = it
+                _spinner.value = false
             }, {
                 _error.value = it.localizedMessage
+                _spinner.value = false
             })
         }
+
     }
 
     fun joinGroup(id: String, userId: String, user: User, lat: Double, long: Double): MutableLiveData<String> {

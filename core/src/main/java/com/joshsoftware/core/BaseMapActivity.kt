@@ -48,6 +48,7 @@ abstract class BaseMapActivity:  PermissionActivity(), OnMapReadyCallback {
 
     override fun onMapReady(p0: GoogleMap?) {
         map = p0
+        map?.moveCamera(CameraUpdateFactory.zoomTo(zoomLevel))
         listener?.mapReady()
     }
 

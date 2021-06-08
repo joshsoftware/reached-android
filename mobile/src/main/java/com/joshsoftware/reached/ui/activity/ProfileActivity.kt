@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.Member
-import com.joshsoftware.core.model.User
+import com.joshsoftware.core.model.RequestCodes
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.viewmodel.ProfileViewModel
@@ -24,18 +24,26 @@ class ProfileActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-        intent.extras?.getParcelable<Member>(IntentConstant.INTENT_MEMBER.name)?.let {
+        intent.extras?.getParcelable<Member>(IntentConstant.MEMBER.name)?.let {
             userId = it.id
             setUserData(it)
         }
 
-        intent.extras?.getString(IntentConstant.INTENT_GROUP_ID.name)?.let {
+        intent.extras?.getString(IntentConstant.GROUP_ID.name)?.let {
             groupId = it
         }
 
         txtLocateNow.setOnClickListener {
             startMapActivity(userId, groupId)
         }
+        txtAddLocaiton.setOnClickListener {
+            startSelectLocationActivity()
+        }
+    }
+
+    private fun startSelectLocationActivity() {
+        val intent = Intent(this, PickLocationActivity::class.java)
+        startActivityForResult(intent, RequestCodes.PICK_LOCATION.code)
     }
 
     private fun startMapActivity(memberId: String?, groupId: String?) {

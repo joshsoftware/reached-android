@@ -103,11 +103,11 @@ class ReachedFirebaseService: FirebaseMessagingService() {
     private fun getGroupLeaveRequestPendingIntent(data: String?, message: String?): PendingIntent? {
         val intent = Intent(this, GroupMemberActivity::class.java)
         getNotificationPayload(data)?.let {
-            intent.putExtra(IntentConstant.INTENT_GROUP_ID.name, it.groupId)
+            intent.putExtra(IntentConstant.GROUP_ID.name, it.groupId)
             intent.putExtra(INTENT_GROUP, Group(it.groupId))
-            intent.putExtra(IntentConstant.INTENT_REQUEST_ID.name, it.requestId)
-            intent.putExtra(IntentConstant.INTENT_MEMBER_ID.name, it.memberId)
-            intent.putExtra(IntentConstant.INTENT_MESSAGE.name, message)
+            intent.putExtra(IntentConstant.REQUEST_ID.name, it.requestId)
+            intent.putExtra(IntentConstant.MEMBER_ID.name, it.memberId)
+            intent.putExtra(IntentConstant.MESSAGE.name, message)
         }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         return PendingIntent.getActivity(this, 0, intent,

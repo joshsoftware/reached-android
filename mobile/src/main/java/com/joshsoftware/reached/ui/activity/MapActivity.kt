@@ -160,7 +160,7 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
     }
 
     override fun mapReady() {
-        showProgressView(binding.parent)
+        showProgressView()
         if(memberId != null && groupId != null) {
             groupCard.visibility = View.GONE
             viewModel.observeLocationChanges(groupId!!, memberId!!)

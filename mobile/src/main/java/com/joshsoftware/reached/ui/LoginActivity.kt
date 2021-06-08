@@ -50,6 +50,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
             }, 200)
             sharedPreferences.setOnboardingShown(true)
         } else {
+            hideOnboarding()
             sharedPreferences.userData?.let {
                 if (it.groups.isEmpty()) {
                     startGroupChoiceActivity()
@@ -175,7 +176,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
 
         viewModel.spinner.observe(this, Observer {loading ->
             if(loading) {
-                showProgressView(binding.parent)
+                showProgressView()
             } else {
                 hideProgressView()
             }

@@ -134,10 +134,10 @@ class GroupMemberActivity : BaseActivity() {
     }
 
     private fun handleLeaveRequest(intent: Intent?) {
-        val requestId = intent?.extras?.getString(IntentConstant.INTENT_REQUEST_ID.name)
-        val groupId = intent?.extras?.getString(IntentConstant.INTENT_GROUP_ID.name)
-        val memberId = intent?.extras?.getString(IntentConstant.INTENT_MEMBER_ID.name)
-        val message = intent?.extras?.getString(IntentConstant.INTENT_MESSAGE.name)
+        val requestId = intent?.extras?.getString(IntentConstant.REQUEST_ID.name)
+        val groupId = intent?.extras?.getString(IntentConstant.GROUP_ID.name)
+        val memberId = intent?.extras?.getString(IntentConstant.MEMBER_ID.name)
+        val message = intent?.extras?.getString(IntentConstant.MESSAGE.name)
         showLeaveRequestDialog(requestId, groupId, memberId, message)
     }
 
@@ -285,7 +285,7 @@ class GroupMemberActivity : BaseActivity() {
         viewModel.spinner.observe(this, Observer { loading ->
             if(loading != null) {
                 if (loading) {
-                    showProgressView(binding.parent)
+                    showProgressView()
                 } else {
                     hideProgressView()
                 }

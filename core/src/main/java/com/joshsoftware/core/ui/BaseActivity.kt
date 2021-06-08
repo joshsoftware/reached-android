@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Constraints
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModel
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment
@@ -27,7 +28,6 @@ import com.joshsoftware.core.di.Injectable
 import com.joshsoftware.core.viewmodel.BaseViewModel
 
 abstract class BaseActivity: AppCompatActivity(), Injectable {
-    var progressLayout: FrameLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,37 +86,22 @@ abstract class BaseActivity: AppCompatActivity(), Injectable {
      * Shows the progress dialog in the given parent container view
      * @param rootView View
      */
-    fun showProgressView(rootView: View) {
-        if(progressLayout == null) {
-            progressLayout = FrameLayout(this)
-            val layoutParams = Constraints.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            progressLayout?.setBackgroundColor(Color.parseColor("#ffffff"))
-            progressLayout?.alpha = 0.5f
-            progressLayout?.elevation = resources.getDimension(R.dimen.progress_layout_elevation)
-            progressLayout?.layoutParams = layoutParams
-
-            val progressBar = ProgressBar(this)
-            val progressParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
-            progressBar.layoutParams = progressParams
-            progressLayout?.addView(progressBar)
-            if (rootView is ConstraintLayout) {
-                rootView.addView(progressLayout)
-            } else if (rootView is CoordinatorLayout) {
-                rootView.addView(progressLayout)
-            } else if (rootView is FrameLayout) {
-                rootView.addView(progressLayout)
-            }
-        } else {
-            progressLayout?.visibility = View.VISIBLE
-        }
+    fun showProgressView() {
+       val progressDialog = ProgressDialogFragment()
+        supportFragmentManager.beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .add(android.R.id.content, progressDialog, "progress")
+            .addToBackStack(null)
+            .commit()
     }
 
     /**
      * Hides the progress dialog from the parent container view
      */
     open fun hideProgressView() {
-        if(progressLayout !=  null) {
-            progressLayout?.visibility = View.GONE
+        val progressDialogFragment = supportFragmentManager.findFragmentByTag("progress") as ProgressDialogFragment?
+        progressDialogFragment?.let {
+            progressDialogFragment.dismiss()
         }
     }
 }

@@ -128,7 +128,7 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
         viewModel.spinner.observe(this, Observer{ loading ->
             loading?.let {
                 if(it) {
-                    showProgressView(parentLayout)
+                    showProgressView()
                 } else {
                     hideProgressView()
                 }

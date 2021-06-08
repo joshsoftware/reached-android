@@ -103,7 +103,7 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
         viewModel.spinner.observe(this, androidx.lifecycle.Observer { loading ->
             if(loading) {
-                showProgressView(binding.parent)
+                showProgressView()
             } else {
                 hideProgressView()
             }
