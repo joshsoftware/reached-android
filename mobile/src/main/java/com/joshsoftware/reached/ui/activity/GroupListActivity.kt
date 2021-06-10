@@ -1,5 +1,6 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -12,11 +13,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.zxing.integration.android.IntentIntegrator
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.PermissionActivity
+import com.joshsoftware.core.geofence.GeoConstants
+import com.joshsoftware.core.geofence.GeofenceBroadcastReceiver
+import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.ui.adapter.GroupsAdapter
@@ -32,6 +39,8 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_group_list.*
 import kotlinx.android.synthetic.main.activity_groups.*
+import timber.log.Timber
+import java.util.ArrayList
 import javax.inject.Inject
 
 const val REQUEST_CODE_MEMBERS = 1
@@ -41,7 +50,6 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
     lateinit var viewModel: GroupListViewModel
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
 
@@ -69,11 +77,11 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
             requestPermission(arrayOf(android.Manifest.permission.CAMERA), action = {
                 if(it == PermissionActivity.Status.GRANTED) {
                     IntentIntegrator(this@GroupListActivity)
-                        .setCaptureActivity(CaptureActivity::class.java)
-                        .setOrientationLocked(false)
-                        .setBeepEnabled(false)
-                        .setPrompt("Scan QR code to join a group")
-                        .initiateScan(); // `this` is the current Activity
+                            .setCaptureActivity(CaptureActivity::class.java)
+                            .setOrientationLocked(false)
+                            .setBeepEnabled(false)
+                            .setPrompt("Scan QR code to join a group")
+                            .initiateScan(); // `this` is the current Activity
                 }
             })
             toggleFabMenu()
@@ -143,6 +151,8 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
     }
 
 
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.logout) {
             sharedPreferences.deleteUserData()
@@ -182,15 +192,15 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
 
     // Get the results:
     override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
+            requestCode: Int,
+            resultCode: Int,
+            data: Intent?
     ) {
         if(requestCode == REQUEST_CODE_MEMBERS) {
             fetchGroups()
         } else {
             val result =
-                IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+                    IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if (result != null) {
                 if (result.contents == null) {
                     Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
@@ -211,9 +221,9 @@ class GroupListActivity : PermissionActivity(), HasSupportFragmentInjector {
                                     long = location.longitude
                                 }
                                 viewModel.joinGroup(groupId, id, user, lat, long)
-                                    .observe(this, androidx.lifecycle.Observer {
-                                        startGroupMembersActivity(result.contents)
-                                    })
+                                        .observe(this, androidx.lifecycle.Observer {
+                                            startGroupMembersActivity(result.contents)
+                                        })
 
                             }
                         }

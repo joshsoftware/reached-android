@@ -26,4 +26,5 @@
     <color name="map_surface_color">#FFFFFF</color>
     <color name="map_text_color">#000000</color>
     <color name="safe_text_color">#15CF00</color>
+    <color name="map_background_color">#E8E8E8</color>
 </resources>

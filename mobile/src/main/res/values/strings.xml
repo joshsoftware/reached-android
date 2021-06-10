@@ -49,4 +49,7 @@
     <string name="safeguard_your_family_and_friend_s">SAFEGUARD FAMILY AND FRIEND\'S!</string>
     <string name="with_your_google_account">With your Google account</string>
     <string name="sign_in">SIGN IN</string>
+    <string name="location_name">Location name</string>
+    <string name="button_text_save">Save</string>
+    <string name="address_save_success_message">Address added successfully!</string>
 </resources>

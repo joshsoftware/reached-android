@@ -65,7 +65,7 @@ class WearGroupListActivity : BaseActivity() {
         viewModel.spinner.observe(this, Observer { loading ->
             loading?.let {
                 if(it) {
-                    showProgressView(binding.parentLayout)
+                    showProgressView()
                 } else {
                     hideProgressView()
                 }

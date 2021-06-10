@@ -7,6 +7,7 @@ import com.joshsoftware.reached.viewmodel.CreateGroupViewModel
 import com.joshsoftware.core.viewmodel.GroupListViewModel
 import com.joshsoftware.reached.viewmodel.HomeViewModel
 import com.joshsoftware.reached.viewmodel.ProfileViewModel
+import com.joshsoftware.reached.viewmodel.SaveLocationViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -33,6 +34,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ProfileViewModel::class)
     abstract fun buildHProfileViewModel(viewModel: ProfileViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(SaveLocationViewModel::class)
+    abstract fun buildHSaveLocationViewModel(viewModel: SaveLocationViewModel): ViewModel
 
 
 }

@@ -5,8 +5,11 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Address(
-    var name: String,
-    var lat: Double,
-    var long: Double,
-    var radius: Int? = null
-): Parcelable
+        var id: String? = null,
+        var name: String,
+        var lat: Double,
+        var long: Double,
+        var radius: Int = 0
+): Parcelable {
+    constructor(): this("", "", 0.0, 0.0)
+}

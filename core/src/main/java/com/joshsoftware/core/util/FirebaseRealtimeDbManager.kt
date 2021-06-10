@@ -4,6 +4,7 @@ import android.location.Location
 import com.google.android.gms.common.api.Response
 import com.google.firebase.database.*
 import com.google.gson.Gson
+import com.joshsoftware.core.BuildConfig
 import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.model.*
 import com.joshsoftware.core.util.FirebaseDatabaseKey.*
@@ -18,7 +19,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class FirebaseRealtimeDbManager {
-    private val db = FirebaseDatabase.getInstance("https://reached-stage.firebaseio.com/")
+    private val db = FirebaseDatabase.getInstance(BuildConfig.DATABASE_URL)
     val groupReference = db.getReference(GROUPS.key)
     val userReference = db.getReference(USERS.key)
     val requestReference = db.getReference(REQUESTS.key)
@@ -596,6 +597,24 @@ class FirebaseRealtimeDbManager {
             }
 
         })
+    }
+
+
+    fun saveAddress(memberId: String, groupId: String, address: Address): Deferred<Address> {
+        val deferred = CompletableDeferred<Address>()
+        groupReference
+                .child(groupId)
+                .child(MEMBERS.key)
+                .child(memberId)
+                .child(ADDRESS.key)
+                .push().setValue(address).addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        deferred.complete(address)
+                    } else {
+                        it.exception?.let { ex -> deferred.completeExceptionally(ex) }
+                    }
+                }
+        return deferred
     }
 
 }

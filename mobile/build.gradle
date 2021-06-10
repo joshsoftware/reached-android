@@ -10,20 +10,12 @@ apply from: '../shared_dependencies.gradle'
 
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('/home/nayan/AndroidStudioProjects/reached.jks')
-            storePassword 'reachedapp'
-            keyPassword 'reachedapp'
-            keyAlias 'reached'
-        }
-    }
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.joshsoftware.reached"
-        minSdkVersion 28
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 6
         versionName "1.0"
@@ -31,16 +23,33 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        releaase {
+            storeFile file('/home/nayan/AndroidStudioProjects/reached.jks')
+            storePassword 'reachedapp'
+            keyPassword 'reachedapp'
+            keyAlias 'reached'
+        }
+        debug {
+            storeFile file('/home/nayan/.android/debug.keystore')
+            keyAlias 'androiddebugkey'
+            storePassword 'android'
+            keyPassword 'android'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaase
+
         }
-        debug {
+        development {
             minifyEnabled false
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
 
     }

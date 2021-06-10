@@ -29,6 +29,9 @@ abstract class ActivityModule {
     @ContributesAndroidInjector
     abstract fun contributePickLocationActivity(): PickLocationActivity
 
+    @ContributesAndroidInjector
+    abstract fun contributeSavePickedLocationActivity(): SavePickedLocationActivity
+
     @ContributesAndroidInjector(modules = [GroupListModule::class])
     abstract fun contributeGroupListActivity(): GroupListActivity
 }

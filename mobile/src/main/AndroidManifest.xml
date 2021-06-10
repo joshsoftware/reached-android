@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ui.activity.SavePickedLocationActivity"></activity>
+        <activity android:name=".ui.activity.SavePickedLocationActivity">
+        </activity>
         <activity android:name=".ui.activity.PickLocationActivity" />
         <activity android:name=".ui.activity.ProfileActivity" />
         <activity android:name=".ui.activity.HomeActivity" />
@@ -51,6 +52,7 @@
             android:name=".ui.activity.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -87,6 +89,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <receiver android:name="com.joshsoftware.core.geofence.GeofenceBroadcastReceiver"/>
+
     </application>
 
 </manifest>

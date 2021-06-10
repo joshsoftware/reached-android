@@ -29,6 +29,7 @@ class LocationUpdateService: Service(), GoogleApiClient.ConnectionCallbacks {
 
 
     private lateinit var mGoogleApiClient: GoogleApiClient
+    private lateinit var geoFenceClient: GeofencingClient
     private lateinit var mLocationRequest: LocationRequest
     private var listener: BaseLocationActivity.LocationChangeListener? = null
 
@@ -43,7 +44,7 @@ class LocationUpdateService: Service(), GoogleApiClient.ConnectionCallbacks {
     override fun onCreate() {
         AndroidInjection.inject(this)
         super.onCreate()
-
+        geoFenceClient = LocationServices.getGeofencingClient(this)
     }
 
     protected fun fetchLocation() {

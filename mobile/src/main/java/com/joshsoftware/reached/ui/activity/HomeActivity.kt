@@ -1,5 +1,6 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -8,8 +9,14 @@ import android.transition.TransitionManager
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.geofence.GeoConstants
+import com.joshsoftware.core.geofence.GeofenceBroadcastReceiver
+import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.Member
@@ -20,6 +27,7 @@ import com.joshsoftware.reached.viewmodel.HomeViewModel
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.home_view.*
 import kotlinx.android.synthetic.main.layout_create_group.*
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -31,12 +39,14 @@ class HomeActivity : BaseActivity() {
     lateinit var viewModel: HomeViewModel
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var geofencingClient: GeofencingClient
 
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        geofencingClient = LocationServices.getGeofencingClient(this)
         setupViewPager()
         fetchGroups()
         fabCreate.setOnClickListener {
@@ -127,6 +137,9 @@ class HomeActivity : BaseActivity() {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         viewModel.result.observe(this, {
+            if(it.isNotEmpty()) {
+                addGeofences(it)
+            }
             adapter.submitList(it)
             adapter.notifyDataSetChanged()
             dotsIndicator.refreshDots()
@@ -166,5 +179,54 @@ class HomeActivity : BaseActivity() {
         val intent = Intent(this, QrCodeActivity::class.java)
         intent.putExtra(INTENT_GROUP, group)
         startActivity(intent)
+    }private fun addGeofences(list: MutableList<Group>) {
+        sharedPreferences.userId?.let { userId ->
+            val addressList = getAddressListForUserId(userId, list)
+            geofencingClient.removeGeofences(addressList.map { it.id })
+
+            val geofencingBuilder = GeofencingRequest.Builder()
+            addressList.forEach { address ->
+                val geofence = Geofence.Builder()
+                        .setRequestId(address.id!!)
+                        .setCircularRegion(
+                                address.lat,
+                                address.long,
+                                address.radius.toFloat())
+                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+                        .build()
+                geofencingBuilder.addGeofence(geofence)
+
+            }
+            if(addressList.isNotEmpty()) {
+                val geofenceRequest = geofencingBuilder.build()
+                val intent = Intent(this, GeofenceBroadcastReceiver::class.java)
+                intent.action = GeoConstants.ACTION_GEO_FENCE
+                val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+                geofencingClient.addGeofences(geofenceRequest, pendingIntent).addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        Timber.e("Geofence added successfully")
+                    } else {
+                        Timber.e("Failed to add geofence")
+                    }
+                }
+            }
+
+        }
+    }
+
+    private fun getAddressListForUserId(userId: String, list: MutableList<Group>): MutableList<Address> {
+        val addressList = mutableListOf<Address>()
+        list.forEach {
+            it.members.forEach { (key, value) ->
+                if(key == userId) {
+                    it.members[key]?.address?.forEach { (t, u) ->
+                        it.members[key]!!.address[t]!!.id = t
+                        addressList.add(it.members[key]!!.address[t]!!)
+                    }
+                }
+            }
+        }
+        return addressList
     }
 }

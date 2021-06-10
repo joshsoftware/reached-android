@@ -1,11 +1,7 @@
 package com.joshsoftware.reached.ui.activity
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
-import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -19,7 +15,6 @@ import com.joshsoftware.core.BaseMapActivity
 import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.reached.R
-import kotlinx.android.synthetic.main.activity_groups.*
 import kotlinx.android.synthetic.main.activity_groups.titleTextView
 import kotlinx.android.synthetic.main.activity_pick_location.*
 import kotlinx.android.synthetic.main.layout_save_location_header.*
@@ -86,7 +81,7 @@ class PickLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivit
         autocompleteFragment.setOnPlaceSelectedListener(object: PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 // As we have specified the fields we can use !!
-                address = Address(place.name!!, place.latLng?.latitude!!, place.latLng?.longitude!!)
+                address = Address(null, place.name!!, place.latLng?.latitude!!, place.latLng?.longitude!!)
                 updateMapLocation(place.latLng)
             }
 

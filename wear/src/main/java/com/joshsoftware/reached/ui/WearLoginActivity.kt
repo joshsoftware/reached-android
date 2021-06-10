@@ -72,7 +72,7 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
 
         viewModel.spinner.observe(this, Observer { loading ->
             if(loading) {
-                showProgressView(binding.parent)
+                showProgressView()
             } else {
                 hideProgressView()
             }

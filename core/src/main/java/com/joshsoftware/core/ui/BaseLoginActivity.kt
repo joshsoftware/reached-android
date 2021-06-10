@@ -98,9 +98,9 @@ open abstract class BaseLoginActivity: PermissionActivity() {
         if (requestCode == 10) {
             if (grantResults.isNotEmpty()) {
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    if (grantResults[0] === PackageManager.PERMISSION_GRANTED
-                            && grantResults[1] === PackageManager.PERMISSION_GRANTED) {
-                        if(grantResults[2] === PackageManager.PERMISSION_GRANTED) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        if(grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                             listener?.onPermissionGrant()
                             startLocationTrackingService()
                         } else {
@@ -112,8 +112,8 @@ open abstract class BaseLoginActivity: PermissionActivity() {
                             showAlert("Permission Required", "You have to Allow permission to access user location", 22)
                         }                    }
                 } else {
-                    if (grantResults[0] === PackageManager.PERMISSION_GRANTED
-                            && grantResults[1] === PackageManager.PERMISSION_GRANTED) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                         listener?.onPermissionGrant()
                         startLocationTrackingService()
                     } else {

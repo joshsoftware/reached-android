@@ -20,7 +20,6 @@ import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
 import com.joshsoftware.reached.model.OnboardingData
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
-import com.joshsoftware.reached.ui.activity.GroupListActivity
 import com.joshsoftware.reached.ui.activity.HomeActivity
 import com.joshsoftware.reached.ui.adapter.OnboardingAdapter
 import timber.log.Timber

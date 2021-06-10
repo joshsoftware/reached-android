@@ -8,6 +8,7 @@ enum class FirebaseDatabaseKey(var key: String) {
     USERS ("users"),
     REQUESTS ("requests"),
     MEMBERS ("members"),
+    ADDRESS ("address"),
     TOKEN ("token"),
     WATCH ("watch"),
     PHONE ("phone"),
