@@ -40,8 +40,17 @@ android {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue  "string", "app_name", "@string/app_name"
-            buildConfigField "String", "DATABASE_URL", "\"https://reached-stage.firebaseio.com/\""
+            buildConfigField "String", "DATABASE_URL", "\"https://reached-ce772.firebaseio.com/\""
             signingConfig signingConfigs.release
+        }
+
+        staging {
+            minifyEnabled false
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue  "string", "app_name", "@string/app_name_stage"
+            buildConfigField "String", "DATABASE_URL", "\"https://reached-stage.firebaseio.com/\""
+            signingConfig signingConfigs.debug
         }
 
         development {

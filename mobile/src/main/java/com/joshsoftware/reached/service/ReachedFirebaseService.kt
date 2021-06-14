@@ -93,8 +93,11 @@ class ReachedFirebaseService: FirebaseMessagingService() {
             }
             NotificationType.LEAVE.key -> {
                 getGroupLeaveRequestPendingIntent(data, message)
-            } else -> {
+            }
+            NotificationType.SOS.key -> {
                 getSosIntent(data)
+            } else -> {
+                getGeofenceIntent(data)
             }
         }
 
@@ -140,6 +143,17 @@ class ReachedFirebaseService: FirebaseMessagingService() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         return PendingIntent.getActivity(this, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    private fun getGeofenceIntent(data: String?): PendingIntent? {
+        val intent = Intent(this, MapActivity::class.java)
+        getNotificationPayload(data)?.let {
+            intent.putExtra(INTENT_GROUP_ID, it.groupId)
+            intent.putExtra(INTENT_MEMBER_ID, it.memberId)
+        }
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        return PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     override fun onDestroy() {

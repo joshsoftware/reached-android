@@ -96,7 +96,7 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
         viewModel.result.observe(this, androidx.lifecycle.Observer{ id ->
             id?.let {
-//                startGroupMemberActivity(it)
+                startGroupMemberActivity()
                 finish()
             }
         })

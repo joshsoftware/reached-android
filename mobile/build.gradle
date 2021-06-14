@@ -45,6 +45,12 @@ android {
             signingConfig signingConfigs.releaase
 
         }
+        staging {
+            minifyEnabled false
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
         development {
             minifyEnabled false
             debuggable true

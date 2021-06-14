@@ -40,7 +40,7 @@ class HomeActivity : BaseActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var geofencingClient: GeofencingClient
-
+    private var geofenceAdded: Boolean = false
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,8 +137,9 @@ class HomeActivity : BaseActivity() {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         viewModel.result.observe(this, {
-            if(it.isNotEmpty()) {
+            if(!geofenceAdded) {
                 addGeofences(it)
+                geofenceAdded = true
             }
             adapter.submitList(it)
             adapter.notifyDataSetChanged()
@@ -181,52 +182,43 @@ class HomeActivity : BaseActivity() {
         startActivity(intent)
     }private fun addGeofences(list: MutableList<Group>) {
         sharedPreferences.userId?.let { userId ->
-            val addressList = getAddressListForUserId(userId, list)
-            geofencingClient.removeGeofences(addressList.map { it.id })
 
             val geofencingBuilder = GeofencingRequest.Builder()
-            addressList.forEach { address ->
-                val geofence = Geofence.Builder()
-                        .setRequestId(address.id!!)
-                        .setCircularRegion(
-                                address.lat,
-                                address.long,
-                                address.radius.toFloat())
-                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
-                        .build()
-                geofencingBuilder.addGeofence(geofence)
-
-            }
-            if(addressList.isNotEmpty()) {
-                val geofenceRequest = geofencingBuilder.build()
-                val intent = Intent(this, GeofenceBroadcastReceiver::class.java)
-                intent.action = GeoConstants.ACTION_GEO_FENCE
-                val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-                geofencingClient.addGeofences(geofenceRequest, pendingIntent).addOnCompleteListener {
-                    if(it.isSuccessful) {
-                        Timber.e("Geofence added successfully")
-                    } else {
-                        Timber.e("Failed to add geofence")
+            val addressList = mutableListOf<Address>()
+            list.forEach { group ->
+                group.members.forEach { (key, member) ->
+                    if(key == userId) {
+                        group.members[key]?.address?.forEach { (t, address) ->
+                            geofencingClient.removeGeofences(mutableListOf(t))
+                            val geofence = Geofence.Builder()
+                                .setRequestId(t)
+                                .setCircularRegion(
+                                    address.lat,
+                                    address.long,
+                                    address.radius.toFloat())
+                                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+                                .build()
+                            geofencingBuilder.addGeofence(geofence)
+                            val geofenceRequest = geofencingBuilder.build()
+                            val intent = Intent(this, GeofenceBroadcastReceiver::class.java)
+                            intent.putExtra(IntentConstant.GROUP_ID.name, group.id)
+                            intent.putExtra(IntentConstant.MEMBER_ID.name, key)
+                            intent.action = GeoConstants.ACTION_GEO_FENCE
+                            val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+                            geofencingClient.addGeofences(geofenceRequest, pendingIntent).addOnCompleteListener {
+                                if(it.isSuccessful) {
+                                    Timber.e("Geofence added successfully")
+                                } else {
+                                    Timber.e("Failed to add geofence")
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-        }
-    }
 
-    private fun getAddressListForUserId(userId: String, list: MutableList<Group>): MutableList<Address> {
-        val addressList = mutableListOf<Address>()
-        list.forEach {
-            it.members.forEach { (key, value) ->
-                if(key == userId) {
-                    it.members[key]?.address?.forEach { (t, u) ->
-                        it.members[key]!!.address[t]!!.id = t
-                        addressList.add(it.members[key]!!.address[t]!!)
-                    }
-                }
-            }
         }
-        return addressList
     }
 }

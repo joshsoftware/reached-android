@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name_dev">Development</string>
+    <string name="app_name_stage">Stage</string>
     <string name="network_error">Please check your internet connection</string>
     <string name="please_try_again">Please try again</string>
     <string name="something_went_wrong">Something went wrond</string>

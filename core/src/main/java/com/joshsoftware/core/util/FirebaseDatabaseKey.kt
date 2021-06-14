@@ -12,4 +12,6 @@ enum class FirebaseDatabaseKey(var key: String) {
     TOKEN ("token"),
     WATCH ("watch"),
     PHONE ("phone"),
+    ENTERED ("entered"),
+    EXIT ("entered")
 }
