@@ -68,22 +68,31 @@ class FirebaseRealtimeDbManager {
         })
     }
 
-    suspend fun toggleSosState(groupId: String, user: User, userId: String, sosSent: Boolean) = suspendCoroutine<Boolean?> { continuation ->
-        groupReference.child(groupId).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val group = snapshot.getValue(Group::class.java)
-                val member = group?.members?.get(userId)
-                member?.let {
-                    member.sosState = sosSent
-                    groupReference.child(groupId).setValue(group)
-                }
-                continuation.resume(member?.sosState)
+    suspend fun toggleSosState(user: User, userId: String, sosSent: Boolean) = suspendCoroutine<Boolean?> { continuation ->
+        userReference.child(userId).child("sosState").setValue(true).addOnCompleteListener {
+            if(it.isSuccessful) {
+//                user.groups.forEach { t, u ->
+//                    groupReference.child(groupId).addListenerForSingleValueEvent(object : ValueEventListener {
+//                        override fun onDataChange(snapshot: DataSnapshot) {
+//                            val group = snapshot.getValue(Group::class.java)
+//                            val member = group?.members?.get(userId)
+//                            member?.let {
+//                                member.sosState = sosSent
+//                                groupReference.child(groupId).setValue(group)
+//                            }
+//                            continuation.resume(member?.sosState)
+//                        }
+//
+//                        override fun onCancelled(error: DatabaseError) {
+//                            continuation.resumeWithException(error.toException())
+//                        }
+//                    })
+//                }
+            } else {
+                it.exception?.let { ex -> continuation.resumeWithException(ex) }
             }
+        }
 
-            override fun onCancelled(error: DatabaseError) {
-                continuation.resumeWithException(error.toException())
-            }
-        })
     }
 
     suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double) = suspendCoroutine<Pair<Group, User>> { continuation ->
@@ -456,7 +465,7 @@ class FirebaseRealtimeDbManager {
         }
     }
 
-    suspend fun deleteGroup(group: Group, userId: String) = suspendCoroutine<Boolean> { continuation ->
+    suspend fun deleteGroup(group: Group) = suspendCoroutine<Boolean> { continuation ->
         group.id?.let { gId ->
             groupReference.child(gId).removeValue().addOnCompleteListener {
                 if(it.isSuccessful) {
@@ -614,6 +623,19 @@ class FirebaseRealtimeDbManager {
                         it.exception?.let { ex -> deferred.completeExceptionally(ex) }
                     }
                 }
+        return deferred
+    }
+
+    fun deleteAddress(groupId: String, memberId: String, addressId: String): Deferred<Boolean> {
+        val deferred = CompletableDeferred<Boolean>()
+        groupReference.child(groupId).child(MEMBERS.key).child(memberId)
+            .child(ADDRESS.key).child(addressId).removeValue().addOnCompleteListener {
+                if(it.isSuccessful) {
+                    deferred.complete(true)
+                } else {
+                    it.exception?.let { ex -> deferred.completeExceptionally(ex) }
+                }
+            }
         return deferred
     }
 

@@ -44,46 +44,25 @@
                 app:layout_constraintTop_toTopOf="parent"/>
 
             <ImageView
-                android:id="@+id/imgMenu"
+                android:id="@+id/imgGroupMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@id/imgAddMember"
                 android:src="@drawable/ic_menu_dots"
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackground"
                 app:layout_constraintBottom_toBottomOf="@id/nameTextView"
-                app:layout_constraintEnd_toEndOf="@id/imgAddMember"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/nameTextView" />
 
-            <TextView
-                android:text="Tracking location"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:textColor="@android:color/holo_blue_bright"
-                android:textSize="16sp"
-                android:id="@+id/statusTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/nameTextView"
-                />
-            <TextView
-                android:text="All members are SAFE"
-                android:layout_marginStart="16dp"
-                android:textSize="12sp"
-                android:id="@+id/subTitleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/statusTextView"
-                />
             <ImageView
                 android:layout_marginEnd="16dp"
                 android:id="@+id/imgAddMember"
                 android:src="@drawable/ic_add_member"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/statusTextView"
-                app:layout_constraintBottom_toBottomOf="@id/subTitleTextView"/>
+                app:layout_constraintTop_toTopOf="@+id/nameTextView"
+                app:layout_constraintBottom_toBottomOf="@+id/nameTextView"
+                app:layout_constraintEnd_toStartOf="@id/imgGroupMenu"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/memberRecyclerView"
                 android:layout_width="match_parent"
@@ -96,7 +75,23 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
                 />
-
+            <View
+                android:id="@+id/viewTransparent"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#42000000"
+                />
+            <include
+                android:id="@+id/groupMenuLayout"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                layout="@layout/group_menu_layout"
+                app:layout_constraintTop_toBottomOf="@id/imgGroupMenu"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="16dp"
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

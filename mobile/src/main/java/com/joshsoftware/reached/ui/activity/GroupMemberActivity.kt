@@ -163,7 +163,7 @@ class GroupMemberActivity : BaseActivity() {
             binding.sosLabel.text = getString(R.string.send_sos)
         }
         sosSent = !sosSent
-        viewModel.sendSos(groupId, userId = sharedPreferences.userId!!, user = sharedPreferences.userData!!, sosSent = sosSent)
+//        viewModel.sendSos(groupId, userId = sharedPreferences.userId!!, user = sharedPreferences.userData!!, sosSent = sosSent)
     }
 
     private fun setSosLabel(sosSent: Boolean) {

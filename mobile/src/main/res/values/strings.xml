@@ -54,4 +54,5 @@
     <string name="address_save_success_message">Address added successfully!</string>
     <string name="check_location_activity">Check Location Activity</string>
     <string name="locate_now">Locate now</string>
+    <string name="message_address_deleted">Address was deleted successfully!!</string>
 </resources>

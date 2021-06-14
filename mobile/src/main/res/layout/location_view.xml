@@ -59,6 +59,7 @@
             <ImageView
                 android:id="@+id/imgDelete"
                 android:padding="16dp"
+                android:clickable="true"
                 android:src="@drawable/ic_close"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="?attr/selectableItemBackground"

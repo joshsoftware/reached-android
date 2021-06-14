@@ -4,6 +4,7 @@ import android.location.Location
 import com.google.firebase.database.DatabaseError
 import com.joshsoftware.core.model.*
 import com.joshsoftware.core.util.FirebaseRealtimeDbManager
+import kotlinx.coroutines.Deferred
 import java.lang.Exception
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -38,8 +39,8 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     suspend fun updateLocation(groupId: String, userId: String, location: Location): Group? {
         return dbManager.updateLocation(groupId, userId, location)
     }
-    suspend fun sendSos(groupId: String, userId: String, user: User, sosSent: Boolean): Boolean? {
-        return dbManager.toggleSosState(groupId, user, userId, sosSent)
+    suspend fun sendSos(userId: String, user: User, sosSent: Boolean): Boolean? {
+        return dbManager.toggleSosState(user, userId, sosSent)
     }
 
 
@@ -70,8 +71,8 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     }
 
 
-    suspend fun deleteGroup(group: Group, userId: String): Boolean? {
-        return dbManager.deleteGroup(group, userId)
+    suspend fun deleteGroup(group: Group): Boolean? {
+        return dbManager.deleteGroup(group)
     }
 
     suspend fun leaveRequestExists(userId: String, groupId: String): Boolean {
@@ -84,5 +85,9 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
 
     suspend fun getLeaveRequests(groupId: String): List<LeaveRequestData> {
         return dbManager.getRequests(groupId)
+    }
+
+    fun deleteAddress(groupId: String, memberId: String, addressId: String): Deferred<Boolean> {
+        return dbManager.deleteAddress(groupId, memberId, addressId)
     }
 }

@@ -2,6 +2,7 @@ package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -45,7 +46,10 @@ class ProfileActivity : BaseActivity() {
             startMapActivity(userId, groupId)
         }
         txtAddLocaiton.setOnClickListener {
-            startSelectLocationActivity()
+            startSelectLocationActivity(userId, groupId)
+        }
+        imgBack.setOnClickListener {
+            onBackPressed()
         }
     }
 
@@ -54,8 +58,26 @@ class ProfileActivity : BaseActivity() {
             it.value.id = it.key
             it.value
         }.toMutableList()
-        addressList.add(Address(null, "Test 2", "Prime plus", "enter", 2112.0, 1212.0, 100))
-        adapter = AddressAdapter()
+        adapter = AddressAdapter { address ->
+            showChoiceDialog("Do you want to delete this address?", {
+                isNetWorkAvailable {
+                    if(groupId != null && member.id != null) {
+                        viewModel.deleteAddress(groupId!!, member.id!!, address.id).observe(this, {
+                            val list = adapter.currentList.toMutableList()
+                            val index = list.indexOfFirst { it.id ==  address.id}
+                            if(index != -1) {
+                                list.removeAt(index)
+                                adapter.submitList(list)
+                                adapter.notifyItemRemoved(index)
+                            }
+                            showToastMessage(getString(R.string.message_address_deleted))
+                        })
+                    }
+
+                }
+            })
+        }
+
         locationViewPager.adapter = adapter
         locationViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         locationViewPager.offscreenPageLimit = 1
@@ -70,8 +92,10 @@ class ProfileActivity : BaseActivity() {
         adapter.submitList(addressList)
     }
 
-    private fun startSelectLocationActivity() {
+    private fun startSelectLocationActivity(memberId: String?, groupId: String?) {
         val intent = Intent(this, PickLocationActivity::class.java)
+        intent.putExtra(IntentConstant.MEMBER_ID.name, memberId)
+        intent.putExtra(IntentConstant.GROUP_ID.name, groupId)
         startActivityForResult(intent, RequestCodes.PICK_LOCATION.code)
     }
 
@@ -96,7 +120,14 @@ class ProfileActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == RESULT_OK) {
-
+            if(requestCode == RequestCodes.PICK_LOCATION.code) {
+                val list = adapter.currentList.toMutableList()
+                data?.extras?.getParcelable<Address>(IntentConstant.ADDRESS.name)?.let {
+                    list.add(it)
+                    adapter.submitList(list)
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
     }
 

@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
+import android.view.View
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
@@ -25,8 +27,8 @@ import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.adapter.HomeAdapter
 import com.joshsoftware.reached.viewmodel.HomeViewModel
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.home_view.*
 import kotlinx.android.synthetic.main.layout_create_group.*
+import kotlinx.android.synthetic.main.layout_reached_header.*
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -49,6 +51,12 @@ class HomeActivity : BaseActivity() {
         geofencingClient = LocationServices.getGeofencingClient(this)
         setupViewPager()
         fetchGroups()
+
+        txtSos.setOnClickListener {
+            if(sharedPreferences.userId != null  && sharedPreferences.userData != null) {
+                viewModel.sendSos(sharedPreferences.userId!!, sharedPreferences.userData!!, true)
+            }
+        }
         fabCreate.setOnClickListener {
             showCreateGroupLayout()
         }
@@ -76,6 +84,7 @@ class HomeActivity : BaseActivity() {
                             long = location.longitude
                         }
                         viewModel.createGroup(groupId, id, user, groupName, lat, long).observe(this, {
+                            updateCurrentAdapterList(it)
                             showToastMessage("Group created successfully!")
                         })
                     }
@@ -87,6 +96,7 @@ class HomeActivity : BaseActivity() {
         txtShowOnMap.setOnClickListener {
             startMapActivity()
         }
+
     }
 
 
@@ -101,8 +111,16 @@ class HomeActivity : BaseActivity() {
     private fun setupViewPager() {
         adapter = HomeAdapter(sharedPreferences, { member, groupId ->
             startProfileActivity(member, groupId)
-        }) {
-            startQrCodeActivity(it)
+        }, { group ->
+
+        }, { group, position ->
+            showChoiceDialog("Do you ]want to delete this group?", {
+                viewModel.deleteGroup(group).observe(this, {
+                    showToastMessage("Group was deleted successfully!")
+                })
+            })
+        }) { group ->
+            startQrCodeActivity(group)
         }
         homeViewPager.adapter = adapter
         dotsIndicator.setViewPager2(homeViewPager)
@@ -124,7 +142,7 @@ class HomeActivity : BaseActivity() {
     private fun startProfileActivity(member: Member, groupId: String) {
         val intent = Intent(this, ProfileActivity::class.java)
         intent.putExtra(IntentConstant.MEMBER.name, member)
-        intent.putExtra(INTENT_GROUP_ID, groupId)
+        intent.putExtra(IntentConstant.GROUP_ID.name, groupId)
         startActivity(intent)
     }
 
@@ -151,6 +169,10 @@ class HomeActivity : BaseActivity() {
         })
     }
 
+    fun updateCurrentAdapterList(group: Group) {
+        adapter.notifyItemInserted(adapter.currentList.size - 1)
+        dotsIndicator.refreshDots()
+    }
 
     private fun showCreateGroupLayout() {
         val set = ConstraintSet()
@@ -191,14 +213,14 @@ class HomeActivity : BaseActivity() {
                         group.members[key]?.address?.forEach { (t, address) ->
                             geofencingClient.removeGeofences(mutableListOf(t))
                             val geofence = Geofence.Builder()
-                                .setRequestId(t)
-                                .setCircularRegion(
-                                    address.lat,
-                                    address.long,
-                                    address.radius.toFloat())
-                                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
-                                .build()
+                                    .setRequestId(t)
+                                    .setCircularRegion(
+                                            address.lat,
+                                            address.long,
+                                            address.radius.toFloat())
+                                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+                                    .build()
                             geofencingBuilder.addGeofence(geofence)
                             val geofenceRequest = geofencingBuilder.build()
                             val intent = Intent(this, GeofenceBroadcastReceiver::class.java)

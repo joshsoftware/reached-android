@@ -14,6 +14,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.joshsoftware.core.BaseMapActivity
 import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.IntentConstant
+import com.joshsoftware.core.model.RequestCodes
 import com.joshsoftware.reached.R
 import kotlinx.android.synthetic.main.activity_groups.titleTextView
 import kotlinx.android.synthetic.main.activity_pick_location.*
@@ -23,6 +24,8 @@ import timber.log.Timber
 class PickLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
 
     private var address: Address? = null
+    lateinit var memberId: String
+    lateinit var groupId: String
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +33,20 @@ class PickLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivit
         setContentView(R.layout.activity_pick_location)
         Places.initialize(this, getString(R.string.places_api_key))
         setupMap()
+        handleIntent()
         setupListeners()
         titleTextView.setText(getString(R.string.choose_location_on_map_title))
+    }
+
+    private fun handleIntent() {
+        intent.extras?.getString(IntentConstant.MEMBER_ID.name)?.let {
+            memberId = it
+        } ?: kotlin.run { throw Exception("Member id required for saving location") }
+
+        intent.extras?.getString(IntentConstant.GROUP_ID.name)?.let {
+            groupId = it
+        } ?: kotlin.run { throw Exception("Group id required for saving location") }
+
     }
 
     private fun setupListeners() {
@@ -49,14 +64,16 @@ class PickLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivit
     private fun startSaveLocationActivity(address: Address?) {
         val intent = Intent(this, SavePickedLocationActivity::class.java)
         intent.putExtra(IntentConstant.ADDRESS.name, address)
-        startActivity(intent)
+        intent.putExtra(IntentConstant.MEMBER_ID.name, memberId)
+        intent.putExtra(IntentConstant.GROUP_ID.name, groupId)
+        startActivityForResult(intent, RequestCodes.PICK_LOCATION.code)
     }
 
     private fun setupMap() {
         listener = this
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment?
+            .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.let {
             setMapFragment(it)
         }
@@ -95,5 +112,19 @@ class PickLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivit
     private fun updateMapLocation(latLng: LatLng?) {
         val cu = CameraUpdateFactory.newLatLng(latLng)
         map?.animateCamera(cu);
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == RESULT_OK) {
+            if(requestCode == RequestCodes.PICK_LOCATION.code) {
+                data?.extras?.getParcelable<Address>(IntentConstant.ADDRESS.name)?.let {
+                    val resultIntent = Intent()
+                    resultIntent.putExtra(IntentConstant.ADDRESS.name, it)
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                }
+            }
+        }
     }
 }

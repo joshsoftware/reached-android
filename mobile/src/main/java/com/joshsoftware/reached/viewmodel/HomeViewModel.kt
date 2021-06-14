@@ -15,6 +15,14 @@ class HomeViewModel @Inject constructor(val sharedPreferences: AppSharedPreferen
                                         val repository: GroupRepository)
     : BaseViewModel<MutableList<Group>>() {
 
+    fun sendSos(userId: String, user: User, sosSent: Boolean): MutableLiveData<Boolean> {
+        val liveData = MutableLiveData<Boolean>()
+        executeRoutine {
+            liveData.value = repository.sendSos(userId, user, sosSent)
+        }
+        return liveData
+    }
+
     fun fetchGroups(userId: String) {
         viewModelScope.launch {
             _spinner.value = true
@@ -51,6 +59,14 @@ class HomeViewModel @Inject constructor(val sharedPreferences: AppSharedPreferen
                 sharedPreferences.saveUserData(it)
             }
             liveData.value = group
+        }
+        return liveData
+    }
+
+    fun deleteGroup(group: Group): LiveData<Boolean> {
+        val liveData = MutableLiveData<Boolean>()
+        executeRoutine {
+            liveData.value = repository.deleteGroup(group)
         }
         return liveData
     }

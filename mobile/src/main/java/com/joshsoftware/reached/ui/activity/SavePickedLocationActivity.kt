@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.TextUtils
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -39,18 +40,11 @@ class SavePickedLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapA
         setContentView(R.layout.activity_save_picked_location)
         setupMapFragmnet()
 
-//        intent.extras?.getParcelable<Address>(IntentConstant.ADDRESS.name)?.let {
-//            address = it
-//            setupUi(it)
-//        }
         handleIntent()
         setupListeners()
     }
 
     private fun handleIntent() {
-        intent.putExtra(IntentConstant.MEMBER_ID.name, "WVG6pD4AvbUwe2c03LkPgVfC1KU2")
-        intent.putExtra(IntentConstant.GROUP_ID.name, "3c76b335-cf87-4946-9841-d39bc60668bd")
-        intent.putExtra(IntentConstant.ADDRESS.name, Address(null, "Test address", "Sai anand apt", Transition.ENTER.key, 18.5135, 73.7699, 100))
         intent.extras?.getString(IntentConstant.MEMBER_ID.name)?.let {
             memberId = it
         } ?: kotlin.run { throw Exception("Member id required for saving location") }
@@ -100,8 +94,19 @@ class SavePickedLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapA
         }
         txtSave.setOnClickListener {
             isNetWorkAvailable {
+                if(TextUtils.isEmpty(edtLocation.text)) {
+                    showToastMessage("Please enter a name for location")
+                    return@isNetWorkAvailable
+                }
+                address.name = edtLocation.text.toString()
                 viewModel.saveAddress(memberId, groupId, address)
             }
+        }
+        radioBtnHome.setOnClickListener {
+            edtLocation.setText("Home")
+        }
+        radioBtnWork.setOnClickListener {
+            edtLocation.setText("Work")
         }
     }
 
