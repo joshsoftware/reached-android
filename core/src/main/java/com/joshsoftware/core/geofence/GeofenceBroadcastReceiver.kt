@@ -19,8 +19,7 @@ import dagger.android.AndroidInjection
 import kotlinx.coroutines.flow.combineTransform
 import javax.inject.Inject
 
-class GeofenceBroadcastReceiver @Inject constructor(val dbManager: FirebaseRealtimeDbManager): BroadcastReceiver() {
-
+class GeofenceBroadcastReceiver(): BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         AndroidInjection.inject(this, context);
         val geofenceIntent = GeofencingEvent.fromIntent(intent)
@@ -28,17 +27,17 @@ class GeofenceBroadcastReceiver @Inject constructor(val dbManager: FirebaseRealt
         val mId = intent?.extras?.getString(IntentConstant.MEMBER_ID.name)
         if(gId != null && mId != null) {
             if(geofenceIntent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                dbManager.groupReference.child(gId).child(FirebaseDatabaseKey.MEMBERS.key)
-                    .child(mId)
-                    .child(FirebaseDatabaseKey.ADDRESS.key)
-                    .child(geofenceIntent.triggeringGeofences[0].requestId)
-                        .child(FirebaseDatabaseKey.ENTERED.key).setValue(true)
+//                dbManager.groupReference.child(gId).child(FirebaseDatabaseKey.MEMBERS.key)
+//                    .child(mId)
+//                    .child(FirebaseDatabaseKey.ADDRESS.key)
+//                    .child(geofenceIntent.triggeringGeofences[0].requestId)
+//                        .child(FirebaseDatabaseKey.ENTERED.key).setValue(true)
             } else {
-                dbManager.groupReference.child(gId).child(FirebaseDatabaseKey.MEMBERS.key)
-                        .child(mId)
-                        .child(FirebaseDatabaseKey.ADDRESS.key)
-                        .child(geofenceIntent.triggeringGeofences[0].requestId)
-                        .child(FirebaseDatabaseKey.ENTERED.key).setValue(true)
+//                dbManager.groupReference.child(gId).child(FirebaseDatabaseKey.MEMBERS.key)
+//                        .child(mId)
+//                        .child(FirebaseDatabaseKey.ADDRESS.key)
+//                        .child(geofenceIntent.triggeringGeofences[0].requestId)
+//                        .child(FirebaseDatabaseKey.ENTERED.key).setValue(true)
             }
         }
         if (context != null) {

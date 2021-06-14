@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.model.RequestCodes
@@ -13,7 +14,9 @@ import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.adapter.AddressAdapter
 import com.joshsoftware.reached.viewmodel.ProfileViewModel
 import kotlinx.android.synthetic.main.activity_groups.*
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_profile.*
+import java.lang.Math.abs
 import javax.inject.Inject
 
 class ProfileActivity : BaseActivity() {
@@ -50,10 +53,20 @@ class ProfileActivity : BaseActivity() {
         val addressList = member.address.map {
             it.value.id = it.key
             it.value
-        }
+        }.toMutableList()
+        addressList.add(Address(null, "Test 2", "Prime plus", "enter", 2112.0, 1212.0, 100))
         adapter = AddressAdapter()
         locationViewPager.adapter = adapter
         locationViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        locationViewPager.offscreenPageLimit = 1
+        val nextItemVisiblePx = resources.getDimension(R.dimen.viewpager_next_item_visible)
+        val currentItemHorizontalMarginPx = resources.getDimension(R.dimen.viewpager_current_item_horizontal_margin)
+        val pageTranslationX = nextItemVisiblePx + currentItemHorizontalMarginPx
+        locationViewPager.setPageTransformer { page, position ->
+            page.translationX = -pageTranslationX * position
+            // Next line scales the item's height. You can remove it if you don't want this effect
+//            page.scaleY = 1 - (0.25f * abs(position))
+        }
         adapter.submitList(addressList)
     }
 

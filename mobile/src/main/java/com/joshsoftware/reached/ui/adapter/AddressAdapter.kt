@@ -34,6 +34,7 @@ class AddressAdapter: ListAdapter<Address, ViewHolder>(DIFF_CALLBACK) {
         if(model != null) {
             holder.itemView.apply {
                 txtLocationName.text = model.name
+                txtRadius.text = "${(model.radius.toFloat() / 1000.0)} KM"
                 txtAddress.text = model.address
             }
         }

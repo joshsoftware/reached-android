@@ -14,7 +14,7 @@ data class Address(
         var transition: String,
         var lat: Double,
         var long: Double,
-        var radius: Int = 0
+        var radius: Int = 200
 ): Parcelable {
     constructor(): this(null, "","","enter", 0.0, 0.0)
 }

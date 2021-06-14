@@ -81,7 +81,7 @@ class PickLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivit
         autocompleteFragment.setOnPlaceSelectedListener(object: PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 // As we have specified the fields we can use !!
-                address = Address(null, place.name!!, place.latLng?.latitude!!, place.latLng?.longitude!!)
+                address = Address(null, "", place.name!!, "enter", place.latLng?.latitude!!, place.latLng?.longitude!!)
                 updateMapLocation(place.latLng)
             }
 

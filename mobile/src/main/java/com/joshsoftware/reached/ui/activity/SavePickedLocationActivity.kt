@@ -17,6 +17,7 @@ import com.joshsoftware.core.BaseMapActivity
 import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.reached.R
+import com.joshsoftware.reached.model.Transition
 import com.joshsoftware.reached.viewmodel.SaveLocationViewModel
 import kotlinx.android.synthetic.main.activity_save_picked_location.*
 import kotlinx.android.synthetic.main.layout_save_location_header.*
@@ -48,8 +49,8 @@ class SavePickedLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapA
 
     private fun handleIntent() {
         intent.putExtra(IntentConstant.MEMBER_ID.name, "WVG6pD4AvbUwe2c03LkPgVfC1KU2")
-        intent.putExtra(IntentConstant.GROUP_ID.name, "79a60b6f-a6fa-4f07-967d-bf140e6835cb")
-        intent.putExtra(IntentConstant.ADDRESS.name, Address(null, "Test address", 18.5135, 73.7699, 100))
+        intent.putExtra(IntentConstant.GROUP_ID.name, "3c76b335-cf87-4946-9841-d39bc60668bd")
+        intent.putExtra(IntentConstant.ADDRESS.name, Address(null, "Test address", "Sai anand apt", Transition.ENTER.key, 18.5135, 73.7699, 100))
         intent.extras?.getString(IntentConstant.MEMBER_ID.name)?.let {
             memberId = it
         } ?: kotlin.run { throw Exception("Member id required for saving location") }
