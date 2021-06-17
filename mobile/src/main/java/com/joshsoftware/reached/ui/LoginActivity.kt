@@ -8,7 +8,6 @@ import android.transition.TransitionManager
 import android.view.View
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.constraintlayout.widget.Constraints
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -27,8 +26,6 @@ import javax.inject.Inject
 
 class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListener {
     lateinit var binding: ActivityLoginMobileBinding
-
-    private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
     private var adapter: OnboardingAdapter? = null
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
@@ -50,21 +47,9 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
             sharedPreferences.setOnboardingShown(true)
         } else {
             hideOnboarding()
-            sharedPreferences.userData?.let {
-                if (it.groups.isEmpty()) {
-                    startGroupChoiceActivity()
-                } else {
-                    startGroupListActivity()
-                }
-                finish()
-            }
-
         }
         binding.apply {
             imgSkip.setOnClickListener {
-                hideOnboarding()
-            }
-            imgSliderToggle.setOnClickListener {
                 hideOnboarding()
             }
             btnGoogleSignIn.setOnClickListener {
@@ -79,7 +64,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
             viewPagerOnboarding.orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = OnboardingAdapter()
             viewPagerOnboarding.adapter = adapter
-            adapter?.submitList(listOf(
+            val list = listOf(
                 OnboardingData(
                     R.drawable.onboarding_one_background, R.drawable.onboarding_one, getString(
                         R.string.onboarding_text_one)),
@@ -92,37 +77,29 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
                 OnboardingData(
                     R.drawable.onboarding_four_background, R.drawable.onboarding_four, getString(
                         R.string.onboarding_text_four))
-            ))
+            )
+            adapter?.submitList(list)
             dotsIndicator.setViewPager2(viewPagerOnboarding)
-            pageCounter = object : Runnable {
-                override fun run() {
-                        if (viewPagerOnboarding.currentItem < 4) {
-                            viewPagerOnboarding.currentItem++
-                            if(viewPagerOnboarding.currentItem != 3) {
-                                handler.postDelayed(this, 2 * 1000)
-                            }
-                        }
-                }
-            }
-            handler.postDelayed(pageCounter!!, 2 * 1000)
-            viewPagerOnboarding.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    if(position == 3) {
-                        btnContinue.visibility = View.VISIBLE
-                        imgContinue.visibility = View.GONE
-                    } else {
 
-                        btnContinue.visibility = View.GONE
-                        imgContinue.visibility = View.VISIBLE
-                    }
-                }
-            })
-            btnContinue.setOnClickListener {
-                    hideOnboarding()
-            }
+//            /** Enables automatic page swap */
+//            pageCounter = object : Runnable {
+//                override fun run() {
+//                        if (viewPagerOnboarding.currentItem < 4) {
+//                            viewPagerOnboarding.currentItem++
+//                            if(viewPagerOnboarding.currentItem != 3) {
+//                                handler.postDelayed(this, 2 * 1000)
+//                            }
+//                        }
+//                }
+//            }
+//            handler.postDelayed(pageCounter!!, 2 * 1000)
+
             imgContinue.setOnClickListener {
-                viewPagerOnboarding.setCurrentItem(viewPagerOnboarding.currentItem + 1, true)
+                if(viewPagerOnboarding.currentItem == list.size - 1) {
+                    hideOnboarding()
+                } else {
+                    viewPagerOnboarding.setCurrentItem(viewPagerOnboarding.currentItem + 1, true)
+                }
             }
         }
 

@@ -34,41 +34,20 @@
                 android:id="@+id/viewPagerOnboarding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/continueLayout"
+                app:layout_constraintBottom_toTopOf="@id/imgContinue"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/continueLayout"
-                android:layout_width="wrap_content"
-                android:layout_marginBottom="@dimen/dimen_onboarding_btn_bottom_margin"
-                android:layout_height="60dp"
-                app:layout_constraintBottom_toTopOf="@id/dotsIndicator"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
             <ImageView
                 android:id="@+id/imgContinue"
+                android:layout_marginBottom="@dimen/dimen_onboarding_btn_bottom_margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_onboarding_arrow"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/dotsIndicator"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnContinue"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/black"
-                android:text="@string/button_text_continue"
-                android:textColor="@color/white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
             <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
                 android:id="@+id/dotsIndicator"
                 android:layout_width="wrap_content"
@@ -109,6 +88,7 @@
         <ImageView
             android:id="@+id/imgSliderToggle"
             android:layout_width="wrap_content"
+            android:visibility="invisible"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_slider_toggle"
             app:layout_constraintBottom_toBottomOf="@id/imgSliderBackground"

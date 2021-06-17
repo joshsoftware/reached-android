@@ -15,6 +15,7 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.tabs.TabLayoutMediator
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.geofence.GeoConstants
 import com.joshsoftware.core.geofence.GeofenceBroadcastReceiver
@@ -25,6 +26,8 @@ import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.adapter.HomeAdapter
+import com.joshsoftware.reached.ui.dialog.JoinGroupDialog
+import com.joshsoftware.reached.utils.InviteLinkUtils
 import com.joshsoftware.reached.viewmodel.HomeViewModel
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.layout_create_group.*
@@ -48,6 +51,11 @@ class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        val linkUtils = InviteLinkUtils()
+        linkUtils.handleDynamicLinks(intent) {
+            showJoinGroupAlertDialog(it)
+        }
         geofencingClient = LocationServices.getGeofencingClient(this)
         setupViewPager()
         fetchGroups()
@@ -99,6 +107,9 @@ class HomeActivity : BaseActivity() {
 
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+    }
 
     private fun fetchGroups() {
         isNetWorkAvailable {
@@ -116,6 +127,10 @@ class HomeActivity : BaseActivity() {
         }, { group, position ->
             showChoiceDialog("Do you ]want to delete this group?", {
                 viewModel.deleteGroup(group).observe(this, {
+                    sharedPreferences.userData?.apply {
+                        groups.remove(group.id)
+                        sharedPreferences.saveUserData(this)
+                    }
                     showToastMessage("Group was deleted successfully!")
                 })
             })
@@ -123,7 +138,9 @@ class HomeActivity : BaseActivity() {
             startQrCodeActivity(group)
         }
         homeViewPager.adapter = adapter
-        dotsIndicator.setViewPager2(homeViewPager)
+        TabLayoutMediator (dotsTabLayout, homeViewPager) { tab, pos ->
+
+        }.attach()
 
         val pageMargin = resources.getDimensionPixelOffset(R.dimen.page_margin).toFloat()
         val pageOffset = resources.getDimensionPixelOffset(R.dimen.offset).toFloat()
@@ -155,13 +172,15 @@ class HomeActivity : BaseActivity() {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         viewModel.result.observe(this, {
+            if(it.size == 0) {
+                startGroupChoiceActivity()
+            }
             if(!geofenceAdded) {
                 addGeofences(it)
                 geofenceAdded = true
             }
             adapter.submitList(it)
             adapter.notifyDataSetChanged()
-            dotsIndicator.refreshDots()
         })
 
         viewModel.spinner.observe(this, {
@@ -169,9 +188,14 @@ class HomeActivity : BaseActivity() {
         })
     }
 
-    fun updateCurrentAdapterList(group: Group) {
+    private fun startGroupChoiceActivity() {
+        val intent = Intent(this, GroupChoiceActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+    }
+
+    private fun updateCurrentAdapterList(group: Group) {
         adapter.notifyItemInserted(adapter.currentList.size - 1)
-        dotsIndicator.refreshDots()
     }
 
     private fun showCreateGroupLayout() {
@@ -242,5 +266,10 @@ class HomeActivity : BaseActivity() {
 
 
         }
+    }
+
+    private fun showJoinGroupAlertDialog(group: Group) {
+        val dialog = JoinGroupDialog.newInstance(group)
+        dialog.show(supportFragmentManager, dialog.tag)
     }
 }

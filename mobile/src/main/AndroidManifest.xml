@@ -16,11 +16,9 @@
         </activity>
         <activity android:name=".ui.activity.PickLocationActivity" />
         <activity android:name=".ui.activity.ProfileActivity" android:theme="@style/ProfileTheme"/>
-        <activity android:name=".ui.activity.HomeActivity" />
-        <activity
-            android:name=".ui.activity.OnboardingActivity"
-            android:theme="@style/OnboardingTheme" />
-        <activity android:name=".ui.activity.GroupListActivity">
+        <activity android:name=".ui.activity.HomeActivity"
+            android:launchMode="singleTop"
+            >
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -35,6 +33,9 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.activity.OnboardingActivity"
+            android:theme="@style/OnboardingTheme" />
         <activity android:name=".ui.activity.CreateGroupActivity" />
 
         <meta-data
@@ -65,6 +66,7 @@
         <activity
             android:name=".ui.activity.GroupChoiceActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/GroupChoiceTheme" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"

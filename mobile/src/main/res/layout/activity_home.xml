@@ -45,25 +45,24 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@id/dotsIndicator"
+        app:layout_constraintBottom_toTopOf="@id/dotsTabLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtMyGroups" />
+        app:layout_constraintTop_toBottomOf="@id/txtMyGroups" >
+    </androidx.viewpager2.widget.ViewPager2>
 
-    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-        android:id="@+id/dotsIndicator"
-        android:layout_width="wrap_content"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/dotsTabLayout"
+        android:layout_width="match_parent"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:dotsColor="@android:color/darker_gray"
-        app:dotsCornerRadius="8dp"
-        app:dotsSize="8dp"
-        app:dotsWidthFactor="1"
-        app:dotsSpacing="4dp"
+        android:layout_gravity="bottom"
         app:layout_constraintBottom_toTopOf="@id/txtShowOnMap"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:selectedDotColor="@color/onboarding_button_background_tint" />
+        />
     <TextView
         android:id="@+id/txtShowOnMap"
         android:textAlignment="center"
