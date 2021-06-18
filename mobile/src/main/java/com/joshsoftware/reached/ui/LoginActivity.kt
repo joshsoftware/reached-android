@@ -14,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.di.AppType
+import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
@@ -21,6 +22,7 @@ import com.joshsoftware.reached.model.OnboardingData
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.HomeActivity
 import com.joshsoftware.reached.ui.adapter.OnboardingAdapter
+import com.joshsoftware.reached.utils.InviteLinkUtils
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,6 +34,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
 
     val handler = Handler()
     var pageCounter : Runnable? = null
+    var inviteLinkGroup: Group? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +42,6 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
         val view = binding.root
         setContentView(view)
         setListener(this)
-
         if(!sharedPreferences.onboardingShown) {
             Handler().postDelayed({
                 showOnboardingLayout()

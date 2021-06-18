@@ -16,9 +16,12 @@ import com.google.android.gms.location.LocationServices
 import com.google.zxing.integration.android.IntentIntegrator
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.ui.BaseLocationActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupChoiceBinding
+import com.joshsoftware.reached.ui.dialog.JoinGroupDialog
+import com.joshsoftware.reached.utils.InviteLinkUtils
 import com.journeyapps.barcodescanner.CaptureActivity
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -44,7 +47,10 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         binding = ActivityGroupChoiceBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
+        val linkUtils = InviteLinkUtils()
+        linkUtils.handleDynamicLinks(intent) {
+            showJoinGroupAlertDialog(it)
+        }
         binding.apply {
             createButton.setOnClickListener {
                 showCreateGroupLayout()
@@ -81,9 +87,9 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
                 requestPermission(arrayOf(android.Manifest.permission.CAMERA), action = {
                     if(it == Status.GRANTED) {
                         IntentIntegrator(this@GroupChoiceActivity)
-                                .setCaptureActivity(CaptureActivity::class.java)
-                                .setOrientationLocked(true)
-                                .initiateScan(); // `this` is the current Activity
+                            .setCaptureActivity(CaptureActivity::class.java)
+                            .setOrientationLocked(true)
+                            .initiateScan(); // `this` is the current Activity
                     }
                 })
             }
@@ -111,8 +117,8 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
     }
 
     private fun startGroupMemberActivity() {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
     }
 
     private fun startQrCodeActivity(id: String) {
@@ -128,7 +134,7 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         data: Intent?
     ) {
         val result =
-                IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             if (result.contents == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
@@ -212,4 +218,8 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         }
     }
 
+    private fun showJoinGroupAlertDialog(group: Group) {
+        val dialog = JoinGroupDialog.newInstance(group)
+        dialog.show(supportFragmentManager, dialog.tag)
+    }
 }

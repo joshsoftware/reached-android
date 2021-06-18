@@ -7,6 +7,7 @@ enum class IntentConstant {
     GROUP_ID,
     MESSAGE,
     ADDRESS,
+    INVITE_LINK_GROUP,
 }
 enum class RequestCodes(val code: Int) {
     PICK_LOCATION(1)

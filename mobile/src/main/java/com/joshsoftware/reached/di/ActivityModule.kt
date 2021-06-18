@@ -20,7 +20,7 @@ abstract class ActivityModule {
     @ContributesAndroidInjector
     abstract fun contributeMapActivity(): MapActivity
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [GroupListModule::class])
     abstract fun contributeHomeActivity(): HomeActivity
 
     @ContributesAndroidInjector

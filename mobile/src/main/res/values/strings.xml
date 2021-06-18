@@ -55,4 +55,5 @@
     <string name="check_location_activity">Check Location Activity</string>
     <string name="locate_now">Locate now</string>
     <string name="message_address_deleted">Address was deleted successfully!!</string>
+    <string name="logout">Logout</string>
 </resources>

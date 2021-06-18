@@ -60,7 +60,9 @@ class GroupMemberActivity : BaseActivity() {
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
             adapter = MemberAdapter(
                 sharedPreferences
-            ) {
+            , {
+
+            }) {
                 startMapActivity(it)
             }
 

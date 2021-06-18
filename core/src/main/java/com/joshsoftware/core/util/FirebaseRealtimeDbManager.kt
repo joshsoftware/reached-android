@@ -370,6 +370,15 @@ class FirebaseRealtimeDbManager {
                                         if(user.groups.size == groupList.size) {
                                             onSuccess(groupList)
                                         }
+                                    } ?: run {
+                                        user.groups.remove(s)
+                                        val idx = groupList.indexOfFirst { gId -> gId.id == s }
+                                        if(idx != -1) {
+                                            groupList.removeAt(idx)
+                                        }
+                                        if(user.groups.size == groupList.size) {
+                                            onSuccess(groupList)
+                                        }
                                     }
                                 }
 

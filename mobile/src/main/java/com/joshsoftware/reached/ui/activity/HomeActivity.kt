@@ -6,9 +6,13 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
+import android.view.Gravity
+import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.Geofence
@@ -25,11 +29,16 @@ import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
+import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.reached.ui.adapter.HomeAdapter
 import com.joshsoftware.reached.ui.dialog.JoinGroupDialog
 import com.joshsoftware.reached.utils.InviteLinkUtils
 import com.joshsoftware.reached.viewmodel.HomeViewModel
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.home_drawer_layout.*
 import kotlinx.android.synthetic.main.layout_create_group.*
 import kotlinx.android.synthetic.main.layout_reached_header.*
 import timber.log.Timber
@@ -37,8 +46,10 @@ import java.util.*
 import javax.inject.Inject
 
 
-class HomeActivity : BaseActivity() {
+class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
 
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
     lateinit var adapter: HomeAdapter
 
     lateinit var viewModel: HomeViewModel
@@ -50,12 +61,13 @@ class HomeActivity : BaseActivity() {
     lateinit var sharedPreferences: AppSharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.home_drawer_layout)
 
         val linkUtils = InviteLinkUtils()
         linkUtils.handleDynamicLinks(intent) {
             showJoinGroupAlertDialog(it)
         }
+
         geofencingClient = LocationServices.getGeofencingClient(this)
         setupViewPager()
         fetchGroups()
@@ -65,6 +77,15 @@ class HomeActivity : BaseActivity() {
                 viewModel.sendSos(sharedPreferences.userId!!, sharedPreferences.userData!!, true)
             }
         }
+
+        imgMenu.setOnClickListener {
+            if(drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                drawer_layout.closeDrawer(GravityCompat.START)
+            } else {
+                drawer_layout.openDrawer(GravityCompat.START)
+            }
+        }
+
         fabCreate.setOnClickListener {
             showCreateGroupLayout()
         }
@@ -122,7 +143,9 @@ class HomeActivity : BaseActivity() {
     private fun setupViewPager() {
         adapter = HomeAdapter(sharedPreferences, { member, groupId ->
             startProfileActivity(member, groupId)
-        }, { group ->
+        }, { member, groupId ->
+            startLocationActivity()
+        },{ group ->
 
         }, { group, position ->
             showChoiceDialog("Do you ]want to delete this group?", {
@@ -131,6 +154,7 @@ class HomeActivity : BaseActivity() {
                         groups.remove(group.id)
                         sharedPreferences.saveUserData(this)
                     }
+                    adapter.notifyItemRemoved(position)
                     showToastMessage("Group was deleted successfully!")
                 })
             })
@@ -154,6 +178,10 @@ class HomeActivity : BaseActivity() {
                 page.translationX = myOffset
             }
         }
+    }
+
+    private fun startLocationActivity() {
+
     }
 
     private fun startProfileActivity(member: Member, groupId: String) {
@@ -237,14 +265,14 @@ class HomeActivity : BaseActivity() {
                         group.members[key]?.address?.forEach { (t, address) ->
                             geofencingClient.removeGeofences(mutableListOf(t))
                             val geofence = Geofence.Builder()
-                                    .setRequestId(t)
-                                    .setCircularRegion(
-                                            address.lat,
-                                            address.long,
-                                            address.radius.toFloat())
-                                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
-                                    .build()
+                                .setRequestId(t)
+                                .setCircularRegion(
+                                    address.lat,
+                                    address.long,
+                                    address.radius.toFloat())
+                                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+                                .build()
                             geofencingBuilder.addGeofence(geofence)
                             val geofenceRequest = geofencingBuilder.build()
                             val intent = Intent(this, GeofenceBroadcastReceiver::class.java)
@@ -271,5 +299,20 @@ class HomeActivity : BaseActivity() {
     private fun showJoinGroupAlertDialog(group: Group) {
         val dialog = JoinGroupDialog.newInstance(group)
         dialog.show(supportFragmentManager, dialog.tag)
+    }
+
+    override fun supportFragmentInjector() = dispatchingAndroidInjector
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.logout -> {
+                sharedPreferences.deleteUserData()
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
