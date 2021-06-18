@@ -74,7 +74,9 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
 
         txtSos.setOnClickListener {
             if(sharedPreferences.userId != null  && sharedPreferences.userData != null) {
-                viewModel.sendSos(sharedPreferences.userId!!, sharedPreferences.userData!!, true)
+                viewModel.sendSos(sharedPreferences.userId!!, sharedPreferences.userData!!).observe(this, Observer {
+                    showToastMessage("Sos sent successfully!")
+                })
             }
         }
 

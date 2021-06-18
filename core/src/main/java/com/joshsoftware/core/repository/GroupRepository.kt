@@ -39,8 +39,8 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     suspend fun updateLocation(groupId: String, userId: String, location: Location): Group? {
         return dbManager.updateLocation(groupId, userId, location)
     }
-    suspend fun sendSos(userId: String, user: User, sosSent: Boolean): Boolean? {
-        return dbManager.toggleSosState(user, userId, sosSent)
+    suspend fun sendSos(userId: String, user: User): Boolean? {
+        return dbManager.toggleSosState(user, userId)
     }
 
 

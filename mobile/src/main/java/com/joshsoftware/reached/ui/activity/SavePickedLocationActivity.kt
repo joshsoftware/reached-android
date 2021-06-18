@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.SupportMapFragment
@@ -111,7 +112,12 @@ class SavePickedLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapA
     }
 
     private fun setupUi(address: Address) {
-        txtAddress.text = address.name
+        edtLocation.addTextChangedListener {
+            radioBtnHome.isChecked = false
+            radioBtnWork.isChecked = false
+        }
+
+        txtAddress.text = address.address
     }
 
     override fun mapReady() {

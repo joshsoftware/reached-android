@@ -68,30 +68,44 @@ class FirebaseRealtimeDbManager {
         })
     }
 
-    suspend fun toggleSosState(user: User, userId: String, sosSent: Boolean) = suspendCoroutine<Boolean?> { continuation ->
-        userReference.child(userId).child("sosState").setValue(true).addOnCompleteListener {
-            if(it.isSuccessful) {
-//                user.groups.forEach { t, u ->
-//                    groupReference.child(groupId).addListenerForSingleValueEvent(object : ValueEventListener {
-//                        override fun onDataChange(snapshot: DataSnapshot) {
-//                            val group = snapshot.getValue(Group::class.java)
-//                            val member = group?.members?.get(userId)
-//                            member?.let {
-//                                member.sosState = sosSent
-//                                groupReference.child(groupId).setValue(group)
-//                            }
-//                            continuation.resume(member?.sosState)
-//                        }
-//
-//                        override fun onCancelled(error: DatabaseError) {
-//                            continuation.resumeWithException(error.toException())
-//                        }
-//                    })
-//                }
-            } else {
-                it.exception?.let { ex -> continuation.resumeWithException(ex) }
+    suspend fun toggleSosState(user: User, userId: String) = suspendCoroutine<Boolean?> { continuation ->
+        userReference.child(userId).child("sosState").addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val value = snapshot.value
+                if(value  != null) {
+                    if(!(value as Boolean)) {
+                        userReference.child(userId).child("sosState").setValue(true).addOnCompleteListener {
+                            if(it.isSuccessful) {
+                                user.groups.forEach { (t, u) ->
+                                    groupReference
+                                            .child(t)
+                                            .child(MEMBERS.key)
+                                            .child(userId)
+                                            .child("sosState")
+                                            .setValue(true)
+                                }
+                                continuation.resume(true)
+                            } else {
+                                it.exception?.let { ex -> continuation.resumeWithException(ex) }
+                            }
+                        }
+                    } else {
+                        continuation.resume(true)
+                    }
+
+                } else {
+                    userReference.child(userId).child("sosState").setValue(true).addOnCompleteListener {
+                        if(it.isSuccessful) {
+                            continuation.resume(true)
+                        } else {
+                            it.exception?.let { ex -> continuation.resumeWithException(ex) }
+                        }
+                    }
+                }
             }
-        }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
 
     }
 

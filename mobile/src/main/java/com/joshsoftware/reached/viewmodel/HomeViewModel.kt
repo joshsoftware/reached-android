@@ -15,10 +15,10 @@ class HomeViewModel @Inject constructor(val sharedPreferences: AppSharedPreferen
                                         val repository: GroupRepository)
     : BaseViewModel<MutableList<Group>>() {
 
-    fun sendSos(userId: String, user: User, sosSent: Boolean): MutableLiveData<Boolean> {
+    fun sendSos(userId: String, user: User): MutableLiveData<Boolean> {
         val liveData = MutableLiveData<Boolean>()
         executeRoutine {
-            liveData.value = repository.sendSos(userId, user, sosSent)
+            liveData.value = repository.sendSos(userId, user)
         }
         return liveData
     }
