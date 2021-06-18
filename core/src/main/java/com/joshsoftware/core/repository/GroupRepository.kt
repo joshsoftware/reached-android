@@ -43,6 +43,10 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
         return dbManager.toggleSosState(user, userId)
     }
 
+    suspend fun markSafe(userId: String, member: Member): Boolean? {
+        return dbManager.markUserSafe(member, userId)
+    }
+
 
     fun fetchMember(groupId: String, memberId: String,
                     onFetch: (Member?) -> Unit,

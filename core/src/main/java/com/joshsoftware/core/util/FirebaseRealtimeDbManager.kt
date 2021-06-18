@@ -26,17 +26,17 @@ class FirebaseRealtimeDbManager {
     val dateTimeUtils = DateTimeUtils()
 
     suspend fun addUserWith(id: String, user: User, token: String, appType: AppType) = suspendCoroutine<User> { continuation ->
-        userReference.child(id).addListenerForSingleValueEvent(object: ValueEventListener {
+        userReference.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val requestedUser = snapshot.getValue(User::class.java)
-                if(requestedUser != null) {
-                    if(appType == AppType.MOBILE) {
+                if (requestedUser != null) {
+                    if (appType == AppType.MOBILE) {
                         requestedUser.token.phone = token
                     } else {
                         requestedUser.token.watch = token
                     }
                     userReference.child(id).setValue(requestedUser).addOnCompleteListener {
-                        if(it.isSuccessful) {
+                        if (it.isSuccessful) {
                             continuation.resume(user)
                         } else {
                             it.exception?.let { ex ->
@@ -45,13 +45,13 @@ class FirebaseRealtimeDbManager {
                         }
                     }
                 } else {
-                    if(appType == AppType.MOBILE) {
+                    if (appType == AppType.MOBILE) {
                         user.token.phone = token
                     } else {
                         user.token.watch = token
                     }
                     userReference.child(id).setValue(user).addOnCompleteListener {
-                        if(it.isSuccessful) {
+                        if (it.isSuccessful) {
                             continuation.resume(user)
                         } else {
                             it.exception?.let { ex ->
@@ -69,53 +69,63 @@ class FirebaseRealtimeDbManager {
     }
 
     suspend fun toggleSosState(user: User, userId: String) = suspendCoroutine<Boolean?> { continuation ->
-        userReference.child(userId).child("sosState").addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val value = snapshot.value
-                if(value  != null) {
-                    if(!(value as Boolean)) {
-                        userReference.child(userId).child("sosState").setValue(true).addOnCompleteListener {
-                            if(it.isSuccessful) {
-                                user.groups.forEach { (t, u) ->
-                                    groupReference
-                                            .child(t)
-                                            .child(MEMBERS.key)
-                                            .child(userId)
-                                            .child("sosState")
-                                            .setValue(true)
-                                }
-                                continuation.resume(true)
-                            } else {
-                                it.exception?.let { ex -> continuation.resumeWithException(ex) }
-                            }
+        userReference.child(userId).child("sosState").setValue(true).addOnCompleteListener {
+            if (it.isSuccessful) {
+                user.groups.forEach { (t, u) ->
+                    groupReference
+                            .child(t)
+                            .child(MEMBERS.key)
+                            .child(userId)
+                            .child("sosState")
+                            .setValue(true)
+                }
+                continuation.resume(true)
+            } else {
+                it.exception?.let { ex -> continuation.resumeWithException(ex) }
+            }
+        }
+
+
+    }
+
+    suspend fun markUserSafe(member: Member, userId: String) = suspendCoroutine<Boolean?> { continuation ->
+        userReference.child(userId).child("sosState").setValue(false).addOnCompleteListener {
+            if (it.isSuccessful) {
+                userReference.child(member.id!!).addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val user = snapshot.getValue(User::class.java)
+                        user?.groups?.forEach { (t, u) ->
+                            groupReference
+                                    .child(t)
+                                    .child(MEMBERS.key)
+                                    .child(userId)
+                                    .child("sosState")
+                                    .setValue(false)
                         }
-                    } else {
                         continuation.resume(true)
                     }
 
-                } else {
-                    userReference.child(userId).child("sosState").setValue(true).addOnCompleteListener {
-                        if(it.isSuccessful) {
-                            continuation.resume(true)
-                        } else {
-                            it.exception?.let { ex -> continuation.resumeWithException(ex) }
-                        }
+                    override fun onCancelled(error: DatabaseError) {
+                        continuation.resumeWithException(error.toException())
                     }
-                }
-            }
 
-            override fun onCancelled(error: DatabaseError) {}
-        })
+                })
+
+            } else {
+                it.exception?.let { ex -> continuation.resumeWithException(ex) }
+            }
+        }
 
     }
+
 
     suspend fun createGroupWith(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double) = suspendCoroutine<Pair<Group, User>> { continuation ->
         val map = hashMapOf<String, Member>()
         map[userId] = Member(name = user.name, profileUrl = user.profileUrl, lat = lat, long = long, lastUpdated = dateTimeUtils.getCurrentTime())
         val group = Group(
-            members = map,
-            created_by = userId,
-            name = groupName
+                members = map,
+                created_by = userId,
+                name = groupName
         )
         groupReference.child(id).setValue(group).addOnCompleteListener {
             if(it.isSuccessful) {
@@ -134,11 +144,11 @@ class FirebaseRealtimeDbManager {
     }
 
     private fun updateUserWithGroup(
-        groupId: String,
-        user: User,
-        userId: String,
-        onComplete: (User) -> Unit,
-        onError: (Exception) -> Unit
+            groupId: String,
+            user: User,
+            userId: String,
+            onComplete: (User) -> Unit,
+            onError: (Exception) -> Unit
     ) {
         userReference.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -202,9 +212,9 @@ class FirebaseRealtimeDbManager {
     }
 
     fun isGroupCreated(
-        userId: String,
-        onFetch: (Boolean) -> Unit,
-        onError: (DatabaseError) -> Unit
+            userId: String,
+            onFetch: (Boolean) -> Unit,
+            onError: (DatabaseError) -> Unit
     ) {
         userReference.child(userId).addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -356,8 +366,8 @@ class FirebaseRealtimeDbManager {
 
 
     fun fetchGroupList(userId: String,
-                               onSuccess: (ArrayList<Group>) -> Unit,
-                               onError: (Exception) -> Unit) {
+                       onSuccess: (ArrayList<Group>) -> Unit,
+                       onError: (Exception) -> Unit) {
         val groupList = arrayListOf<Group>()
         userReference.child(userId).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -446,19 +456,19 @@ class FirebaseRealtimeDbManager {
     }
 
     fun removeRequestFromUser(
-        requestId: String,
-        userId: String,
-        onComplete: (String) -> Unit,
-        onError: (Exception) -> Unit
+            requestId: String,
+            userId: String,
+            onComplete: (String) -> Unit,
+            onError: (Exception) -> Unit
     ) {
         userReference.child(userId).child("requests").child(requestId)
                 .removeValue().addOnCompleteListener {
-            if(it.isSuccessful) {
-                onComplete(requestId)
-            } else {
-                it.exception?.let(onError)
-            }
-        }
+                    if(it.isSuccessful) {
+                        onComplete(requestId)
+                    } else {
+                        it.exception?.let(onError)
+                    }
+                }
     }
 
     suspend fun deleteRequestWith(requestId: String, userId: String) = suspendCoroutine<Boolean> { continuation ->
@@ -474,10 +484,10 @@ class FirebaseRealtimeDbManager {
     }
 
     private fun deleteRequestWith(
-        requestId: String,
-        userId: String,
-        onComplete: (String) -> Unit,
-        onError: (Exception) -> Unit,
+            requestId: String,
+            userId: String,
+            onComplete: (String) -> Unit,
+            onError: (Exception) -> Unit,
     ) {
         requestReference.child(requestId).removeValue().addOnCompleteListener {
             if(it.isSuccessful) {
@@ -513,10 +523,10 @@ class FirebaseRealtimeDbManager {
     }
 
     private fun removeGroupFromUserRef(
-        groupId: String,
-        userId: String,
-        onFinish: () -> Unit,
-        onError:(Exception) -> Unit
+            groupId: String,
+            userId: String,
+            onFinish: () -> Unit,
+            onError:(Exception) -> Unit
     ) {
         userReference.child(userId).child("groups").child(groupId).removeValue().addOnCompleteListener {
             if(it.isSuccessful) {
@@ -528,20 +538,20 @@ class FirebaseRealtimeDbManager {
     }
 
     suspend fun requestLeaveGroup(
-        groupId: String,
-        userId: String,
-        createdBy: String,
-        name: String,
-        groupName: String
+            groupId: String,
+            userId: String,
+            createdBy: String,
+            name: String,
+            groupName: String
     ) = suspendCoroutine<Boolean> { continuation ->
         val newRef = requestReference.push()
         newRef.setValue(Request(
-            RequestType.LEAVE.key,
-            LeaveRequestData(
-                group = RequestParam(groupId, groupName),
-                from = RequestParam(userId, name),
-                to = createdBy
-            )
+                RequestType.LEAVE.key,
+                LeaveRequestData(
+                        group = RequestParam(groupId, groupName),
+                        from = RequestParam(userId, name),
+                        to = createdBy
+                )
         )).addOnCompleteListener {
             if(it.isSuccessful) {
                 updateUserWithRequest(userId, newRef.key.toString(), {
@@ -558,10 +568,10 @@ class FirebaseRealtimeDbManager {
     }
 
     fun updateUserWithRequest(
-        userId: String,
-        requestId: String,
-        onError: (Exception) -> Unit,
-        onComplete: (User) -> Unit
+            userId: String,
+            requestId: String,
+            onError: (Exception) -> Unit,
+            onComplete: (User) -> Unit
     ) {
         userReference.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -652,13 +662,13 @@ class FirebaseRealtimeDbManager {
     fun deleteAddress(groupId: String, memberId: String, addressId: String): Deferred<Boolean> {
         val deferred = CompletableDeferred<Boolean>()
         groupReference.child(groupId).child(MEMBERS.key).child(memberId)
-            .child(ADDRESS.key).child(addressId).removeValue().addOnCompleteListener {
-                if(it.isSuccessful) {
-                    deferred.complete(true)
-                } else {
-                    it.exception?.let { ex -> deferred.completeExceptionally(ex) }
+                .child(ADDRESS.key).child(addressId).removeValue().addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        deferred.complete(true)
+                    } else {
+                        it.exception?.let { ex -> deferred.completeExceptionally(ex) }
+                    }
                 }
-            }
         return deferred
     }
 

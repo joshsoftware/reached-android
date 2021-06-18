@@ -30,6 +30,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         />
     <ImageView
+        android:visibility="gone"
         android:id="@+id/imgInfo"
         android:src="@drawable/ic_info"
         android:layout_width="wrap_content"

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
+import com.joshsoftware.core.model.User
 import com.joshsoftware.core.repository.GroupRepository
 import javax.inject.Inject
 
@@ -44,6 +45,14 @@ class MapViewModel @Inject constructor(var repository: GroupRepository)
                 _error.value = it.localizedMessage
             })
         }
+    }
+
+    fun markSafe(userId: String, member: Member): LiveData<Boolean> {
+        val liveData = MutableLiveData<Boolean>()
+        executeRoutine {
+           liveData.value = repository.markSafe(userId, member)
+        }
+        return liveData
     }
 
 }

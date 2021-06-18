@@ -3,6 +3,7 @@ package com.joshsoftware.core.model
 enum class IntentConstant {
     REQUEST_ID,
     MEMBER_ID,
+    GROUP,
     MEMBER,
     GROUP_ID,
     MESSAGE,

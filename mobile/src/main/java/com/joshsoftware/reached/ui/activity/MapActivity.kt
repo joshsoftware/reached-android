@@ -1,6 +1,7 @@
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,11 +21,14 @@ import com.google.android.gms.maps.model.*
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.BaseMapActivity
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.viewmodel.MapViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityMapMobileBinding
 import kotlinx.android.synthetic.main.activity_map_mobile.*
+import kotlinx.android.synthetic.main.activity_map_mobile.txtSos
+import kotlinx.android.synthetic.main.layout_reached_header.*
 import kotlinx.android.synthetic.main.member_view.view.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
@@ -42,8 +46,8 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
     lateinit var sharedPreferences: AppSharedPreferences
 
     lateinit var viewModel: MapViewModel
-    var memberId: String? = null
-    var groupId: String? = null
+    var member: Member? = null
+    var group: Group? = null
     lateinit var binding: ActivityMapMobileBinding
     private var markers: ArrayList<Marker> = arrayListOf()
     private var showProgress = true
@@ -87,11 +91,11 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
     }
 
     private fun handleIntentArguments() {
-        intent.extras?.getString(INTENT_MEMBER_ID)?.let {
-            memberId = it
+        intent.extras?.getParcelable<Member>(IntentConstant.MEMBER.name)?.let {
+            member = it
         }
-        intent.extras?.getString(INTENT_GROUP_ID)?.let {
-            groupId = it
+        intent.extras?.getParcelable<Group>(IntentConstant.GROUP.name)?.let {
+            group = it
         }
     }
 
@@ -154,19 +158,44 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
             }
             val bounds = builder.build()
             map?.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
-//            map?.animateCamera(CameraUpdateFactory.newLatLngZoom(bounds.center, 12f));
         }
 
     }
 
     override fun mapReady() {
         showProgressView()
-        if(memberId != null && groupId != null) {
+        if(member != null && group != null) {
+            setupGeofence(member!!)
+            if(sharedPreferences.userId == group!!.created_by) {
+                imgMarkSafe.setOnClickListener {
+                    if(imgMarkSafe.tag == R.drawable.ic_not_safe) {
+                        viewModel.markSafe(member?.id!!, member!!).observe(this, Observer {
+                            showToastMessage("Marked safe successfully!")
+                            imgMarkSafe.setImageResource(R.drawable.ic_safe)
+                            imgMarkSafe.tag = R.drawable.ic_safe
+                            txtMember.text = "${member!!.name}"
+                        })
+                    }
+                }
+            }
             groupCard.visibility = View.GONE
-            viewModel.observeLocationChanges(groupId!!, memberId!!)
-        } else if(memberId != null) {
+            memberCard.visibility = View.VISIBLE
+            val text = if(member!!.sosState) {
+                imgMarkSafe.tag = R.drawable.ic_not_safe
+                txtSos.visibility = View.GONE
+                "${member!!.name} needs help"
+            } else {
+                imgMarkSafe.tag = R.drawable.ic_safe
+                txtSos.visibility = View.VISIBLE
+                "${member!!.name}"
+            }
+            txtMember.text = text
+            imgMarkSafe.setImageResource(if(member!!.sosState) R.drawable.ic_not_safe else R.drawable.ic_safe)
+            viewModel.observeLocationChanges(group?.id!!, member?.id!!)
+        } else if(member != null) {
             groupCard.visibility = View.GONE
-            viewModel.observeLocationChanges(groupId!!, memberId!!)
+            memberCard.visibility = View.VISIBLE
+            viewModel.observeLocationChanges(group?.id!!, member?.id!!)
         } else {
             sharedPreferences.userId?.let { viewModel.fetchGroups(it) }
         }
@@ -174,6 +203,18 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
         animateCameraZoom()
     }
 
+    private fun setupGeofence(member: Member) {
+        member.address.forEach { (_, address) ->
+            val circleOptions = CircleOptions()
+                    .center( LatLng(address.lat, address.long) )
+                    .radius( address.radius.toDouble() )
+                    .fillColor(0x40ff0000)
+                    .strokeColor(Color.TRANSPARENT)
+                    .strokeWidth(2f);
+            map?.addCircle(circleOptions)
+        }
+
+    }
     private fun removeMarkers() {
         markers.forEach {
             it.remove()

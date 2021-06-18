@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.home_view.view.*
 
 class HomeAdapter(val sharedPreferences: AppSharedPreferences,
                   val onMemberClick: (Member, String) -> Unit,
-                  val onMemberProfileClick: (Member, String) -> Unit,
+                  val onMemberProfileClick: (Member, Group) -> Unit,
                   val onGroupEdit: (Group) -> Unit,
                   val onGroupDelete: (Group, Int) -> Unit,
                   val onAddMember: (Group) -> Unit): ListAdapter<Group, ViewHolder>(DIFF_CALLBACK) {
@@ -28,7 +28,7 @@ class HomeAdapter(val sharedPreferences: AppSharedPreferences,
         val model = getItem(position)
         if(model != null) {
             val adapter = MemberAdapter(sharedPreferences, {
-                onMemberProfileClick(it, model.id!!)
+                onMemberProfileClick(it, model)
             }) {
                 onMemberClick(it, model.id!!)
             }

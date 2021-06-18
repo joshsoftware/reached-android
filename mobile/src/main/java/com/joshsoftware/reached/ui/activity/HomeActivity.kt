@@ -145,8 +145,8 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
     private fun setupViewPager() {
         adapter = HomeAdapter(sharedPreferences, { member, groupId ->
             startProfileActivity(member, groupId)
-        }, { member, groupId ->
-            startLocationActivity()
+        }, { member, group ->
+            startLocationActivity(member, group)
         },{ group ->
 
         }, { group, position ->
@@ -182,8 +182,11 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
         }
     }
 
-    private fun startLocationActivity() {
-
+    private fun startLocationActivity(member: Member, group: Group) {
+        val intent = Intent(this, MapActivity::class.java)
+        intent.putExtra(IntentConstant.MEMBER.name, member)
+        intent.putExtra(IntentConstant.GROUP.name, group)
+        startActivity(intent)
     }
 
     private fun startProfileActivity(member: Member, groupId: String) {
