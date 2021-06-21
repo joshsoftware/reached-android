@@ -6,10 +6,9 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
-import android.view.Gravity
 import android.view.MenuItem
-import android.view.View
 import android.view.animation.AnticipateOvershootInterpolator
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -34,7 +33,6 @@ import com.joshsoftware.reached.ui.adapter.HomeAdapter
 import com.joshsoftware.reached.ui.dialog.JoinGroupDialog
 import com.joshsoftware.reached.utils.InviteLinkUtils
 import com.joshsoftware.reached.viewmodel.HomeViewModel
-import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_home.*
@@ -148,7 +146,7 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
         }, { member, group ->
             startLocationActivity(member, group)
         },{ group ->
-
+            startGroupEditActivity(group)
         }, { group, position ->
             showChoiceDialog("Do you ]want to delete this group?", {
                 viewModel.deleteGroup(group).observe(this, {
@@ -180,6 +178,12 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
                 page.translationX = myOffset
             }
         }
+    }
+
+    private fun startGroupEditActivity(group: Group) {
+        val intent = Intent(this, GroupEditActivity::class.java)
+        intent.putExtra(IntentConstant.GROUP.name, group)
+        startActivity(intent)
     }
 
     private fun startLocationActivity(member: Member, group: Group) {
@@ -232,27 +236,29 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
     }
 
     private fun showCreateGroupLayout() {
+        val container = findViewById<ConstraintLayout>(R.id.container)
         val set = ConstraintSet()
-        set.clone(parentLayout)
+        set.clone(container)
         set.clear(createGroupLayout.id, ConstraintSet.TOP)
         set.connect(createGroupLayout.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
         val transition = ChangeBounds()
         transition.interpolator = AnticipateOvershootInterpolator(0.5f)
         transition.duration = 500
-        TransitionManager.beginDelayedTransition(parentLayout, transition)
-        set.applyTo(parentLayout)
+        TransitionManager.beginDelayedTransition(container, transition)
+        set.applyTo(container)
     }
 
     private fun hideCreateGroup() {
+        val container = findViewById<ConstraintLayout>(R.id.container)
         val set = ConstraintSet()
-        set.clone(parentLayout)
+        set.clone(container)
         set.connect(createGroupLayout.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
         set.clear(createGroupLayout.id, ConstraintSet.BOTTOM)
         val transition = ChangeBounds()
         transition.interpolator = AnticipateOvershootInterpolator(0.5f)
         transition.duration = 200
-        TransitionManager.beginDelayedTransition(parentLayout, transition)
-        set.applyTo(parentLayout)
+        TransitionManager.beginDelayedTransition(container, transition)
+        set.applyTo(container)
     }
 
     private fun startQrCodeActivity(group: Group) {

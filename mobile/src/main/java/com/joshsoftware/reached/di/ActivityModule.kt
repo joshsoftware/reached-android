@@ -32,4 +32,7 @@ abstract class ActivityModule {
     @ContributesAndroidInjector
     abstract fun contributeSavePickedLocationActivity(): SavePickedLocationActivity
 
+    @ContributesAndroidInjector
+    abstract fun contributeGroupEditActivity(): GroupEditActivity
+
 }

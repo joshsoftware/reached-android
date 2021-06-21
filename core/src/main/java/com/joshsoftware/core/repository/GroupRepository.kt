@@ -94,4 +94,8 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     fun deleteAddress(groupId: String, memberId: String, addressId: String): Deferred<Boolean> {
         return dbManager.deleteAddress(groupId, memberId, addressId)
     }
+
+    fun deleteMember(member: Member, group: Group): Deferred<Member> {
+        return dbManager.deleteMember(member, group)
+    }
 }

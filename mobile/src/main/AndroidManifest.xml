@@ -12,13 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ui.activity.SavePickedLocationActivity">
-        </activity>
+        <activity android:name=".ui.activity.GroupEditActivity"></activity>
+        <activity android:name=".ui.activity.SavePickedLocationActivity"></activity>
         <activity android:name=".ui.activity.PickLocationActivity" />
-        <activity android:name=".ui.activity.ProfileActivity" android:theme="@style/ProfileTheme"/>
-        <activity android:name=".ui.activity.HomeActivity"
-            android:launchMode="singleTop"
-            >
+        <activity
+            android:name=".ui.activity.ProfileActivity"
+            android:theme="@style/ProfileTheme" />
+        <activity
+            android:name=".ui.activity.HomeActivity"
+            android:launchMode="singleTop">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -53,7 +55,6 @@
             android:name=".ui.activity.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -65,8 +66,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.GroupChoiceActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/GroupChoiceTheme" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
@@ -91,8 +92,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <receiver android:name="com.joshsoftware.core.geofence.GeofenceBroadcastReceiver"/>
 
+        <receiver android:name="com.joshsoftware.core.geofence.GeofenceBroadcastReceiver" />
     </application>
 
 </manifest>

@@ -672,4 +672,25 @@ class FirebaseRealtimeDbManager {
         return deferred
     }
 
+    fun deleteMember(member: Member, group: Group): Deferred<Member> {
+        val deferred = CompletableDeferred<Member>()
+        groupReference.child(group.id!!).child(MEMBERS.key)
+            .child(member.id!!).removeValue().addOnCompleteListener {
+                if(it.isSuccessful) {
+                    userReference.child(member.id!!).child(GROUPS.key).child(group.id!!)
+                        .removeValue().addOnCompleteListener {
+                            if(it.isSuccessful) {
+                                deferred.complete(member)
+                            } else {
+                                it.exception?.let{ ex -> deferred.completeExceptionally(ex)}
+                            }
+                        }
+                } else {
+                    it.exception?.let{ ex -> deferred.completeExceptionally(ex)}
+                }
+            }
+
+        return deferred
+    }
+
 }

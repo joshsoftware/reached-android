@@ -3,11 +3,8 @@ package com.joshsoftware.reached.di
 import androidx.lifecycle.ViewModel
 import com.joshsoftware.core.di.viewmodel.ViewModelKey
 import com.joshsoftware.reached.ui.activity.GroupChoiceViewModel
-import com.joshsoftware.reached.viewmodel.CreateGroupViewModel
 import com.joshsoftware.core.viewmodel.GroupListViewModel
-import com.joshsoftware.reached.viewmodel.HomeViewModel
-import com.joshsoftware.reached.viewmodel.ProfileViewModel
-import com.joshsoftware.reached.viewmodel.SaveLocationViewModel
+import com.joshsoftware.reached.viewmodel.*
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -38,6 +35,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SaveLocationViewModel::class)
     abstract fun buildHSaveLocationViewModel(viewModel: SaveLocationViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GroupEditViewModel::class)
+    abstract fun buildGroupEditViewModel(viewModel: GroupEditViewModel): ViewModel
 
 
 }
