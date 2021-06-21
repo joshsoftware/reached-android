@@ -265,7 +265,8 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
         val intent = Intent(this, QrCodeActivity::class.java)
         intent.putExtra(INTENT_GROUP, group)
         startActivity(intent)
-    }private fun addGeofences(list: MutableList<Group>) {
+    }
+    private fun addGeofences(list: MutableList<Group>) {
         sharedPreferences.userId?.let { userId ->
 
             val geofencingBuilder = GeofencingRequest.Builder()

@@ -19,6 +19,7 @@ import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.DialogJoinGroupBinding
 import com.joshsoftware.reached.ui.activity.GroupChoiceViewModel
 import com.joshsoftware.reached.ui.activity.GroupMemberActivity
+import com.joshsoftware.reached.ui.activity.HomeActivity
 import com.joshsoftware.reached.ui.activity.INTENT_GROUP
 import kotlinx.android.synthetic.main.member_view.view.*
 import java.util.*
@@ -126,8 +127,7 @@ class JoinGroupDialog: BaseDialogFragment() {
 
     private fun startGroupMemberActivity() {
         if(activity != null) {
-            val intent = Intent(activity, GroupMemberActivity::class.java)
-            intent.putExtra(INTENT_GROUP, group)
+            val intent = Intent(activity, HomeActivity::class.java)
             startActivity(intent)
         }
     }

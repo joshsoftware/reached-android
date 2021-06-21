@@ -1,6 +1,8 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.R.attr
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -11,10 +13,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
@@ -86,7 +86,7 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
         }
 
         txtShowList.setOnClickListener {
-            finish()
+            onBackPressed()
         }
     }
 
@@ -120,18 +120,18 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
         viewModel = ViewModelProvider(this, viewModelFactory)[MapViewModel::class.java]
 
         viewModel.groups.observe(this, { groups ->
-            if(showProgress) {
+            if (showProgress) {
                 hideProgressView()
                 showProgress = false
             }
-            if(!groups.isNullOrEmpty()) {
+            if (!groups.isNullOrEmpty()) {
                 this@MapActivity.groups = groups
                 setCurrentGroup(groups[currentPosition])
             }
         })
 
         viewModel.result.observe(this, { member ->
-            if(showProgress) {
+            if (showProgress) {
                 hideProgressView()
                 showProgress = false
             }
@@ -190,7 +190,7 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
                 "${member!!.name}"
             }
             txtMember.text = text
-            imgMarkSafe.setImageResource(if(member!!.sosState) R.drawable.ic_not_safe else R.drawable.ic_safe)
+            imgMarkSafe.setImageResource(if (member!!.sosState) R.drawable.ic_not_safe else R.drawable.ic_safe)
             viewModel.observeLocationChanges(group?.id!!, member?.id!!)
         } else if(member != null) {
             groupCard.visibility = View.GONE
@@ -206,8 +206,8 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
     private fun setupGeofence(member: Member) {
         member.address.forEach { (_, address) ->
             val circleOptions = CircleOptions()
-                    .center( LatLng(address.lat, address.long) )
-                    .radius( address.radius.toDouble() )
+                    .center(LatLng(address.lat, address.long))
+                    .radius(address.radius.toDouble())
                     .fillColor(0x40ff0000)
                     .strokeColor(Color.TRANSPARENT)
                     .strokeWidth(2f);
@@ -226,21 +226,32 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
         val view = (getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
                 .inflate(R.layout.marker_view, null)
         val imageView = view.findViewById<ImageView>(R.id.imgProfile)
-        if(member.profileUrl != null) {
-            Glide.with(this).load(member.profileUrl).listener( object: RequestListener<Drawable?> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable?>?, isFirstResource: Boolean): Boolean {
-                    createMarkerFrom(view, member)
-                    deferred.complete(true)
-                    return true
-                }
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable?>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    createMarkerFrom(view, member)
-                    deferred.complete(true)
-                    imageView.setImageDrawable(resource)
-                    return true
-                }
-            }).into(imageView);
+        if(member.profileUrl.isNullOrEmpty().not()) {
+            Glide
+                .with(this)
+                .asBitmap()
+                .load(member.profileUrl)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        val scale: Float = applicationContext.resources.displayMetrics.density
+                        val pixels = (50 * scale + 0.5f).toInt()
+                        val bitmap = Bitmap.createScaledBitmap(resource, pixels, pixels, true)
+                        imageView.setImageBitmap(bitmap)
+                        createMarkerFrom(view, member)
+                        deferred.complete(true)
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        imageView.setImageResource(R.drawable.ic_profile_placeholder);
+                        createMarkerFrom(view, member)
+                        deferred.complete(true)
+                    }
+                });
         } else {
+            imageView.setImageResource(R.drawable.ic_profile_placeholder);
             createMarkerFrom(view, member)
             deferred.complete(true)
         }
@@ -252,10 +263,10 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
             val bitmap = createDrawableFromView(view)
             val memberPos = LatLng(member.lat!!, member.long!!)
             val marker = map?.addMarker(
-                    MarkerOptions()
-                            .position(memberPos)
-                            .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                            .title(member.name!!)
+                MarkerOptions()
+                    .position(memberPos)
+                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    .title(member.name!!)
             )
             marker?.let { m ->
                 markers.add(m)
@@ -263,5 +274,9 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
         } catch (e: Exception) {
             println("Exception ${e.localizedMessage}")
         }
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 }

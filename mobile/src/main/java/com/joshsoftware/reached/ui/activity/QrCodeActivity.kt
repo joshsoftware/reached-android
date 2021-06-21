@@ -54,9 +54,7 @@ class QrCodeActivity : AppCompatActivity() {
     }
 
     private fun startGroupMemberActivity(groupId: String) {
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, groupId)
-        startActivity(intent)
+        finish()
     }
 
     private fun generateQrCode(id: String) {
