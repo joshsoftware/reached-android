@@ -9,6 +9,7 @@ import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.model.*
 import com.joshsoftware.core.util.FirebaseDatabaseKey.*
 import kotlinx.coroutines.*
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -691,6 +692,26 @@ class FirebaseRealtimeDbManager {
             }
 
         return deferred
+    }
+
+    private fun setLastKnownAddress(lastKnownAddress: String, userId: String, user: User) {
+        user.groups.forEach { (id, _) ->
+            groupReference.child(id).addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val group = snapshot.getValue(Group::class.java)
+                    group?.members?.forEach { (memberId, member) ->
+                        if(memberId == userId) {
+                            member.lastKnownAddress = lastKnownAddress
+                        }
+                    }
+                    groupReference.child(id).setValue(group)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.e(error.message)
+                }
+            })
+        }
     }
 
 }

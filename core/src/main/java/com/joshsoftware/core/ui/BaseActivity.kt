@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -17,12 +18,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Constraints
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.shape.CutCornerTreatment
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.R
 import com.joshsoftware.core.di.Injectable
 import com.joshsoftware.core.viewmodel.BaseViewModel
@@ -104,4 +107,5 @@ abstract class BaseActivity: AppCompatActivity(), Injectable {
             progressDialogFragment.dismiss()
         }
     }
+
 }

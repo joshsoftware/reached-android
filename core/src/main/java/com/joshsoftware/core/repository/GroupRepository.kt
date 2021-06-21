@@ -23,7 +23,6 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
         return dbManager.fetchGroup(userId)
     }
 
-
     fun fetchGroupList(userId: String,
                                onSuccess: (ArrayList<Group>) -> Unit,
                                onError: (Exception) -> Unit) {
@@ -39,6 +38,7 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     suspend fun updateLocation(groupId: String, userId: String, location: Location): Group? {
         return dbManager.updateLocation(groupId, userId, location)
     }
+
     suspend fun sendSos(userId: String, user: User): Boolean? {
         return dbManager.toggleSosState(user, userId)
     }
@@ -73,7 +73,6 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     suspend fun leaveGroup(requestId: String, groupId: String, userId: String): Boolean? {
         return dbManager.leaveGroup(requestId, groupId, userId)
     }
-
 
     suspend fun deleteGroup(group: Group): Boolean? {
         return dbManager.deleteGroup(group)

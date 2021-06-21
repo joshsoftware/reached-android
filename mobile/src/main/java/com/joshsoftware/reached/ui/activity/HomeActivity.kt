@@ -29,10 +29,12 @@ import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.LoginActivity
+import com.joshsoftware.reached.ui.SosActivity
 import com.joshsoftware.reached.ui.adapter.HomeAdapter
 import com.joshsoftware.reached.ui.dialog.JoinGroupDialog
 import com.joshsoftware.reached.utils.InviteLinkUtils
 import com.joshsoftware.reached.viewmodel.HomeViewModel
+import com.joshsoftware.reached.viewmodel.SosViewModel
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_home.*
@@ -44,7 +46,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
+class HomeActivity : SosActivity(), HasSupportFragmentInjector {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -70,13 +72,7 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
         setupViewPager()
         fetchGroups()
 
-        txtSos.setOnClickListener {
-            if(sharedPreferences.userId != null  && sharedPreferences.userData != null) {
-                viewModel.sendSos(sharedPreferences.userId!!, sharedPreferences.userData!!).observe(this, Observer {
-                    showToastMessage("Sos sent successfully!")
-                })
-            }
-        }
+        addSosListener(txtSos, sharedPreferences)
 
         imgMenu.setOnClickListener {
             if(drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -125,7 +121,16 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
         txtShowOnMap.setOnClickListener {
             startMapActivity()
         }
-
+        navView.setNavigationItemSelectedListener { menuItem ->
+            if(menuItem.itemId == R.id.nav_logout) {
+                sharedPreferences.deleteUserData()
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
+            true
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -208,6 +213,7 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
 
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
+        sosViewModel = ViewModelProvider(this, viewModelFactory)[SosViewModel::class.java]
         viewModel.result.observe(this, {
             if(it.size == 0) {
                 startGroupChoiceActivity()
@@ -315,16 +321,4 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector {
 
     override fun supportFragmentInjector() = dispatchingAndroidInjector
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.logout -> {
-                sharedPreferences.deleteUserData()
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
 }

@@ -26,6 +26,8 @@ import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.viewmodel.MapViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityMapMobileBinding
+import com.joshsoftware.reached.ui.SosMapActivity
+import com.joshsoftware.reached.viewmodel.SosViewModel
 import kotlinx.android.synthetic.main.activity_map_mobile.*
 import kotlinx.android.synthetic.main.activity_map_mobile.txtSos
 import kotlinx.android.synthetic.main.layout_reached_header.*
@@ -38,7 +40,7 @@ import javax.inject.Inject
 
 
 const val INTENT_MEMBER_ID = "MEMBER_ID"
-class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
+class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -67,6 +69,7 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
         mapFragment?.let {
             setMapFragment(it)
         }
+        addSosListener(txtSos, sharedPreferences)
 
         handleIntentArguments()
         setupNavigationButtonListeners()
@@ -118,6 +121,7 @@ class MapActivity: BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
 
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[MapViewModel::class.java]
+        sosViewModel = ViewModelProvider(this, viewModelFactory)[SosViewModel::class.java]
 
         viewModel.groups.observe(this, { groups ->
             if (showProgress) {

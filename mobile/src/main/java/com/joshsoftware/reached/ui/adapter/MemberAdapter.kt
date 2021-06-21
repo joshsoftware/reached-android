@@ -44,7 +44,11 @@ class MemberAdapter(
                 } else {
                     containerCardView.strokeWidth = 0
                 }
-
+                if(model.lastKnownAddress.isNullOrEmpty()) {
+                    placeTextView.text = "Enroute"
+                } else {
+                    placeTextView.text = model.lastKnownAddress
+                }
                 model.lastUpdated?.let { updatedText ->
 //                    lastUpdatedTextView.text = dateTimeUtils.getLastUpdatedFormatted(updatedText)
                 }

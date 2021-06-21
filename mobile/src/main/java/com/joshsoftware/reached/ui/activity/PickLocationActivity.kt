@@ -2,6 +2,7 @@ package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -11,18 +12,26 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.BaseMapActivity
 import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.RequestCodes
 import com.joshsoftware.reached.R
+import com.joshsoftware.reached.ui.SosMapActivity
+import com.joshsoftware.reached.viewmodel.SosViewModel
 import kotlinx.android.synthetic.main.activity_groups.titleTextView
 import kotlinx.android.synthetic.main.activity_pick_location.*
 import kotlinx.android.synthetic.main.layout_save_location_header.*
 import timber.log.Timber
+import javax.inject.Inject
 
-class PickLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
+class PickLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var sharedPreferences: AppSharedPreferences
     private var address: Address? = null
     lateinit var memberId: String
     lateinit var groupId: String
@@ -50,6 +59,7 @@ class PickLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivit
     }
 
     private fun setupListeners() {
+        addSosListener(txtSos, sharedPreferences)
         btnNext.setOnClickListener {
             startSaveLocationActivity(address)
         }
@@ -81,7 +91,7 @@ class PickLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivit
     }
 
     override fun initializeViewModel() {
-
+        sosViewModel = ViewModelProvider(this, viewModelFactory)[SosViewModel::class.java]
     }
 
     override fun mapReady() {

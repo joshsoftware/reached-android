@@ -42,4 +42,10 @@ abstract class ViewModelModule {
     abstract fun buildGroupEditViewModel(viewModel: GroupEditViewModel): ViewModel
 
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(SosViewModel::class)
+    abstract fun buildSosViewModel(viewModel: SosViewModel): ViewModel
+
+
 }

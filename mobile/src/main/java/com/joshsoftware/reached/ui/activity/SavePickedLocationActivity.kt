@@ -15,21 +15,27 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.BaseMapActivity
 import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.model.Transition
+import com.joshsoftware.reached.ui.SosMapActivity
 import com.joshsoftware.reached.viewmodel.SaveLocationViewModel
+import com.joshsoftware.reached.viewmodel.SosViewModel
 import kotlinx.android.synthetic.main.activity_save_picked_location.*
 import kotlinx.android.synthetic.main.layout_save_location_header.*
 import javax.inject.Inject
 
 
-class SavePickedLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
+class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var sharedPreferences: AppSharedPreferences
+
     lateinit var viewModel: SaveLocationViewModel
 
     lateinit var address: Address
@@ -71,6 +77,7 @@ class SavePickedLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapA
 
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[SaveLocationViewModel::class.java]
+        sosViewModel = ViewModelProvider(this, viewModelFactory)[SosViewModel::class.java]
 
         viewModel.result.observe(this, { address ->
             if(address != null) {
@@ -90,6 +97,7 @@ class SavePickedLocationActivity : BaseMapActivity(), BaseMapActivity.OnBaseMapA
     }
 
     private fun setupListeners() {
+        addSosListener(txtSos, sharedPreferences)
         imgBack.setOnClickListener {
             finish()
         }
