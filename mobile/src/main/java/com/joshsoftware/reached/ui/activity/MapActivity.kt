@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -172,29 +173,33 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
             setupGeofence(member!!)
             if(sharedPreferences.userId == group!!.created_by) {
                 imgMarkSafe.setOnClickListener {
-                    if(imgMarkSafe.tag == R.drawable.ic_not_safe) {
-                        viewModel.markSafe(member?.id!!, member!!).observe(this, Observer {
+                    if(imgMarkSafe.tag == R.drawable.safe) {
+                        viewModel.markSafe(member?.id!!, member!!).observe(this, {
                             showToastMessage("Marked safe successfully!")
-                            imgMarkSafe.setImageResource(R.drawable.ic_safe)
-                            imgMarkSafe.tag = R.drawable.ic_safe
+                            imgMarkSafe.setImageResource(R.drawable.safe)
+                            imgMarkSafe.tag = R.drawable.safe
                             txtMember.text = "${member!!.name}"
+                            txtMember.setTextColor(Color.BLACK)
                         })
                     }
                 }
             }
             groupCard.visibility = View.GONE
             memberCard.visibility = View.VISIBLE
+            var color = Color.RED
             val text = if(member!!.sosState) {
-                imgMarkSafe.tag = R.drawable.ic_not_safe
+                imgMarkSafe.tag = R.drawable.unsafe
                 txtSos.visibility = View.GONE
                 "${member!!.name} needs help"
             } else {
-                imgMarkSafe.tag = R.drawable.ic_safe
+                imgMarkSafe.tag = R.drawable.safe
                 txtSos.visibility = View.VISIBLE
+                color = Color.BLACK
                 "${member!!.name}"
             }
             txtMember.text = text
-            imgMarkSafe.setImageResource(if (member!!.sosState) R.drawable.ic_not_safe else R.drawable.ic_safe)
+            txtMember.setTextColor(color)
+            imgMarkSafe.setImageResource(if (member!!.sosState) R.drawable.unsafe else R.drawable.safe)
             viewModel.observeLocationChanges(group?.id!!, member?.id!!)
         } else if(member != null) {
             groupCard.visibility = View.GONE

@@ -309,8 +309,6 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
                     }
                 }
             }
-
-
         }
     }
 

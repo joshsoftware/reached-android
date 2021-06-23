@@ -14,6 +14,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.BaseMapActivity
+import com.joshsoftware.core.BuildConfig
 import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.RequestCodes
@@ -36,7 +37,6 @@ class PickLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivity
     lateinit var memberId: String
     lateinit var groupId: String
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pick_location)
