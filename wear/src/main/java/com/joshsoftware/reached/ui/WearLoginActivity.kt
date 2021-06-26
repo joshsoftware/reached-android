@@ -6,13 +6,14 @@ import android.os.Handler
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.BaseLocationPermissionActivity
 import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.databinding.ActivityLoginBinding
 import timber.log.Timber
 import javax.inject.Inject
 
-class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListener {
+class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.PermissionListener {
     lateinit var binding: ActivityLoginBinding
 
     @Inject
@@ -23,7 +24,7 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
         binding = ActivityLoginBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        setListener(this)
+        listener = this
 
         if(sharedPreferences.userData != null) {
             sharedPreferences.userId?.let {
@@ -90,6 +91,7 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
     }
 
     override fun onPermissionGrant() {
+        startLocationTrackingService()
         if(sharedPreferences.userData != null) {
             sharedPreferences.userId?.let {
                 if (sharedPreferences.userData!!.groups.isEmpty()) {

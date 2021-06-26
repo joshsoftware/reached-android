@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.BaseLocationPermissionActivity
 import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.ui.BaseLoginActivity
@@ -26,7 +27,7 @@ import com.joshsoftware.reached.utils.InviteLinkUtils
 import timber.log.Timber
 import javax.inject.Inject
 
-class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListener {
+class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.PermissionListener {
     lateinit var binding: ActivityLoginMobileBinding
     private var adapter: OnboardingAdapter? = null
     @Inject
@@ -41,7 +42,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
         binding = ActivityLoginMobileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        setListener(this)
+        listener = this
         if(!sharedPreferences.onboardingShown) {
             Handler().postDelayed({
                 showOnboardingLayout()
@@ -55,10 +56,11 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
                 hideOnboarding()
             }
             btnGoogleSignIn.setOnClickListener {
-                if(sharedPreferences.userData == null) {
-                    signIn()
+                isNetWorkAvailable {
+                    if(sharedPreferences.userData == null) {
+                        signIn()
+                    }
                 }
-
             }
         }
 
@@ -187,6 +189,7 @@ class LoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListene
     }
 
     override fun onPermissionGrant() {
+        startLocationTrackingService()
         if(sharedPreferences.userData != null) {
             sharedPreferences.userId?.let {
                 if (sharedPreferences.userData!!.groups.isEmpty()) {

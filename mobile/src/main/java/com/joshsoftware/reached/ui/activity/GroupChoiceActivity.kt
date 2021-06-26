@@ -56,26 +56,28 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
                 showCreateGroupLayout()
             }
             btnCreate.setOnClickListener {
-                val groupName = groupEditText.text.toString()
+                isNetWorkAvailable {
+                    val groupName = groupEditText.text.toString()
 
-                if(TextUtils.isEmpty(groupName)) {
-                    showToastMessage(getString(R.string.valid_please_enter_group_name))
-                    return@setOnClickListener
-                }
-                val groupId = UUID.randomUUID().toString()
-                val id = sharedPreferences.userId
-                val user = sharedPreferences.userData
-                if (user != null) {
-                    if (id != null) {
-                        val client = LocationServices.getFusedLocationProviderClient(applicationContext)
-                        client.lastLocation.addOnSuccessListener { location ->
-                            var lat = 0.0
-                            var long = 0.0
-                            if(location != null) {
-                                lat = location.latitude
-                                long = location.longitude
+                    if(TextUtils.isEmpty(groupName)) {
+                        showToastMessage(getString(R.string.valid_please_enter_group_name))
+                        return@setOnClickListener
+                    }
+                    val groupId = UUID.randomUUID().toString()
+                    val id = sharedPreferences.userId
+                    val user = sharedPreferences.userData
+                    if (user != null) {
+                        if (id != null) {
+                            val client = LocationServices.getFusedLocationProviderClient(applicationContext)
+                            client.lastLocation.addOnSuccessListener { location ->
+                                var lat = 0.0
+                                var long = 0.0
+                                if(location != null) {
+                                    lat = location.latitude
+                                    long = location.longitude
+                                }
+                                viewModel.createGroup(groupId, id, user, groupName, lat, long)
                             }
-                            viewModel.createGroup(groupId, id, user, groupName, lat, long)
                         }
                     }
                 }
@@ -84,14 +86,16 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
                 hideCreateGroup()
             }
             joinButton.setOnClickListener {
-                requestPermission(arrayOf(android.Manifest.permission.CAMERA), action = {
-                    if(it == Status.GRANTED) {
-                        IntentIntegrator(this@GroupChoiceActivity)
-                            .setCaptureActivity(CaptureActivity::class.java)
-                            .setOrientationLocked(true)
-                            .initiateScan(); // `this` is the current Activity
-                    }
-                })
+                isNetWorkAvailable {
+                    requestPermission(arrayOf(android.Manifest.permission.CAMERA), action = {
+                        if(it == Status.GRANTED) {
+                            IntentIntegrator(this@GroupChoiceActivity)
+                                .setCaptureActivity(CaptureActivity::class.java)
+                                .setOrientationLocked(true)
+                                .initiateScan(); // `this` is the current Activity
+                        }
+                    })
+                }
             }
 
         }
