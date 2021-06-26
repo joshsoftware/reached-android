@@ -1,5 +1,6 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -42,6 +43,7 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
     lateinit var viewModel: GroupChoiceViewModel
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGroupChoiceBinding.inflate(layoutInflater)
@@ -61,21 +63,15 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
 
                     if(TextUtils.isEmpty(groupName)) {
                         showToastMessage(getString(R.string.valid_please_enter_group_name))
-                        return@setOnClickListener
+                        return@isNetWorkAvailable
                     }
+
                     val groupId = UUID.randomUUID().toString()
                     val id = sharedPreferences.userId
                     val user = sharedPreferences.userData
                     if (user != null) {
                         if (id != null) {
-                            val client = LocationServices.getFusedLocationProviderClient(applicationContext)
-                            client.lastLocation.addOnSuccessListener { location ->
-                                var lat = 0.0
-                                var long = 0.0
-                                if(location != null) {
-                                    lat = location.latitude
-                                    long = location.longitude
-                                }
+                            getLastKnownLocation { lat, long ->
                                 viewModel.createGroup(groupId, id, user, groupName, lat, long)
                             }
                         }
@@ -99,6 +95,24 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
             }
 
         }
+    }
+
+    private fun getLastKnownLocation(onLastKnownFetch: (Double, Double) -> Unit) {
+        requestPermission(arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION), action = {
+            if(it == Status.GRANTED) {
+                val client = LocationServices.getFusedLocationProviderClient(applicationContext)
+                client.lastLocation.addOnSuccessListener { location ->
+                    var lat = 0.0
+                    var long = 0.0
+                    if(location != null) {
+                        lat = location.latitude
+                        long = location.longitude
+                    }
+                    onLastKnownFetch(lat, long)
+                }
+            }
+        })
     }
 
     override fun initializeViewModel() {
@@ -149,17 +163,9 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
                 val user = sharedPreferences.userData
                 if (user != null) {
                     if (id != null) {
-
-                        val client = LocationServices.getFusedLocationProviderClient(applicationContext)
-                        client.lastLocation.addOnSuccessListener { location ->
-                            var lat = 0.0
-                            var long = 0.0
-                            if(location != null) {
-                                lat = location.latitude
-                                long = location.longitude
-                            }
+                        getLastKnownLocation { lat, long ->
                             viewModel.joinGroup(groupId, id, user, lat, long)
-                                .observe(this, androidx.lifecycle.Observer {
+                                .observe(this, {
                                     startGroupMembersActivity(result.contents)
                                 })
                         }
