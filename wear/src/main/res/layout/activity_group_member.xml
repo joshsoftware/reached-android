@@ -51,6 +51,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtGroupTitle" />
     <ImageView
+        android:id="@+id/imgShowOnMap"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/reached_slider_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

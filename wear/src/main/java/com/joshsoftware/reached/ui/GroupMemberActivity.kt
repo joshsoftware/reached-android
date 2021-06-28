@@ -49,6 +49,9 @@ class GroupMemberActivity : BaseActivity() {
             viewExit.setOnClickListener {
                 logout(preferences, WearLoginActivity::class.java)
             }
+            imgShowOnMap.setOnClickListener {
+                startMapActivity(Member(""))
+            }
         }
     }
 
@@ -74,4 +77,5 @@ class GroupMemberActivity : BaseActivity() {
         intent.putExtra(INTENT_GROUP_ID, groupId)
         startActivity(intent)
     }
+
 }
