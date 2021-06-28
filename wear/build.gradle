@@ -16,7 +16,7 @@ android {
             keyAlias 'reached'
         }
         debug {
-            storeFile file('/home/nayan/.android/debug.keystore')
+            storeFile file('C:\\Users\\Nayan\\.android\\debug.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'

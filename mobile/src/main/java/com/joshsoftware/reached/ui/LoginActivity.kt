@@ -82,8 +82,6 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
             )
             adapter?.submitList(list)
             dotsIndicator.setViewPager2(viewPagerOnboarding)
-
-
             imgContinue.setOnClickListener {
                 if(viewPagerOnboarding.currentItem == list.size - 1) {
                     hideOnboarding()

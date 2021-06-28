@@ -142,7 +142,6 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
                             .position(latLng)
                             .icon(getMarkerIconFromDrawable(it)))
         }
-
     }
 
     private fun updateMapLocation(latLng: LatLng?) {

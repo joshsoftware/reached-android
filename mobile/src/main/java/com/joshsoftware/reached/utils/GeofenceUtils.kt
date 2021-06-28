@@ -28,41 +28,53 @@ class GeofenceUtils @Inject constructor(var sharedPreferences: AppSharedPreferen
     @SuppressLint("MissingPermission")
     fun addGeofences(list: MutableList<Group>, performPermissionCheck:  (() -> Unit) -> Unit) {
         sharedPreferences.userId?.let { userId ->
-
             val geofencingBuilder = GeofencingRequest.Builder()
-            val addressList = mutableListOf<Address>()
             list.forEach { group ->
                 group.members.forEach { (key, member) ->
                     if(key == userId) {
-                        group.members[key]?.address?.forEach { (t, address) ->
-                            geofencingClient.removeGeofences(mutableListOf(t))
-                            val geofence = Geofence.Builder()
-                                    .setRequestId(t)
-                                    .setCircularRegion(
-                                        address.lat,
-                                        address.long,
-                                        address.radius.toFloat())
-                                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
-                                    .build()
-                            geofencingBuilder.addGeofence(geofence)
-                            val geofenceRequest = geofencingBuilder.build()
-                            val intent = Intent(application.baseContext, GeofenceBroadcastReceiver::class.java)
-                            intent.putExtra(IntentConstant.GROUP_ID.name, group.id)
-                            intent.putExtra(IntentConstant.MEMBER_ID.name, key)
-                            intent.action = GeoConstants.ACTION_GEO_FENCE
-                            val pendingIntent = PendingIntent.getBroadcast(application.baseContext, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-                            performPermissionCheck {
-                                geofencingClient.addGeofences(geofenceRequest, pendingIntent).addOnCompleteListener {
-                                    if(it.isSuccessful) {
-                                        Timber.e("Geofence added successfully")
-                                    } else {
-                                        Timber.e("Failed to add geofence")
-                                    }
-                                }
-                            }
+                        group.members[key]?.address?.forEach { (addressId, address) ->
+                            address.id = addressId
+                            addGeofence(address, group.id!!, key, performPermissionCheck, geofencingBuilder)
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun removeGeofence(id: String) {
+        geofencingClient.removeGeofences(mutableListOf(id))
+    }
+
+    @SuppressLint("MissingPermission")
+    fun addGeofence(address: Address, groupId: String, memberId: String, performPermissionCheck:  (() -> Unit) -> Unit, geofencingBuilder: GeofencingRequest.Builder? = null) {
+        geofencingClient.removeGeofences(mutableListOf(address.id))
+        var geoBuilder = geofencingBuilder
+        if(geofencingBuilder == null) {
+            geoBuilder = GeofencingRequest.Builder()
+        }
+        val geofence = Geofence.Builder()
+                .setRequestId(address.id)
+                .setCircularRegion(
+                    address.lat,
+                    address.long,
+                    address.radius.toFloat())
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build()
+        geoBuilder?.addGeofence(geofence)
+        val geofenceRequest = geoBuilder?.build()
+        val intent = Intent(application.baseContext, GeofenceBroadcastReceiver::class.java)
+        intent.putExtra(IntentConstant.GROUP_ID.name, groupId)
+        intent.putExtra(IntentConstant.MEMBER_ID.name, memberId)
+        intent.action = GeoConstants.ACTION_GEO_FENCE
+        val pendingIntent = PendingIntent.getBroadcast(application.baseContext, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        performPermissionCheck {
+            geofencingClient.addGeofences(geofenceRequest, pendingIntent).addOnCompleteListener {
+                if(it.isSuccessful) {
+                    Timber.e("Geofence added successfully")
+                } else {
+                    Timber.e("Failed to add geofence")
                 }
             }
         }

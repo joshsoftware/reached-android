@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.joshsoftware.core.PermissionActivity
 import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.model.Member
@@ -13,6 +14,7 @@ import com.joshsoftware.core.model.RequestCodes
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.adapter.AddressAdapter
+import com.joshsoftware.reached.utils.GeofenceUtils
 import com.joshsoftware.reached.viewmodel.ProfileViewModel
 import kotlinx.android.synthetic.main.activity_groups.*
 import kotlinx.android.synthetic.main.activity_home.*
@@ -20,12 +22,16 @@ import kotlinx.android.synthetic.main.activity_profile.*
 import java.lang.Math.abs
 import javax.inject.Inject
 
-class ProfileActivity : BaseActivity() {
+class ProfileActivity : PermissionActivity() {
     private var groupId: String? = null
     private var userId: String? = null
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var geofenceUtils: GeofenceUtils
+
     lateinit var viewModel: ProfileViewModel
     lateinit var adapter: AddressAdapter
 
@@ -63,6 +69,7 @@ class ProfileActivity : BaseActivity() {
                 isNetWorkAvailable {
                     if(groupId != null && member.id != null) {
                         viewModel.deleteAddress(groupId!!, member.id!!, address.id).observe(this, {
+                            address.id?.let { addressId ->  geofenceUtils.removeGeofence(addressId) }
                             val list = adapter.currentList.toMutableList()
                             val index = list.indexOfFirst { it.id ==  address.id}
                             if(index != -1) {
@@ -124,6 +131,15 @@ class ProfileActivity : BaseActivity() {
                 val list = adapter.currentList.toMutableList()
                 data?.extras?.getParcelable<Address>(IntentConstant.ADDRESS.name)?.let {
                     list.add(it)
+                    geofenceUtils.addGeofence(it, groupId!!, userId!!, { onPermissionGrant ->
+                        requestPermission(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)) { status ->
+                            if (status == Status.GRANTED) {
+                                onPermissionGrant()
+                            } else {
+                                showToastMessage("Please grant location permission")
+                            }
+                        }
+                    })
                     adapter.submitList(list)
                     adapter.notifyDataSetChanged()
                 }
