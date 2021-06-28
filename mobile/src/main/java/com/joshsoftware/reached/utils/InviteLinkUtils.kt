@@ -40,7 +40,7 @@ class InviteLinkUtils {
                 .build()
     }
 
-    fun handleDynamicLinks(intent: Intent, onGroupFetch: (Group) -> Unit ) {
+    fun handleDynamicLinks(intent: Intent, onGroupFetch: (Group) -> Unit , onFailure: () -> Unit) {
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(intent)
                 .addOnSuccessListener {
@@ -54,8 +54,11 @@ class InviteLinkUtils {
                         val name = it.getQueryParameter("groupName")
                         val group = Group(id, name = name)
                         onGroupFetch(group)
+                    } ?: run {
+                        onFailure()
                     }
                 }.addOnFailureListener {
+                    onFailure()
                     Timber.i(it)
                 }
     }

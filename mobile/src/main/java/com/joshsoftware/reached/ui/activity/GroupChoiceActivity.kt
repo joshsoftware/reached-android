@@ -49,10 +49,6 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         binding = ActivityGroupChoiceBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val linkUtils = InviteLinkUtils()
-        linkUtils.handleDynamicLinks(intent) {
-            showJoinGroupAlertDialog(it)
-        }
         binding.apply {
             createButton.setOnClickListener {
                 showCreateGroupLayout()

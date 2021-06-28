@@ -57,6 +57,9 @@ class JoinGroupDialog: BaseDialogFragment() {
 
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+
+    }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         initializeViewModel()
 

@@ -69,10 +69,6 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_drawer_layout)
 
-        val linkUtils = InviteLinkUtils()
-        linkUtils.handleDynamicLinks(intent) {
-            showJoinGroupAlertDialog(it)
-        }
         handleLeaveRequest(intent)
         setupViewPager()
         fetchGroups()
@@ -236,7 +232,12 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
 
         viewModel.result.observe(this, {
             if (it.size == 0) {
-                startGroupChoiceActivity()
+                val linkUtils = InviteLinkUtils()
+                linkUtils.handleDynamicLinks(intent, {
+                    showJoinGroupAlertDialog(it)
+                }) {
+                    startGroupChoiceActivity()
+                }
             }
             if (!geofenceAdded) {
 
