@@ -26,6 +26,7 @@
         app:layout_constraintTop_toBottomOf="@+id/headerLayout"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/placesConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -65,15 +66,16 @@
         app:layout_constraintTop_toBottomOf="@+id/headerLayout" />
 
     <TextView
-        android:id="@+id/txtBack"
+        android:id="@+id/txtSave"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:visibility="gone"
         android:background="@color/reached_yellow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="16dp"
-        android:text="@string/button_text_back"
+        android:text="@string/button_text_save"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

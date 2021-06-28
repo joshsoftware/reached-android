@@ -1,13 +1,19 @@
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
@@ -36,11 +42,16 @@ class PickLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivity
     private var address: Address? = null
     lateinit var memberId: String
     lateinit var groupId: String
+    var locationMarker: Marker? = null
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pick_location)
-        Places.initialize(this, getString(R.string.places_api_key))
+        if(BuildConfig.PLACES_ENABLED) {
+            Places.initialize(this, getString(R.string.places_api_key))
+        } else {
+            txtSave.visibility = View.VISIBLE
+        }
         setupMap()
         handleIntent()
         setupListeners()
@@ -63,8 +74,11 @@ class PickLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivity
         btnNext.setOnClickListener {
             startSaveLocationActivity(address)
         }
-        txtBack.setOnClickListener {
-            finish()
+        txtSave.setOnClickListener {
+            if(!BuildConfig.PLACES_ENABLED) {
+                address = Address(null, "", "", "enter", locationMarker?.position?.latitude ?: 0.0, locationMarker?.position?.longitude ?: 0.0)
+                startSaveLocationActivity(address)
+            }
         }
         imgBack.setOnClickListener {
             finish()
@@ -87,7 +101,13 @@ class PickLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivity
         mapFragment?.let {
             setMapFragment(it)
         }
-        initializePlaces()
+        if(BuildConfig.PLACES_ENABLED) {
+            placesConstraintLayout.visibility = View.VISIBLE
+            initializePlaces()
+        }else {
+            placesConstraintLayout.visibility = View.GONE
+        }
+
     }
 
     override fun initializeViewModel() {
@@ -97,7 +117,30 @@ class PickLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivity
     override fun mapReady() {
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
             if(location != null) {
-                updateMapLocation(LatLng(location.latitude, location.longitude))
+                val latLng = LatLng(location.latitude, location.longitude)
+                updateMapLocation(latLng)
+                if(!BuildConfig.PLACES_ENABLED) {
+                    ContextCompat.getDrawable(this, R.drawable.marker_mini_map)?.let {
+                        locationMarker = map?.addMarker(
+                            MarkerOptions()
+                                .position(latLng)
+                                .draggable(true)
+                                .icon(getMarkerIconFromDrawable(it)))
+                        map?.setOnMarkerDragListener(object: GoogleMap.OnMarkerDragListener {
+                            override fun onMarkerDragStart(p0: Marker?) {
+
+                            }
+
+                            override fun onMarkerDrag(p0: Marker?) {
+
+                            }
+
+                            override fun onMarkerDragEnd(p0: Marker?) {
+                                locationMarker?.position = p0?.position
+                            }
+                        })
+                    }
+                }
             }
         }
     }
@@ -136,5 +179,14 @@ class PickLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivity
                 }
             }
         }
+    }
+
+    private fun getMarkerIconFromDrawable(drawable: Drawable): BitmapDescriptor? {
+        val canvas = Canvas()
+        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        canvas.setBitmap(bitmap)
+        drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+        drawable.draw(canvas)
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 }
