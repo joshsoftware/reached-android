@@ -54,6 +54,10 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
         dbManager.fetchMember(groupId, memberId, onFetch, onCancel)
     }
 
+    fun fetchMemberOnce(groupId: String, memberId: String): Deferred<Member?> {
+        return dbManager.fetchMemberOnce(groupId, memberId)
+    }
+
     fun isGroupCreated(userId: String,
                        onFetch: (Boolean) -> Unit,
                        onCancel: (DatabaseError) -> Unit) {

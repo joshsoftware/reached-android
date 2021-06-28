@@ -12,6 +12,7 @@ import com.joshsoftware.core.FamViewHolder
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.util.ConversionUtil
+import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.viewholder.ViewHolder
 import kotlinx.android.synthetic.main.group_menu_layout.view.*
 import kotlinx.android.synthetic.main.home_view.*
@@ -42,6 +43,12 @@ class HomeAdapter(val sharedPreferences: AppSharedPreferences,
                 memberRecyclerView.adapter = adapter
                 val util = ConversionUtil()
                 adapter.submitList(util.getMemberListFromMap(model.members))
+
+                if(sharedPreferences.userId == model.created_by) {
+                    txtDelete.text = context.getString(R.string.delete_group)
+                } else {
+                    txtDelete.text = context.getString(R.string.leave_group)
+                }
 
                 imgGroupMenu.setOnClickListener {
                     if(viewTransparent.visibility == View.GONE) {

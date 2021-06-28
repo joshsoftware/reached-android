@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.LeaveRequestData
 import com.joshsoftware.core.model.User
 import com.joshsoftware.core.repository.GroupRepository
 import com.joshsoftware.core.viewmodel.BaseViewModel
@@ -15,13 +16,20 @@ class HomeViewModel @Inject constructor(val sharedPreferences: AppSharedPreferen
                                         val repository: GroupRepository)
     : BaseViewModel<MutableList<Group>>() {
 
-    fun sendSos(userId: String, user: User): MutableLiveData<Boolean> {
-        val liveData = MutableLiveData<Boolean>()
-        executeRoutine {
-            liveData.value = repository.sendSos(userId, user)
-        }
-        return liveData
-    }
+    private var _leaveGroupRequest = MutableLiveData<Boolean?>()
+    val leaveGroupRequest: LiveData<Boolean?>
+        get() = _leaveGroupRequest
+    private var _leaveGroup = MutableLiveData<Boolean?>()
+    val leaveGroup: LiveData<Boolean?>
+        get() = _leaveGroup
+
+    private var _requestExists = MutableLiveData<Boolean>()
+    val requestExists: LiveData<Boolean>
+        get() = _requestExists
+
+    private var _leaveRequests = MutableLiveData<List<LeaveRequestData>>()
+    val leaveRequests: LiveData<List<LeaveRequestData>>
+        get() = _leaveRequests
 
     fun fetchGroups(userId: String) {
         viewModelScope.launch {
@@ -35,19 +43,6 @@ class HomeViewModel @Inject constructor(val sharedPreferences: AppSharedPreferen
             })
         }
 
-    }
-
-    fun joinGroup(id: String, userId: String, user: User, lat: Double, long: Double): MutableLiveData<String> {
-        val liveData = MutableLiveData<String>()
-        executeRoutine {
-            val (id, user) = repository.joinGroup(id, userId, user, lat, long)
-            sharedPreferences.userData?.let {
-                it.groups = user.groups
-                sharedPreferences.saveUserData(it)
-            }
-            liveData.value = id
-        }
-        return liveData
     }
 
     fun createGroup(id: String, userId: String, user: User, groupName: String, lat: Double, long: Double): LiveData<Group> {
@@ -69,5 +64,37 @@ class HomeViewModel @Inject constructor(val sharedPreferences: AppSharedPreferen
             liveData.value = repository.deleteGroup(group)
         }
         return liveData
+    }
+
+
+
+    fun requestLeaveGroup(groupId: String, userId: String, createdBy: String, name: String, groupName: String) {
+        executeRoutine {
+            _leaveGroupRequest.value = repository.requestLeaveGroup(groupId, userId, createdBy, name, groupName)
+        }
+    }
+
+    fun leaveGroup(requestId: String, groupId: String, userId: String) {
+        executeRoutine {
+            _leaveGroup.value = repository.leaveGroup(requestId, groupId, userId)
+        }
+    }
+
+    fun declineGroupLeaveRequest(requestId: String, userId: String) {
+        executeRoutine {
+            repository.deleteRequestWith(requestId, userId)
+        }
+    }
+
+    fun leaveRequestExists(userId: String, groupId: String) {
+        executeRoutine {
+            _requestExists.value = repository.leaveRequestExists(userId, groupId)
+        }
+    }
+
+    fun getLeaveRequests(groupId: String) {
+        executeRoutine {
+            _leaveRequests.value = repository.getLeaveRequests(groupId)
+        }
     }
 }

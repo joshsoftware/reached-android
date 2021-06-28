@@ -47,6 +47,14 @@ class MapViewModel @Inject constructor(var repository: GroupRepository)
         }
     }
 
+    fun fetchMemberData(memberId: String, groupId: String): LiveData<Member> {
+        val liveData = MutableLiveData<Member>()
+        executeRoutine {
+            liveData.value = repository.fetchMemberOnce(groupId, memberId).await()
+        }
+        return liveData
+    }
+
     fun markSafe(userId: String, member: Member): LiveData<Boolean> {
         val liveData = MutableLiveData<Boolean>()
         executeRoutine {

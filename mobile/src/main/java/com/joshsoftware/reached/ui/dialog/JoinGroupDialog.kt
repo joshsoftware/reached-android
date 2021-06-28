@@ -114,13 +114,16 @@ class JoinGroupDialog: BaseDialogFragment() {
     @SuppressLint("MissingPermission")
     fun updateLastLocation(context: Context, gId: String) {
         val client = LocationServices.getFusedLocationProviderClient(context)
-        client.lastLocation.addOnSuccessListener { location ->
+        client.lastLocation.addOnCompleteListener { task ->
             var lat = 0.0
             var long = 0.0
-            if(location != null) {
-                lat = location.latitude
-                long = location.longitude
+            if(task.isSuccessful) {
+                if(task.result != null) {
+                    lat = task.result.latitude
+                    long = task.result.longitude
+                }
             }
+
             viewModel.joinGroup(
                 gId,
                 sharedPreferences.userId!!,

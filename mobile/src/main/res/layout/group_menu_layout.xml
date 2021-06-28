@@ -15,7 +15,7 @@
             <TextView
                 android:drawableStart="@drawable/ic_round_edit_24"
                 android:id="@+id/txtEdit"
-                android:text="Edit group"
+                android:text="@string/edit_group"
                 android:padding="8dp"
                 android:layout_marginTop="8dp"
 
@@ -30,7 +30,7 @@
                 android:clickable="true"
                 android:id="@+id/txtDelete"
                 android:drawableStart="@drawable/ic_round_delete_24"
-                android:text="Delete group"
+                android:text="@string/delete_group"
                 android:padding="8dp"
                 android:layout_margin="8dp"
                 android:drawablePadding="8dp"

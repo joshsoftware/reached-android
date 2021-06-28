@@ -295,6 +295,7 @@ class FirebaseRealtimeDbManager {
                 } else {
                     val member = group.members.get(memberId)
                     member?.let {
+                        member.id = memberId
                         onFetch(member)
                     }
 
@@ -305,6 +306,30 @@ class FirebaseRealtimeDbManager {
                 onCancel(error)
             }
         })
+    }
+
+    fun fetchMemberOnce(groupId: String, memberId: String): Deferred<Member?> {
+        val deferred = CompletableDeferred<Member?>()
+        groupReference.child(groupId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val group = snapshot.getValue(Group::class.java)
+                if (group == null) {
+                    deferred.complete(null)
+                } else {
+                    val member = group.members.get(memberId)
+                    member?.let {
+                        member.id = memberId
+                        deferred.complete(member)
+                    }
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                deferred.completeExceptionally(error.toException())
+            }
+        })
+        return deferred
     }
 
     fun fetchGroupDetails(groupId: String,

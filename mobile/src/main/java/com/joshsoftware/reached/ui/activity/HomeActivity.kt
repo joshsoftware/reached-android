@@ -39,6 +39,7 @@ import com.joshsoftware.reached.viewmodel.HomeViewModel
 import com.joshsoftware.reached.viewmodel.SosViewModel
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
+import kotlinx.android.synthetic.main.activity_group_member_mobile.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.home_drawer_layout.*
 import kotlinx.android.synthetic.main.layout_create_group.*
@@ -72,7 +73,7 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
         linkUtils.handleDynamicLinks(intent) {
             showJoinGroupAlertDialog(it)
         }
-
+        handleLeaveRequest(intent)
         setupViewPager()
         fetchGroups()
 
@@ -126,8 +127,17 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
         }
     }
 
+    private fun handleLeaveRequest(intent: Intent?) {
+        val requestId = intent?.extras?.getString(IntentConstant.REQUEST_ID.name)
+        val groupId = intent?.extras?.getString(IntentConstant.GROUP_ID.name)
+        val memberId = intent?.extras?.getString(IntentConstant.MEMBER_ID.name)
+        val message = intent?.extras?.getString(IntentConstant.MESSAGE.name)
+        showLeaveRequestDialog(requestId, groupId, memberId, message)
+    }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        handleLeaveRequest(intent)
     }
 
     private fun fetchGroups() {
@@ -139,26 +149,42 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
     }
 
     private fun setupViewPager() {
-        adapter = HomeAdapter(sharedPreferences, { member, groupId ->
-            startProfileActivity(member, groupId)
-        }, { member, group ->
+        adapter = HomeAdapter(sharedPreferences,
+                              { member, groupId ->
+                                  startProfileActivity(member, groupId)
+                              }, { member, group ->
                                   startLocationActivity(member, group)
                               },{ group ->
                                   startGroupEditActivity(group)
                               }, { group, position ->
-                                  showChoiceDialog("Do you ]want to delete this group?", {
-                                      viewModel.deleteGroup(group).observe(this, {
-                                          sharedPreferences.userData?.apply {
-                                              groups.remove(group.id)
-                                              sharedPreferences.saveUserData(this)
-                                          }
-                                          adapter.notifyItemRemoved(position)
-                                          showToastMessage("Group was deleted successfully!")
+                                  if(sharedPreferences.userId == group.created_by) {
+                                      showChoiceDialog("Do you want to delete this group?", {
+                                          viewModel.deleteGroup(group).observe(this, {
+                                              sharedPreferences.userData?.apply {
+                                                  groups.remove(group.id)
+                                                  sharedPreferences.saveUserData(this)
+                                              }
+                                              adapter.notifyItemRemoved(position)
+                                              showToastMessage("Group was deleted successfully!")
+                                          })
                                       })
-                                  })
-                              }) { group ->
-            startQrCodeActivity(group)
-        }
+                                  } else {
+                                      showChoiceDialog("Do you want to leave this group?", {
+                                          if(group.id != null && group.created_by != null && group.name != null) {
+                                              viewModel.requestLeaveGroup(
+                                                  group.id!!,
+                                                  sharedPreferences.userId!!,
+                                                  group.created_by!!,
+                                                  sharedPreferences.userData?.name!!,
+                                                  group.name!!
+                                              )
+                                          }
+                                      })
+                                  }
+
+                              }, { group ->
+                                  startQrCodeActivity(group)
+                              })
         homeViewPager.adapter = adapter
         TabLayoutMediator (dotsTabLayout, homeViewPager) { tab, pos ->
 
@@ -207,11 +233,25 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         sosViewModel = ViewModelProvider(this, viewModelFactory)[SosViewModel::class.java]
+
         viewModel.result.observe(this, {
             if (it.size == 0) {
                 startGroupChoiceActivity()
             }
             if (!geofenceAdded) {
+
+                sharedPreferences.userId?.let { userId ->
+                    it.forEach { group ->
+                        group.let { nonNullGroup ->
+                            sharedPreferences.userId?.let {
+                                if (it == nonNullGroup.created_by) {
+                                    nonNullGroup.id?.let { it1 -> viewModel.getLeaveRequests(it1) }
+                                }
+                            }
+                        }
+                    }
+
+                }
                 geofenceUtils.addGeofences(it) { onPermissionCheck ->
                     requestPermission(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)) { status ->
                         if (status == Status.GRANTED) {
@@ -227,6 +267,29 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
             adapter.notifyDataSetChanged()
         })
 
+        viewModel.leaveGroupRequest.observe(this, Observer { groupLeft ->
+            groupLeft?.let {
+                leaveOrDeleteGroupLabel.text = getString(R.string.request_sent)
+                showToastMessage("Your request to leave the group has been sent successfully!")
+            }
+        })
+
+        viewModel.leaveGroup.observe(this, Observer { groupLeft ->
+            groupLeft?.let {
+                showToastMessage("Removed successfully!")
+            }
+        })
+
+        viewModel.leaveRequests.observe(this, Observer { requests ->
+            requests?.forEach { leaveRequest ->
+                showLeaveRequestDialog(
+                    leaveRequest.requestId,
+                    leaveRequest.group?.id,
+                    leaveRequest.from?.id,
+                    "${leaveRequest.from?.name} wants to leave the group. Remove from group?"
+                )
+            }
+        })
         viewModel.spinner.observe(this, {
             if(it) showProgressView() else hideProgressView()
         })
@@ -298,6 +361,20 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
         dialog.show(supportFragmentManager, dialog.tag)
     }
 
+    private fun showLeaveRequestDialog(
+        requestId: String?,
+        groupId: String?,
+        memberId: String?,
+        message: String?
+    ) {
+        if(requestId != null && groupId != null && memberId != null && message != null) {
+            showChoiceDialog(message,  {
+                viewModel.leaveGroup(requestId, groupId, memberId)
+            }, {
+                                 viewModel.declineGroupLeaveRequest(requestId, memberId)
+                             })
+        }
+    }
     override fun supportFragmentInjector() = dispatchingAndroidInjector
 
 }

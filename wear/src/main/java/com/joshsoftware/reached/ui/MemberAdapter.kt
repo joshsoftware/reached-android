@@ -31,12 +31,11 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                     } else {
                         nameTextView.text = model.name
                     }
-//                    if(model.sosState) {
-//                        containerCardView.strokeWidth = 4
-//                        containerCardView.setStrokeColor(ContextCompat.getColor(context, com.joshsoftware.reached.R.color.colorAlert))
-//                    } else {
-//                        containerCardView.strokeWidth = 0
-//                    }
+                    if(model.sosState) {
+                        imgSos.visibility  =View.VISIBLE
+                    } else {
+                        imgSos.visibility  =View.GONE
+                    }
                     if(model.lastKnownAddress.isNullOrEmpty()) {
                         placeTextView.text = "Enroute"
                     } else {
@@ -48,8 +47,6 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                 } else {
                     nameTextView.text = "Show on map"
                     nameTextView.setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
-//                    containerCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-
                     imgProfile.visibility = View.GONE
                     nameTextView.gravity = Gravity.CENTER
                 }

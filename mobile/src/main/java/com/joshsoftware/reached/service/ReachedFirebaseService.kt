@@ -12,10 +12,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.LoginRepository
-import com.joshsoftware.core.model.Group
-import com.joshsoftware.core.model.IntentConstant
-import com.joshsoftware.core.model.NotificationPayload
-import com.joshsoftware.core.model.NotificationType
+import com.joshsoftware.core.model.*
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.activity.*
 import dagger.android.AndroidInjection
@@ -94,13 +91,27 @@ class ReachedFirebaseService: FirebaseMessagingService() {
             NotificationType.LEAVE.key -> {
                 getGroupLeaveRequestPendingIntent(data, message)
             }
+            NotificationType.REMOVED_MEMBER.key -> {
+                getRemovedPendingIntent(data, message)
+            }
             NotificationType.SOS.key -> {
                 getSosIntent(data)
-            } else -> {
+            }
+            NotificationType.GROUP_DELETE.key -> {
                 getGeofenceIntent(data)
+            }
+            else -> {
+                getGroupDeleteIntent(data)
             }
         }
 
+    }
+
+    private fun getGroupDeleteIntent(data: String?): PendingIntent? {
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        return PendingIntent.getActivity(this, 0, intent,
+                                         PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun getGroupLeaveRequestPendingIntent(data: String?, message: String?): PendingIntent? {
@@ -117,12 +128,16 @@ class ReachedFirebaseService: FirebaseMessagingService() {
             PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
+    private fun getRemovedPendingIntent(data: String?, message: String?): PendingIntent? {
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        return PendingIntent.getActivity(this, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
 
     private fun getGroupJoinPendingIntent(data: String?): PendingIntent? {
-        val intent = Intent(this, GroupMemberActivity::class.java)
-        getNotificationPayload(data)?.let {
-            intent.putExtra(INTENT_GROUP, Group(it.groupId))
-        }
+        val intent = Intent(this, HomeActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         return PendingIntent.getActivity(this, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT)
@@ -137,8 +152,8 @@ class ReachedFirebaseService: FirebaseMessagingService() {
     private fun getSosIntent(data: String?): PendingIntent? {
         val intent = Intent(this, MapActivity::class.java)
         getNotificationPayload(data)?.let {
-            intent.putExtra(INTENT_GROUP_ID, it.groupId)
-            intent.putExtra(INTENT_MEMBER_ID, it.memberId)
+            intent.putExtra(IntentConstant.GROUP.name, Group(it.groupId))
+            intent.putExtra(IntentConstant.MEMBER.name, Member(it.memberId))
         }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         return PendingIntent.getActivity(this, 0, intent,
