@@ -121,8 +121,8 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
 
     private fun setupUi(address: Address) {
         edtLocation.addTextChangedListener {
-            radioBtnHome.isChecked = false
-            radioBtnWork.isChecked = false
+            if(edtLocation.text.toString() != "Home") radioBtnHome.isChecked = false
+            if(edtLocation.text.toString() != "Work") radioBtnWork.isChecked = false
         }
 
         txtAddress.text = address.address
