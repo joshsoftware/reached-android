@@ -98,10 +98,10 @@ class ReachedFirebaseService: FirebaseMessagingService() {
                 getSosIntent(data)
             }
             NotificationType.GROUP_DELETE.key -> {
-                getGeofenceIntent(data)
+                getGroupDeleteIntent(data)
             }
             else -> {
-                getGroupDeleteIntent(data)
+                getGeofenceIntent(data)
             }
         }
 
