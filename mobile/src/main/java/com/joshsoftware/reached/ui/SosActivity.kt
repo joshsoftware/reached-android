@@ -5,11 +5,12 @@ import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.PermissionActivity
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.reached.viewmodel.SosViewModel
 import javax.inject.Inject
 
-abstract class SosActivity: BaseActivity() {
+abstract class SosActivity: PermissionActivity() {
 
     protected lateinit var sosViewModel: SosViewModel
 

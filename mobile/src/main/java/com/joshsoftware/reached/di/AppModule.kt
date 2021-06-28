@@ -4,6 +4,8 @@ import android.app.Application
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.LocationServices
 import com.joshsoftware.reached.R
 import dagger.Module
 import dagger.Provides
@@ -20,6 +22,11 @@ class AppModule {
             .build()
 
         return GoogleSignIn.getClient(application.applicationContext, gso)
+    }
+
+    @Provides
+    fun providesGeofenceClient(application: Application): GeofencingClient {
+        return LocationServices.getGeofencingClient(application.applicationContext)
     }
 
 }

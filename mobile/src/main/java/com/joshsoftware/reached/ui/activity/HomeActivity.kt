@@ -1,5 +1,6 @@
 package com.joshsoftware.reached.ui.activity
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
@@ -32,6 +33,7 @@ import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.reached.ui.SosActivity
 import com.joshsoftware.reached.ui.adapter.HomeAdapter
 import com.joshsoftware.reached.ui.dialog.JoinGroupDialog
+import com.joshsoftware.reached.utils.GeofenceUtils
 import com.joshsoftware.reached.utils.InviteLinkUtils
 import com.joshsoftware.reached.viewmodel.HomeViewModel
 import com.joshsoftware.reached.viewmodel.SosViewModel
@@ -55,7 +57,10 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
     lateinit var viewModel: HomeViewModel
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var geofencingClient: GeofencingClient
+
+    @Inject
+    lateinit var geofenceUtils: GeofenceUtils
+
     private var geofenceAdded: Boolean = false
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
@@ -68,7 +73,6 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
             showJoinGroupAlertDialog(it)
         }
 
-        geofencingClient = LocationServices.getGeofencingClient(this)
         setupViewPager()
         fetchGroups()
 
@@ -100,14 +104,7 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
             val user = sharedPreferences.userData
             if (user != null) {
                 if (id != null) {
-                    val client = LocationServices.getFusedLocationProviderClient(applicationContext)
-                    client.lastLocation.addOnSuccessListener { location ->
-                        var lat = 0.0
-                        var long = 0.0
-                        if(location != null) {
-                            lat = location.latitude
-                            long = location.longitude
-                        }
+                    getLastKnownLocation { lat, long ->
                         viewModel.createGroup(groupId, id, user, groupName, lat, long).observe(this, {
                             updateCurrentAdapterList(it)
                             showToastMessage("Group created successfully!")
@@ -149,21 +146,21 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
         adapter = HomeAdapter(sharedPreferences, { member, groupId ->
             startProfileActivity(member, groupId)
         }, { member, group ->
-            startLocationActivity(member, group)
-        },{ group ->
-            startGroupEditActivity(group)
-        }, { group, position ->
-            showChoiceDialog("Do you ]want to delete this group?", {
-                viewModel.deleteGroup(group).observe(this, {
-                    sharedPreferences.userData?.apply {
-                        groups.remove(group.id)
-                        sharedPreferences.saveUserData(this)
-                    }
-                    adapter.notifyItemRemoved(position)
-                    showToastMessage("Group was deleted successfully!")
-                })
-            })
-        }) { group ->
+                                  startLocationActivity(member, group)
+                              },{ group ->
+                                  startGroupEditActivity(group)
+                              }, { group, position ->
+                                  showChoiceDialog("Do you ]want to delete this group?", {
+                                      viewModel.deleteGroup(group).observe(this, {
+                                          sharedPreferences.userData?.apply {
+                                              groups.remove(group.id)
+                                              sharedPreferences.saveUserData(this)
+                                          }
+                                          adapter.notifyItemRemoved(position)
+                                          showToastMessage("Group was deleted successfully!")
+                                      })
+                                  })
+                              }) { group ->
             startQrCodeActivity(group)
         }
         homeViewPager.adapter = adapter
@@ -215,11 +212,19 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         sosViewModel = ViewModelProvider(this, viewModelFactory)[SosViewModel::class.java]
         viewModel.result.observe(this, {
-            if(it.size == 0) {
+            if (it.size == 0) {
                 startGroupChoiceActivity()
             }
-            if(!geofenceAdded) {
-                addGeofences(it)
+            if (!geofenceAdded) {
+                geofenceUtils.addGeofences(it) { onPermissionCheck ->
+                    requestPermission(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)) { status ->
+                        if (status == Status.GRANTED) {
+                            onPermissionCheck()
+                        } else {
+                            showToastMessage("Location Permission required!")
+                        }
+                    }
+                }
                 geofenceAdded = true
             }
             adapter.submitList(it)
@@ -272,44 +277,24 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
         intent.putExtra(INTENT_GROUP, group)
         startActivity(intent)
     }
-    private fun addGeofences(list: MutableList<Group>) {
-        sharedPreferences.userId?.let { userId ->
 
-            val geofencingBuilder = GeofencingRequest.Builder()
-            val addressList = mutableListOf<Address>()
-            list.forEach { group ->
-                group.members.forEach { (key, member) ->
-                    if(key == userId) {
-                        group.members[key]?.address?.forEach { (t, address) ->
-                            geofencingClient.removeGeofences(mutableListOf(t))
-                            val geofence = Geofence.Builder()
-                                .setRequestId(t)
-                                .setCircularRegion(
-                                    address.lat,
-                                    address.long,
-                                    address.radius.toFloat())
-                                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
-                                .build()
-                            geofencingBuilder.addGeofence(geofence)
-                            val geofenceRequest = geofencingBuilder.build()
-                            val intent = Intent(this, GeofenceBroadcastReceiver::class.java)
-                            intent.putExtra(IntentConstant.GROUP_ID.name, group.id)
-                            intent.putExtra(IntentConstant.MEMBER_ID.name, key)
-                            intent.action = GeoConstants.ACTION_GEO_FENCE
-                            val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-                            geofencingClient.addGeofences(geofenceRequest, pendingIntent).addOnCompleteListener {
-                                if(it.isSuccessful) {
-                                    Timber.e("Geofence added successfully")
-                                } else {
-                                    Timber.e("Failed to add geofence")
-                                }
-                            }
-                        }
+    @SuppressLint("MissingPermission")
+    private fun getLastKnownLocation(onLastKnownFetch: (Double, Double) -> Unit) {
+        requestPermission(arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                  android.Manifest.permission.ACCESS_FINE_LOCATION), action = {
+            if(it == Status.GRANTED) {
+                val client = LocationServices.getFusedLocationProviderClient(applicationContext)
+                client.lastLocation.addOnSuccessListener { location ->
+                    var lat = 0.0
+                    var long = 0.0
+                    if(location != null) {
+                        lat = location.latitude
+                        long = location.longitude
                     }
+                    onLastKnownFetch(lat, long)
                 }
             }
-        }
+        })
     }
 
     private fun showJoinGroupAlertDialog(group: Group) {

@@ -11,7 +11,6 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.BaseLocationPermissionActivity
 import com.joshsoftware.core.di.AppType
@@ -23,7 +22,6 @@ import com.joshsoftware.reached.model.OnboardingData
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.HomeActivity
 import com.joshsoftware.reached.ui.adapter.OnboardingAdapter
-import com.joshsoftware.reached.utils.InviteLinkUtils
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -85,18 +83,6 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
             adapter?.submitList(list)
             dotsIndicator.setViewPager2(viewPagerOnboarding)
 
-//            /** Enables automatic page swap */
-//            pageCounter = object : Runnable {
-//                override fun run() {
-//                        if (viewPagerOnboarding.currentItem < 4) {
-//                            viewPagerOnboarding.currentItem++
-//                            if(viewPagerOnboarding.currentItem != 3) {
-//                                handler.postDelayed(this, 2 * 1000)
-//                            }
-//                        }
-//                }
-//            }
-//            handler.postDelayed(pageCounter!!, 2 * 1000)
 
             imgContinue.setOnClickListener {
                 if(viewPagerOnboarding.currentItem == list.size - 1) {
