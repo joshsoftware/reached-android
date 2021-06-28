@@ -5,21 +5,61 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.GroupWaitActivity">
+    <View
+        android:id="@+id/viewExit"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/logout_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    <ImageView
+        android:src="@drawable/ic_logout"
+        android:id="@+id/imgExit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/viewExit"
+        app:layout_constraintEnd_toEndOf="@+id/viewExit"
+        app:layout_constraintTop_toTopOf="@+id/viewExit"
+        app:layout_constraintBottom_toBottomOf="@+id/viewExit"
+        />
+    <TextView
+        android:id="@+id/txtGroups"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/my_groups"
+        android:textColor="@color/title_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewExit" />
+
+    <ImageView
+        android:id="@+id/imgJoinPlaceHolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/ic_mobile"
+        app:layout_constraintBottom_toTopOf="@+id/welcomeTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtGroups" />
 
     <TextView
         android:id="@+id/welcomeTextView"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:layout_marginBottom="8dp"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="Create or Join a group \n from your connected phone"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="Create / Join Group from\n your phone"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

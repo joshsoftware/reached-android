@@ -5,7 +5,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -32,20 +31,26 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                     } else {
                         nameTextView.text = model.name
                     }
-                    if(model.sosState) {
-                        containerCardView.strokeWidth = 4
-                        containerCardView.setStrokeColor(ContextCompat.getColor(context, com.joshsoftware.reached.R.color.colorAlert))
+//                    if(model.sosState) {
+//                        containerCardView.strokeWidth = 4
+//                        containerCardView.setStrokeColor(ContextCompat.getColor(context, com.joshsoftware.reached.R.color.colorAlert))
+//                    } else {
+//                        containerCardView.strokeWidth = 0
+//                    }
+                    if(model.lastKnownAddress.isNullOrEmpty()) {
+                        placeTextView.text = "Enroute"
                     } else {
-                        containerCardView.strokeWidth = 0
+                        placeTextView.text = model.lastKnownAddress
                     }
                     model.profileUrl?.let {
-                        Glide.with(this).load(it).into(profileImageView);
+                        Glide.with(this).load(it).into(imgProfile);
                     }
                 } else {
                     nameTextView.text = "Show on map"
                     nameTextView.setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
-                    containerCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    profileImageView.visibility = View.GONE
+//                    containerCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+
+                    imgProfile.visibility = View.GONE
                     nameTextView.gravity = Gravity.CENTER
                 }
 

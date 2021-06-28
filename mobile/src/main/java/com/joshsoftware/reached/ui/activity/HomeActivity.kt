@@ -120,11 +120,7 @@ class HomeActivity : SosActivity(), HasSupportFragmentInjector {
         }
         navView.setNavigationItemSelectedListener { menuItem ->
             if(menuItem.itemId == R.id.nav_logout) {
-                sharedPreferences.deleteUserData()
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
+                logout(sharedPreferences, LoginActivity::class.java)
             }
             true
         }

@@ -8,20 +8,7 @@ plugins {
 apply from: '../shared_dependencies.gradle'
 
 android {
-    signingConfigs {
-        release {
-            storeFile file('/home/nayan/AndroidStudioProjects/reached.jks')
-            storePassword 'reachedapp'
-            keyPassword 'reachedapp'
-            keyAlias 'reached'
-        }
-        debug {
-            storeFile file('C:\\Users\\Nayan\\.android\\debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-        }
-    }
+
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
@@ -38,7 +25,7 @@ android {
             minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
         }
 
         development {

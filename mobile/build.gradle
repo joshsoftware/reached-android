@@ -23,26 +23,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        releaase {
-            storeFile file('/home/nayan/AndroidStudioProjects/reached.jks')
-            storePassword 'reachedapp'
-            keyPassword 'reachedapp'
-            keyAlias 'reached'
-        }
-        debug {
-            storeFile file('C:\\Users\\Nayan\\.android\\debug.keystore')
-            keyAlias 'androiddebugkey'
-            storePassword 'android'
-            keyPassword 'android'
-        }
-    }
     buildTypes {
         release {
             minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.releaase
+            signingConfig signingConfigs.debug
 
         }
         staging {

@@ -14,7 +14,7 @@
         <item name="shapeAppearanceSmallComponent">@style/App.ShapeAppearance.SmallComponent</item>
         <item name="extendedFloatingActionButtonStyle">@style/App.ExtendedFab</item>
         <item name="fontFamily">@font/sora_regular</item>
-        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowBackground">@color/wear_background</item>
         <!-- Customize your theme here. -->
     </style>
 

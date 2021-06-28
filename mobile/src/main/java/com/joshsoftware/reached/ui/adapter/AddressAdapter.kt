@@ -1,6 +1,7 @@
 package com.joshsoftware.reached.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -18,6 +19,13 @@ class AddressAdapter(val onDelete: (Address) -> Unit): ListAdapter<Address, View
             holder.itemView.apply {
                 txtLocationName.text = model.name
                 txtRadius.text = "${(model.radius.toFloat() / 1000.0)} KM"
+                txtAddress.text = model.address
+                if (model.address.isEmpty()) {
+                    txtAddress.visibility = View.GONE
+                } else {
+                    txtAddress.visibility = View.VISIBLE
+                }
+
                 txtAddress.text = model.address
                 imgDelete.setOnClickListener {
                     onDelete(model)

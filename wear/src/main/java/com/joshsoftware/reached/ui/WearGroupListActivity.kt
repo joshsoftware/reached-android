@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
+import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.core.viewmodel.GroupListViewModel
 import com.joshsoftware.reached.databinding.ActivityGroupMemberBinding
 import com.joshsoftware.reached.databinding.ActivityWearGroupListBinding
 import com.joshsoftware.reached.ui.adapter.GroupsAdapter
+import kotlinx.android.synthetic.main.activity_wear_group_list.*
 import javax.inject.Inject
 
 class WearGroupListActivity : BaseActivity() {
@@ -36,6 +38,9 @@ class WearGroupListActivity : BaseActivity() {
                 viewModel.fetchGroups(it)
             }
         }
+        viewExit.setOnClickListener {
+            logout(sharedPreferences, WearLoginActivity::class.java)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -56,23 +61,13 @@ class WearGroupListActivity : BaseActivity() {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupListViewModel::class.java]
 
-        viewModel.result.observe(this, Observer { list ->
+        viewModel.result.observe(this, { list ->
             list?.let {
                 adapter.submitList(it)
             }
         })
 
-        viewModel.spinner.observe(this, Observer { loading ->
-            loading?.let {
-                if(it) {
-                    showProgressView()
-                } else {
-                    hideProgressView()
-                }
-            }
-        })
-
-        viewModel.error.observe(this,  Observer { error ->
+        viewModel.error.observe(this, { error ->
             error?.let {
                 showErrorMessage(it)
             }

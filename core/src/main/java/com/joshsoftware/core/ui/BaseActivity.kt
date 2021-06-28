@@ -1,34 +1,17 @@
 package com.joshsoftware.core.ui
 
-import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Context
-import android.graphics.Color
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Constraints
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import com.google.android.material.bottomappbar.BottomAppBar
-import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.shape.CutCornerTreatment
-import com.google.android.material.shape.MaterialShapeDrawable
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.R
 import com.joshsoftware.core.di.Injectable
-import com.joshsoftware.core.viewmodel.BaseViewModel
 
 abstract class BaseActivity: AppCompatActivity(), Injectable {
 
@@ -61,7 +44,7 @@ abstract class BaseActivity: AppCompatActivity(), Injectable {
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 onPositiveAction()
                 alertDialog?.dismiss()
-            }.setNegativeButton(getString(R.string.no)) { _,_ ->
+            }.setNegativeButton(getString(R.string.no)) { _, _ ->
                 onNegativeAction()
                 alertDialog?.dismiss()
             }
@@ -108,4 +91,11 @@ abstract class BaseActivity: AppCompatActivity(), Injectable {
         }
     }
 
+    fun logout(sharedPreferences: AppSharedPreferences, cls: Class<*>?) {
+        sharedPreferences.deleteUserData()
+        val intent = Intent(this, cls)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
 }

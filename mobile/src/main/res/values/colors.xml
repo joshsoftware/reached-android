@@ -19,9 +19,7 @@
     <color name="slider_background_color">#898989</color>
     <color name="group_choice_hint_color">#DCDCDC</color>
 
-    <color name="reached_yellow">#EFBD41</color>
     <color name="reached_card_color">#fafafa</color>
-    <color name="reached_header_primary">#575730</color>
 
     <color name="map_surface_color">#FFFFFF</color>
     <color name="map_text_color">#000000</color>

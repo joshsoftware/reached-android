@@ -33,13 +33,16 @@ class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Pe
                 } else {
                     startGroupListActivity()
                 }
+                finish()
             }
         }
         binding.btnGoogleSignIn.setOnClickListener {
-            checkForLocationPermission()
+            isNetWorkAvailable {
+                if(sharedPreferences.userData == null) {
+                    signIn()
+                }
+            }
         }
-
-
 
         registerViewModelObservers()
     }
@@ -49,13 +52,13 @@ class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Pe
     }
 
     private fun registerViewModelObservers() {
-        viewModel.result.observe(this, Observer { (id, user) ->
+        viewModel.result.observe(this, { (id, user) ->
             sharedPreferences.saveUserId(id)
             sharedPreferences.saveUserData(user)
             viewModel.fetchUserDetails(id)
         })
 
-        viewModel.user.observe(this, Observer { user ->
+        viewModel.user.observe(this, { user ->
             user?.let {
                 sharedPreferences.saveUserData(user)
                 if (user.groups.isEmpty()) {
@@ -67,11 +70,11 @@ class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Pe
             }
         })
 
-        viewModel.error.observe(this, Observer { error ->
+        viewModel.error.observe(this, { error ->
             Timber.d(error)
         })
 
-        viewModel.spinner.observe(this, Observer { loading ->
+        viewModel.spinner.observe(this, { loading ->
             if(loading) {
                 showProgressView()
             } else {

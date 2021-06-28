@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -125,6 +126,13 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
             if(edtLocation.text.toString() != "Work") radioBtnWork.isChecked = false
         }
 
+        if(address.address.isEmpty()) {
+            txtAddressLabel.visibility = View.GONE
+            txtAddress.visibility = View.GONE
+        } else {
+            txtAddressLabel.visibility = View.VISIBLE
+            txtAddress.visibility = View.VISIBLE
+        }
         txtAddress.text = address.address
     }
 
