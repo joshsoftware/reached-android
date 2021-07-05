@@ -17,7 +17,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.zxing.integration.android.IntentIntegrator
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.model.Group
-import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.core.ui.BaseLocationActivity
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityGroupChoiceBinding
@@ -50,6 +49,11 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         val view = binding.root
         setContentView(view)
         binding.apply {
+
+            val linkUtils = InviteLinkUtils()
+            linkUtils.handleDynamicLinks(intent, {
+                showJoinGroupAlertDialog(it)
+            }, {})
             createButton.setOnClickListener {
                 showCreateGroupLayout()
             }
@@ -93,6 +97,7 @@ class GroupChoiceActivity : BaseLocationActivity(), BaseLocationActivity.Locatio
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun getLastKnownLocation(onLastKnownFetch: (Double, Double) -> Unit) {
         requestPermission(arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION), action = {

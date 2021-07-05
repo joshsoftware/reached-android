@@ -21,19 +21,6 @@
         <activity
             android:name=".ui.activity.HomeActivity"
             android:launchMode="singleTop">
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="reached1.page.link"
-                    android:scheme="https" />
-                <data
-                    android:host="reached1.page.link"
-                    android:scheme="http" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".ui.activity.OnboardingActivity"
@@ -68,7 +55,19 @@
             android:name=".ui.activity.GroupChoiceActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/GroupChoiceTheme" />
+            android:theme="@style/GroupChoiceTheme" >
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="reached1.page.link"
+                    android:scheme="https" />
+                <data
+                    android:host="reached1.page.link"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"

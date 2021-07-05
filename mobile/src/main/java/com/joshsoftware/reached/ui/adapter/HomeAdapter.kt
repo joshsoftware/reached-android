@@ -47,7 +47,7 @@ class HomeAdapter(val sharedPreferences: AppSharedPreferences,
                 if(sharedPreferences.userId == model.created_by) {
                     txtDelete.text = context.getString(R.string.delete_group)
                 } else {
-                    txtDelete.text = context.getString(R.string.leave_group)
+                    txtDelete.visibility = View.GONE
                 }
 
                 imgGroupMenu.setOnClickListener {
@@ -89,7 +89,7 @@ class HomeAdapter(val sharedPreferences: AppSharedPreferences,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(com.joshsoftware.reached.R.layout.home_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.home_view, parent, false)
         return ViewHolder(view)
     }
 }
