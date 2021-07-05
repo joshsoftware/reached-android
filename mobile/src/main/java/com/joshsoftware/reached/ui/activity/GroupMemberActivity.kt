@@ -60,7 +60,9 @@ class GroupMemberActivity : BaseActivity() {
             recyclerView.layoutManager = LinearLayoutManager(this@GroupMemberActivity)
             adapter = MemberAdapter(
                 sharedPreferences
-            ) {
+            , {
+
+            }) {
                 startMapActivity(it)
             }
 
@@ -134,10 +136,10 @@ class GroupMemberActivity : BaseActivity() {
     }
 
     private fun handleLeaveRequest(intent: Intent?) {
-        val requestId = intent?.extras?.getString(IntentConstant.INTENT_REQUEST_ID.name)
-        val groupId = intent?.extras?.getString(IntentConstant.INTENT_GROUP_ID.name)
-        val memberId = intent?.extras?.getString(IntentConstant.INTENT_MEMBER_ID.name)
-        val message = intent?.extras?.getString(IntentConstant.INTENT_MESSAGE.name)
+        val requestId = intent?.extras?.getString(IntentConstant.REQUEST_ID.name)
+        val groupId = intent?.extras?.getString(IntentConstant.GROUP_ID.name)
+        val memberId = intent?.extras?.getString(IntentConstant.MEMBER_ID.name)
+        val message = intent?.extras?.getString(IntentConstant.MESSAGE.name)
         showLeaveRequestDialog(requestId, groupId, memberId, message)
     }
 
@@ -163,7 +165,7 @@ class GroupMemberActivity : BaseActivity() {
             binding.sosLabel.text = getString(R.string.send_sos)
         }
         sosSent = !sosSent
-        viewModel.sendSos(groupId, userId = sharedPreferences.userId!!, user = sharedPreferences.userData!!, sosSent = sosSent)
+//        viewModel.sendSos(groupId, userId = sharedPreferences.userId!!, user = sharedPreferences.userData!!, sosSent = sosSent)
     }
 
     private fun setSosLabel(sosSent: Boolean) {
@@ -285,7 +287,7 @@ class GroupMemberActivity : BaseActivity() {
         viewModel.spinner.observe(this, Observer { loading ->
             if(loading != null) {
                 if (loading) {
-                    showProgressView(binding.parent)
+                    showProgressView()
                 } else {
                     hideProgressView()
                 }
@@ -307,15 +309,7 @@ class GroupMemberActivity : BaseActivity() {
         startActivity(intent)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.logout) {
-            sharedPreferences.deleteUserData()
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
-    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.group_members_menu, menu)
         return super.onCreateOptionsMenu(menu)

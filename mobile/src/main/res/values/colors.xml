@@ -8,4 +8,21 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="boxTextColor">#3D2321</color>
+
+    <!-- Styles -->
+    <color name="onboarding_background">#FFFFFF</color>
+    <color name="onboarding_button_text_color">#FFFFFF</color>
+    <color name="onboarding_text_color">#000000</color>
+    <color name="onboarding_button_background_tint">#000000</color>
+
+    <!-- Group choice=   -->
+    <color name="slider_background_color">#898989</color>
+    <color name="group_choice_hint_color">#DCDCDC</color>
+
+    <color name="reached_card_color">#fafafa</color>
+
+    <color name="map_surface_color">#FFFFFF</color>
+    <color name="map_text_color">#000000</color>
+    <color name="safe_text_color">#15CF00</color>
+    <color name="map_background_color">#E8E8E8</color>
 </resources>

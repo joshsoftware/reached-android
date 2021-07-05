@@ -51,15 +51,11 @@ class GroupMemberViewModel @Inject constructor(var repository: GroupRepository):
         }
     }
 
-    fun sendSos(groupId: String, userId: String, user: User, sosSent: Boolean) {
-        executeRoutine {
-            _sos.value = repository.sendSos(groupId, userId, user, sosSent)
-        }
-    }
+
 
     fun deleteGroup(group: Group, userId: String) {
         executeRoutine {
-            _deleteGroup.value = repository.deleteGroup(group, userId)
+            _deleteGroup.value = repository.deleteGroup(group)
         }
     }
 

@@ -4,68 +4,141 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/slider_background_color"
     tools:context=".ui.activity.QrCodeActivity">
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/headerCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#e8e8e8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/LoginCardShapeAppearance">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imgLocation"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="32dp"
+                android:src="@drawable/ic_qr_location"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txtGroupName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imgLocation"
+                tools:text="Patil family" />
+
+            <ImageView
+                android:id="@+id/qrCodeImageView"
+                android:layout_width="@dimen/dimen_qr_code"
+                android:layout_height="@dimen/dimen_qr_code"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                android:background="@null"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtGroupName" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-        <ImageView
-            android:id="@+id/qrCodeImageView"
-            android:layout_width="@dimen/dimen_qr_code"
-            android:layout_height="@dimen/dimen_qr_code"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerCard">
 
         <TextView
             android:id="@+id/titleTextView"
-            android:text="Scan QR code"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/show_this_qr_code_to_your_family_member"
+            android:textAlignment="center"
+            android:textColor="@color/login_text_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/qrCodeImageView" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:text="Your family members can now join\n by scanning the above QR code"
             android:id="@+id/subtitleTextView"
-            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Add your family members by\n scanning the above QR code"
+            android:textColor="@color/login_text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleTextView" />
+
+
+        <View
+            android:id="@+id/dividerView"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:alpha="0.3"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/subtitleTextView" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/titleTextView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            android:background="@color/slider_background_color"
+            android:padding="8dp"
+            android:text="OR"
+            app:layout_constraintBottom_toBottomOf="@+id/dividerView"
+            app:layout_constraintEnd_toEndOf="@+id/dividerView"
+            app:layout_constraintStart_toStartOf="@+id/dividerView"
+            app:layout_constraintTop_toTopOf="@+id/dividerView" />
+
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/inviteButton"
-            android:text="@string/button_text_invite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/sendInviteButton"
             style="@style/ChoiceButton"
-            app:cornerRadius="20dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="200dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/button_text_send_invite"
+            android:textColor="@color/black"
+            app:backgroundTint="#efbd41"
+            app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/subtitleTextView"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dividerView" />
+
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/viewListButton"
-            android:text="@string/button_view_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/skipButton"
             style="@style/ChoiceButton"
-            app:cornerRadius="20dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/button_text_skip"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/slider_background_color"
+            app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/inviteButton"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sendInviteButton" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

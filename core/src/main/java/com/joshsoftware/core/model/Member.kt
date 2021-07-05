@@ -11,7 +11,9 @@ data class Member(
     var name: String? = null,
     var profileUrl: String? = null,
     var lastUpdated: String? = null,
+    var lastKnownAddress: String? = null,
     var sosState: Boolean = false,
+    var address: MutableMap<String, Address> = mutableMapOf(),
     var lat: Double? = null,
     var long: Double? = null
 ): Parcelable

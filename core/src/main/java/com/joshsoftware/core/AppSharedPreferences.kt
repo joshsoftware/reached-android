@@ -10,6 +10,7 @@ class AppSharedPreferences(context: Context) {
     private val KEY_WALLY_SHARED_PREFS = "KEY_WALLY_SHARED_PREFS"
     private val KEY_USER_DATA = "KEY_USER_DATA"
     private val KEY_USER_ID = "KEY_USER_ID"
+    private val KEY_ONBOARDING_SHOWN = "KEY_ONBOARDING_SHOWN"
 
     private var sharedPreferences: SharedPreferences =
             context.getSharedPreferences(KEY_WALLY_SHARED_PREFS, Context.MODE_PRIVATE)
@@ -29,6 +30,12 @@ class AppSharedPreferences(context: Context) {
     }
     private set
 
+    var onboardingShown: Boolean = false
+    get() {
+        return sharedPreferences.getBoolean(KEY_ONBOARDING_SHOWN, false)
+    }
+    private set
+
     fun saveUserData(user: User?) {
         val type = object: TypeToken<User>(){}.type
         val userData = Gson().toJson(user, type)
@@ -40,6 +47,12 @@ class AppSharedPreferences(context: Context) {
     fun saveUserId(id: String?) {
         sharedPreferences.putValues {
             it.putString(KEY_USER_ID, id)
+        }
+    }
+
+    fun setOnboardingShown(shown: Boolean) {
+        sharedPreferences.putValues {
+            it.putBoolean(KEY_ONBOARDING_SHOWN, shown)
         }
     }
 

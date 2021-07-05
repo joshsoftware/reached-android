@@ -12,15 +12,5 @@ class CreateGroupViewModel @Inject constructor(var repository: GroupRepository,
                                                var sharedPreferences: AppSharedPreferences)
     : BaseViewModel<Group>() {
 
-    fun createGroup(id: String, userId: String, user: User, groupName: String,  lat: Double, long: Double) {
-        executeRoutine {
-            val (group, user) = repository.createGroup(id, userId, user, groupName, lat, long)
-            sharedPreferences.userData?.let {
-                it.groups = user.groups
-                sharedPreferences.saveUserData(it)
-            }
-            _result.value = group
-        }
-    }
 
 }

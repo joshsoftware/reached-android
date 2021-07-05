@@ -14,7 +14,11 @@ import com.joshsoftware.core.util.DateTimeUtils
 import com.joshsoftware.reached.R
 import kotlinx.android.synthetic.main.member_view.view.*
 
-class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (Member) -> Unit): ListAdapter<Member, FamViewHolder>(
+class MemberAdapter(
+    var sharedPreferences: AppSharedPreferences,
+    var onClick: (Member) -> Unit,
+    var onMemberClick: (Member) -> Unit
+): ListAdapter<Member, FamViewHolder>(
     DIFF_CALLBACK
 ) {
 
@@ -40,18 +44,25 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                 } else {
                     containerCardView.strokeWidth = 0
                 }
-
+                if(model.lastKnownAddress.isNullOrEmpty()) {
+                    placeTextView.text = "Enroute"
+                } else {
+                    placeTextView.text = model.lastKnownAddress
+                }
                 model.lastUpdated?.let { updatedText ->
-                    lastUpdatedTextView.text = dateTimeUtils.getLastUpdatedFormatted(updatedText)
+//                    lastUpdatedTextView.text = dateTimeUtils.getLastUpdatedFormatted(updatedText)
                 }
                 model.profileUrl?.let {
                     if(it.isNotEmpty()) {
                         Glide.with(this).load(it).into(profileImageView);
                     }
                 }
+                profileImageView.setOnClickListener {
+                    onClick(model)
+                }
             }
             holder.itemView.setOnClickListener {
-                onClick(model)
+                onMemberClick(model)
             }
         }
     }

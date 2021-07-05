@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="dimen_qr_code">280dp</dimen>
+    <dimen name="dimen_qr_code">200dp</dimen>
     <dimen name="text_input_edit_text_height">56dp</dimen>
     <dimen name="create_group_dialog_height">235dp</dimen>
     <dimen name="profile_placeholder_content_padding">6dp</dimen>
+    <dimen name="dimen_onboarding_btn_bottom_margin">32dp</dimen>
+    <dimen name="dimen_onboarding_text_bottom_margin">32dp</dimen>
+    <dimen name="dimen_onboarding_image_bottom_margin">64dp</dimen>
+    <dimen name="dimen_button_padding">8dp</dimen>
+    <dimen name="offset">8dp</dimen>
+    <dimen name="page_margin">12dp</dimen>
+    <dimen name="viewpager_next_item_visible">32dp</dimen>
+    <dimen name="viewpager_current_item_horizontal_margin">72dp</dimen>
 </resources>

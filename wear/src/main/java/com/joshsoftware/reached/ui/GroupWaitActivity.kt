@@ -31,7 +31,7 @@ class GroupWaitActivity : BaseActivity() {
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupWaitViewModel::class.java]
 
-        viewModel.result.observe(this, Observer { hasGroups ->
+        viewModel.result.observe(this, { hasGroups ->
             if(hasGroups) {
                 startGroupListActivity()
                 finish()

@@ -11,6 +11,7 @@ import com.joshsoftware.core.ui.BaseActivity
 import com.joshsoftware.core.util.ConversionUtil
 import com.joshsoftware.core.viewmodel.GroupMemberViewModel
 import com.joshsoftware.reached.databinding.ActivityGroupMemberBinding
+import kotlinx.android.synthetic.main.activity_group_member.*
 import javax.inject.Inject
 
 const val INTENT_GROUP_ID = "INTENT_GROUP_ID"
@@ -45,16 +46,22 @@ class GroupMemberActivity : BaseActivity() {
                 startMapActivity(it)
             }
             recyclerView.adapter = adapter
+            viewExit.setOnClickListener {
+                logout(preferences, WearLoginActivity::class.java)
+            }
+            imgShowOnMap.setOnClickListener {
+                startMapActivity(Member(""))
+            }
         }
     }
 
     override fun initializeViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)[GroupMemberViewModel::class.java]
-        viewModel.result.observe(this, Observer { group ->
+        viewModel.result.observe(this, { group ->
             group?.let {
+                txtGroupTitle.text = it.name
                 val util = ConversionUtil()
                 val members = util.getMemberListFromMap(group.members)
-                members.add(Member(name = "All members"))
                 adapter.submitList(members)
             }
         })
@@ -70,4 +77,5 @@ class GroupMemberActivity : BaseActivity() {
         intent.putExtra(INTENT_GROUP_ID, groupId)
         startActivity(intent)
     }
+
 }

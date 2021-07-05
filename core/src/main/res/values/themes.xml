@@ -19,6 +19,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="AlertDialogStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/App.ShapeAppearance.SmallComponent</item>
+        <item name="android:layout_height">@dimen/create_group_dialog_height</item>
+    </style>
+
     <style name="ChoiceButton" parent="LoginComponent">
         <item name="cornerRadius">24dp</item>
     </style>

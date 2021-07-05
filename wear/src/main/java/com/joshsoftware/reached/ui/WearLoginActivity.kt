@@ -6,13 +6,14 @@ import android.os.Handler
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.joshsoftware.core.AppSharedPreferences
+import com.joshsoftware.core.BaseLocationPermissionActivity
 import com.joshsoftware.core.di.AppType
 import com.joshsoftware.core.ui.BaseLoginActivity
 import com.joshsoftware.reached.databinding.ActivityLoginBinding
 import timber.log.Timber
 import javax.inject.Inject
 
-class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityListener {
+class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.PermissionListener {
     lateinit var binding: ActivityLoginBinding
 
     @Inject
@@ -23,7 +24,7 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
         binding = ActivityLoginBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        setListener(this)
+        listener = this
 
         if(sharedPreferences.userData != null) {
             sharedPreferences.userId?.let {
@@ -32,13 +33,16 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
                 } else {
                     startGroupListActivity()
                 }
+                finish()
             }
         }
         binding.btnGoogleSignIn.setOnClickListener {
-            checkForLocationPermission()
+            isNetWorkAvailable {
+                if(sharedPreferences.userData == null) {
+                    signIn()
+                }
+            }
         }
-
-
 
         registerViewModelObservers()
     }
@@ -48,13 +52,13 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
     }
 
     private fun registerViewModelObservers() {
-        viewModel.result.observe(this, Observer { (id, user) ->
+        viewModel.result.observe(this, { (id, user) ->
             sharedPreferences.saveUserId(id)
             sharedPreferences.saveUserData(user)
             viewModel.fetchUserDetails(id)
         })
 
-        viewModel.user.observe(this, Observer { user ->
+        viewModel.user.observe(this, { user ->
             user?.let {
                 sharedPreferences.saveUserData(user)
                 if (user.groups.isEmpty()) {
@@ -66,13 +70,13 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
             }
         })
 
-        viewModel.error.observe(this, Observer { error ->
+        viewModel.error.observe(this, { error ->
             Timber.d(error)
         })
 
-        viewModel.spinner.observe(this, Observer { loading ->
+        viewModel.spinner.observe(this, { loading ->
             if(loading) {
-                showProgressView(binding.parent)
+                showProgressView()
             } else {
                 hideProgressView()
             }
@@ -90,6 +94,7 @@ class WearLoginActivity : BaseLoginActivity(), BaseLoginActivity.BaseActivityLis
     }
 
     override fun onPermissionGrant() {
+        startLocationTrackingService()
         if(sharedPreferences.userData != null) {
             sharedPreferences.userId?.let {
                 if (sharedPreferences.userData!!.groups.isEmpty()) {

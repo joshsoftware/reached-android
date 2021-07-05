@@ -1,3 +1,4 @@
+
 package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
@@ -12,6 +13,7 @@ import com.joshsoftware.core.model.Group
 import com.joshsoftware.reached.databinding.ActivityQrCodeBinding
 import com.joshsoftware.reached.utils.InviteLinkUtils
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import kotlinx.android.synthetic.main.activity_qr_code.*
 import timber.log.Timber
 
 const val INTENT_GROUP_ID = "INTENT_GROUP_ID"
@@ -27,11 +29,12 @@ class QrCodeActivity : AppCompatActivity() {
 
         intent.extras?.getParcelable<Group>(INTENT_GROUP)?.let { group ->
             group.id?.let { gId ->
+                binding.txtGroupName.text = group.name
                 generateQrCode(gId)
-                binding.viewListButton.setOnClickListener {
+                binding.skipButton.setOnClickListener {
                     startGroupMemberActivity(gId)
                 }
-                binding.inviteButton.setOnClickListener {
+                binding.sendInviteButton.setOnClickListener {
                     val linkUtils = InviteLinkUtils()
                     group.name?.let { name -> linkUtils.getInviteLinkFor(gId, groupName = name) { shortInvitedLink ->
                         shortInvitedLink?.let { uri ->
@@ -51,9 +54,7 @@ class QrCodeActivity : AppCompatActivity() {
     }
 
     private fun startGroupMemberActivity(groupId: String) {
-        val intent = Intent(this, GroupMemberActivity::class.java)
-        intent.putExtra(INTENT_GROUP_ID, groupId)
-        startActivity(intent)
+        finish()
     }
 
     private fun generateQrCode(id: String) {

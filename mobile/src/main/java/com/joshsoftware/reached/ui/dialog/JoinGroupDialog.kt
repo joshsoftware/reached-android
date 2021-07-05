@@ -1,12 +1,17 @@
 package com.joshsoftware.reached.ui.dialog
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
@@ -19,6 +24,7 @@ import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.DialogJoinGroupBinding
 import com.joshsoftware.reached.ui.activity.GroupChoiceViewModel
 import com.joshsoftware.reached.ui.activity.GroupMemberActivity
+import com.joshsoftware.reached.ui.activity.HomeActivity
 import com.joshsoftware.reached.ui.activity.INTENT_GROUP
 import kotlinx.android.synthetic.main.member_view.view.*
 import java.util.*
@@ -51,11 +57,14 @@ class JoinGroupDialog: BaseDialogFragment() {
 
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+
+    }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         initializeViewModel()
 
         binding = DialogJoinGroupBinding.inflate(LayoutInflater.from(context))
-        context?.let {
+        context?.let { ctx ->
 
             binding.apply {
 
@@ -69,31 +78,22 @@ class JoinGroupDialog: BaseDialogFragment() {
                 }
 
                 buttonPositive.setOnClickListener {
-                    group?.id?.let { gId ->
-                        val client = LocationServices.getFusedLocationProviderClient(context)
-                        client.lastLocation.addOnSuccessListener { location ->
-                            var lat = 0.0
-                            var long = 0.0
-                            if(location != null) {
-                                lat = location.latitude
-                                long = location.longitude
-                            }
-                            viewModel.joinGroup(
-                                gId,
-                                sharedPreferences.userId!!,
-                                sharedPreferences.userData!!,
-                                lat,
-                                long
-                            ).observe(this@JoinGroupDialog, androidx.lifecycle.Observer {
-                                startGroupMemberActivity()
-                                dismiss()
-                            })
+                    isNetWorkAvailable(ctx) {
+                        if (isLocationPermissionNotGranted()) {
+                            requestPermissions(
+                                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION,
+                                    Manifest.permission.ACCESS_FINE_LOCATION),
+                                10
+                            )
+                        } else {
+                            updateLocationForGroup(ctx)
                         }
                     }
                 }
             }
 
-            val builder = MaterialAlertDialogBuilder(it, R.style.AlertDialogStyle)
+
+            val builder = MaterialAlertDialogBuilder(ctx, R.style.AlertDialogStyle)
             builder.setView(binding.root)
             val dialog = builder.create()
             dialog.setCanceledOnTouchOutside(false)
@@ -106,6 +106,38 @@ class JoinGroupDialog: BaseDialogFragment() {
 
         return super.onCreateDialog(savedInstanceState)
 
+    }
+
+    fun updateLocationForGroup(ctx: Context) {
+        group?.id?.let { gId ->
+            updateLastLocation(ctx, gId)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun updateLastLocation(context: Context, gId: String) {
+        val client = LocationServices.getFusedLocationProviderClient(context)
+        client.lastLocation.addOnCompleteListener { task ->
+            var lat = 0.0
+            var long = 0.0
+            if(task.isSuccessful) {
+                if(task.result != null) {
+                    lat = task.result.latitude
+                    long = task.result.longitude
+                }
+            }
+
+            viewModel.joinGroup(
+                gId,
+                sharedPreferences.userId!!,
+                sharedPreferences.userData!!,
+                lat,
+                long
+            ).observe(this@JoinGroupDialog, {
+                startGroupMemberActivity()
+                dismiss()
+            })
+        }
     }
 
     override fun initializeViewModel() {
@@ -126,8 +158,7 @@ class JoinGroupDialog: BaseDialogFragment() {
 
     private fun startGroupMemberActivity() {
         if(activity != null) {
-            val intent = Intent(activity, GroupMemberActivity::class.java)
-            intent.putExtra(INTENT_GROUP, group)
+            val intent = Intent(activity, HomeActivity::class.java)
             startActivity(intent)
         }
     }
@@ -156,6 +187,37 @@ class JoinGroupDialog: BaseDialogFragment() {
             transition.duration = 500
             TransitionManager.beginDelayedTransition(parentLayout, transition)
             constraintSet.applyTo(parentLayout)
+        }
+    }
+
+
+    private fun isLocationPermissionNotGranted(): Boolean {
+        context?.let { ctx ->
+            return ActivityCompat.checkSelfPermission(
+                ctx,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                ctx,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        } ?: run {
+            return false
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 10) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    context?.let(::updateLocationForGroup)
+            } else {
+                showAlert("Please grant location permission to join the group", 10)
+            }
         }
     }
 }

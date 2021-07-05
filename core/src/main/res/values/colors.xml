@@ -14,5 +14,12 @@
     <color name="colorOnSecondaryVariant">#33331C</color>
     <color name="colorSecondary">#fbe59b</color>
     <color name="colorOnSecondary">#efbd40</color>
+    <color name="reached_yellow">#EFBD41</color>
+    <color name="reached_header_primary">#575730</color>
     <color name="colorAlert">#FF0000</color>
+    <color name="login_surface_color">#575730</color>
+    <color name="login_status_bar_color">#3C3C21</color>
+    <color name="login_text_color">#FFFFFF</color>
+    <color name="wear_background">#2F2F15</color>
+    <color name="title_color">#FCEDB8</color>
 </resources>

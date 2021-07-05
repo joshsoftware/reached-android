@@ -4,6 +4,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.messaging.FirebaseMessaging
+import com.joshsoftware.core.BuildConfig
 import com.joshsoftware.core.model.Token
 import com.joshsoftware.core.model.User
 import timber.log.Timber
@@ -19,7 +20,8 @@ class FirebaseAuthManager {
         account?.let {
             Timber.d("firebaseAuthWithGoogle: %s", account.id!!)
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            mAuth.signInWithCredential(credential)
+            mAuth.
+            signInWithCredential(credential)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Timber.d("signInWithCredential:success")

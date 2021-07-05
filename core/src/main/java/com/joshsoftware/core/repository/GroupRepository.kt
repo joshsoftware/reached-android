@@ -4,6 +4,8 @@ import android.location.Location
 import com.google.firebase.database.DatabaseError
 import com.joshsoftware.core.model.*
 import com.joshsoftware.core.util.FirebaseRealtimeDbManager
+import kotlinx.coroutines.Deferred
+import java.lang.Exception
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
@@ -21,9 +23,10 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
         return dbManager.fetchGroup(userId)
     }
 
-
-    suspend fun fetchGroupList(userId: String): ArrayList<Group> {
-        return dbManager.fetchGroupList( userId)
+    fun fetchGroupList(userId: String,
+                               onSuccess: (ArrayList<Group>) -> Unit,
+                               onError: (Exception) -> Unit) {
+        dbManager.fetchGroupList(userId, onSuccess, onError)
     }
 
     fun fetchGroupDetails(groupId: String,
@@ -35,8 +38,13 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
     suspend fun updateLocation(groupId: String, userId: String, location: Location): Group? {
         return dbManager.updateLocation(groupId, userId, location)
     }
-    suspend fun sendSos(groupId: String, userId: String, user: User, sosSent: Boolean): Boolean? {
-        return dbManager.toggleSosState(groupId, user, userId, sosSent)
+
+    suspend fun sendSos(userId: String, user: User): Boolean? {
+        return dbManager.toggleSosState(user, userId)
+    }
+
+    suspend fun markSafe(userId: String, member: Member): Boolean? {
+        return dbManager.markUserSafe(member, userId)
     }
 
 
@@ -44,6 +52,10 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
                     onFetch: (Member?) -> Unit,
                     onCancel: (DatabaseError) -> Unit) {
         dbManager.fetchMember(groupId, memberId, onFetch, onCancel)
+    }
+
+    fun fetchMemberOnce(groupId: String, memberId: String): Deferred<Member?> {
+        return dbManager.fetchMemberOnce(groupId, memberId)
     }
 
     fun isGroupCreated(userId: String,
@@ -66,9 +78,8 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
         return dbManager.leaveGroup(requestId, groupId, userId)
     }
 
-
-    suspend fun deleteGroup(group: Group, userId: String): Boolean? {
-        return dbManager.deleteGroup(group, userId)
+    suspend fun deleteGroup(group: Group): Boolean? {
+        return dbManager.deleteGroup(group)
     }
 
     suspend fun leaveRequestExists(userId: String, groupId: String): Boolean {
@@ -81,5 +92,13 @@ class GroupRepository @Inject constructor(var dbManager: FirebaseRealtimeDbManag
 
     suspend fun getLeaveRequests(groupId: String): List<LeaveRequestData> {
         return dbManager.getRequests(groupId)
+    }
+
+    fun deleteAddress(groupId: String, memberId: String, addressId: String): Deferred<Boolean> {
+        return dbManager.deleteAddress(groupId, memberId, addressId)
+    }
+
+    fun deleteMember(member: Member, group: Group): Deferred<Member> {
+        return dbManager.deleteMember(member, group)
     }
 }

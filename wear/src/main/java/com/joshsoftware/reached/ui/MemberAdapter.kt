@@ -5,7 +5,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -33,19 +32,22 @@ class MemberAdapter(var sharedPreferences: AppSharedPreferences, var onClick: (M
                         nameTextView.text = model.name
                     }
                     if(model.sosState) {
-                        containerCardView.strokeWidth = 4
-                        containerCardView.setStrokeColor(ContextCompat.getColor(context, com.joshsoftware.reached.R.color.colorAlert))
+                        imgSos.visibility  =View.VISIBLE
                     } else {
-                        containerCardView.strokeWidth = 0
+                        imgSos.visibility  =View.GONE
+                    }
+                    if(model.lastKnownAddress.isNullOrEmpty()) {
+                        placeTextView.text = "Enroute"
+                    } else {
+                        placeTextView.text = model.lastKnownAddress
                     }
                     model.profileUrl?.let {
-                        Glide.with(this).load(it).into(profileImageView);
+                        Glide.with(this).load(it).into(imgProfile);
                     }
                 } else {
                     nameTextView.text = "Show on map"
                     nameTextView.setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
-                    containerCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    profileImageView.visibility = View.GONE
+                    imgProfile.visibility = View.GONE
                     nameTextView.gravity = Gravity.CENTER
                 }
 

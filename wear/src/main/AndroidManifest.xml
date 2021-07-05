@@ -18,14 +18,6 @@
         android:theme="@style/Theme.MyApplication">
         <activity android:name="com.joshsoftware.reached.ui.GroupWaitActivity"
             android:theme="@style/Theme.MyApplication"/>
-        <activity android:name="com.joshsoftware.reached.ui.SplashActivity"
-            android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name="com.joshsoftware.reached.ui.MapActivity"
             android:theme="@style/Theme.MyApplication" />
@@ -35,6 +27,11 @@
         <activity
             android:name="com.joshsoftware.reached.ui.WearLoginActivity"
             android:theme="@style/Theme.MyApplication">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity

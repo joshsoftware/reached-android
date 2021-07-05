@@ -15,17 +15,21 @@ class GroupListViewModel @Inject constructor(var repository: GroupRepository,
 
     fun fetchGroups(userId: String) {
         executeRoutine {
-            val groups = repository.fetchGroupList(userId)
-            sharedPreferences.userData?.let {
-                it.groups.clear()
-                groups.forEach { group ->
-                    group.id?.let {gId ->
-                        it.groups[gId] = true
+            repository.fetchGroupList(userId, { groups ->
+                sharedPreferences.userData?.let {
+                    it.groups.clear()
+                    groups.forEach { group ->
+                        group.id?.let {gId ->
+                            it.groups[gId] = true
+                        }
                     }
+                    sharedPreferences.saveUserData(it)
                 }
-                sharedPreferences.saveUserData(it)
-            }
-            _result.value = groups
+                _result.value = groups
+            }, {
+                _error.value = it.localizedMessage
+            })
+
         }
     }
 

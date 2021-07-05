@@ -12,21 +12,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ui.activity.GroupListActivity">
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="reached1.page.link"
-                    android:scheme="https" />
-                <data
-                    android:host="reached1.page.link"
-                    android:scheme="http" />
-            </intent-filter>
+        <activity android:name=".ui.activity.GroupEditActivity"></activity>
+        <activity android:name=".ui.activity.SavePickedLocationActivity"></activity>
+        <activity android:name=".ui.activity.PickLocationActivity" />
+        <activity
+            android:name=".ui.activity.ProfileActivity"
+            android:theme="@style/ProfileTheme" />
+        <activity
+            android:name=".ui.activity.HomeActivity"
+            android:launchMode="singleTop">
         </activity>
+        <activity
+            android:name=".ui.activity.OnboardingActivity"
+            android:theme="@style/OnboardingTheme" />
         <activity android:name=".ui.activity.CreateGroupActivity" />
 
         <meta-data
@@ -35,8 +33,8 @@
 
         <activity
             android:name=".ui.activity.GroupMemberActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ScanQrCodeActivity"
             android:screenOrientation="portrait" />
@@ -55,7 +53,21 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.GroupChoiceActivity"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/GroupChoiceTheme" >
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="reached1.page.link"
+                    android:scheme="https" />
+                <data
+                    android:host="reached1.page.link"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
@@ -65,12 +77,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.LoginActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/LoginTheme" />
 
         <service
             android:name="com.joshsoftware.core.service.LocationUpdateService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
         <service
             android:name=".service.ReachedFirebaseService"
             android:exported="false">
@@ -78,6 +91,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <receiver android:name="com.joshsoftware.core.geofence.GeofenceBroadcastReceiver" />
     </application>
 
 </manifest>

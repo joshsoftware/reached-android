@@ -17,10 +17,7 @@ import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.NotificationPayload
 import com.joshsoftware.core.model.NotificationType
 import com.joshsoftware.reached.R
-import com.joshsoftware.reached.ui.GroupMemberActivity
-import com.joshsoftware.reached.ui.INTENT_GROUP_ID
-import com.joshsoftware.reached.ui.INTENT_MEMBER_ID
-import com.joshsoftware.reached.ui.MapActivity
+import com.joshsoftware.reached.ui.*
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -92,12 +89,34 @@ class ReachedWearFirebaseService: FirebaseMessagingService() {
         return when(type) {
             NotificationType.JOIN_GROUP.key -> {
                 getGroupJoinPendingIntent(data)
-            } else -> {
+            }
+            NotificationType.LEAVE.key -> {
+                getWearListPendingIntent()
+            }
+            NotificationType.REMOVED_MEMBER.key -> {
+                getWearListPendingIntent()
+            }
+            NotificationType.SOS.key -> {
                 getSosIntent(data)
+            }
+            NotificationType.GROUP_DELETE.key -> {
+                getWearListPendingIntent()
+            }
+            else -> {
+                getWearListPendingIntent()
             }
         }
 
     }
+
+    private fun getWearListPendingIntent(): PendingIntent? {
+        val intent = Intent(this, WearGroupListActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        return PendingIntent.getActivity(this, 0, intent,
+                                         PendingIntent.FLAG_UPDATE_CURRENT)
+
+    }
+
 
     private fun getGroupJoinPendingIntent(data: String?): PendingIntent? {
         val intent = Intent(this, GroupMemberActivity::class.java)
@@ -108,7 +127,6 @@ class ReachedWearFirebaseService: FirebaseMessagingService() {
         return PendingIntent.getActivity(this, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT)
     }
-
 
     private fun getNotificationPayload(data: String?): NotificationPayload? {
         return Gson().fromJson(data, NotificationPayload::class.java)
