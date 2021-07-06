@@ -15,17 +15,17 @@ import com.joshsoftware.reached.R
 import kotlinx.android.synthetic.main.member_view.view.*
 
 class MemberAdapter(
-    var sharedPreferences: AppSharedPreferences,
-    var onClick: (Member) -> Unit,
-    var onMemberClick: (Member) -> Unit
-): ListAdapter<Member, FamViewHolder>(
+        var sharedPreferences : AppSharedPreferences,
+        var onClick : (Member) -> Unit,
+        var onMemberClick : (Member) -> Unit
+) : ListAdapter<Member, FamViewHolder>(
     DIFF_CALLBACK
 ) {
 
     var dateTimeUtils = DateTimeUtils()
 
     @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: FamViewHolder, position: Int) {
+    override fun onBindViewHolder(holder : FamViewHolder, position : Int) {
         val model = getItem(position)
         if(model != null) {
             holder.itemView.apply {
@@ -58,29 +58,29 @@ class MemberAdapter(
                     }
                 }
                 profileImageView.setOnClickListener {
-                    onClick(model)
+                    onMemberClick(model)
                 }
             }
             holder.itemView.setOnClickListener {
-                onMemberClick(model)
+                onClick(model)
             }
         }
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Member> () {
-            override fun areItemsTheSame(oldItem: Member, newItem: Member): Boolean {
+
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Member>() {
+            override fun areItemsTheSame(oldItem : Member, newItem : Member) : Boolean {
                 return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: Member, newItem: Member): Boolean {
+            override fun areContentsTheSame(oldItem : Member, newItem : Member) : Boolean {
                 return oldItem == newItem
             }
-
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FamViewHolder {
+    override fun onCreateViewHolder(parent : ViewGroup, viewType : Int) : FamViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.member_view, parent, false)
         return FamViewHolder(view)
     }

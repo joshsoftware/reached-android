@@ -31,9 +31,9 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
 
-    val handler = Handler()
-    var pageCounter : Runnable? = null
-    var inviteLinkGroup: Group? = null
+//    val handler = Handler()
+//    var pageCounter : Runnable? = null
+//    var inviteLinkGroup: Group? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
