@@ -9,7 +9,10 @@
     <dimen name="dimen_onboarding_image_bottom_margin">64dp</dimen>
     <dimen name="dimen_button_padding">8dp</dimen>
     <dimen name="offset">8dp</dimen>
+    <dimen name="text_message_padding">4dp</dimen>
+    <dimen name="text_message_padding_right_left">8dp</dimen>
     <dimen name="page_margin">12dp</dimen>
     <dimen name="viewpager_next_item_visible">32dp</dimen>
+
     <dimen name="viewpager_current_item_horizontal_margin">72dp</dimen>
 </resources>

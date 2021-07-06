@@ -60,4 +60,5 @@
     <string name="reject">REJECT</string>
     <string name="accept">ACCEPT</string>
     <string name="prominent_disclosure_text">This app collects location data to enable other members of the group to see your location which enables them to make sure you are safe even when the app is closed or not in use.</string>
+    <string name="location_drag_message">Tap and hold the marker to move around the map.</string>
 </resources>
