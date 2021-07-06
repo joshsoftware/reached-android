@@ -20,14 +20,13 @@ class MemberAdapter(
 ) : ListAdapter<Member, FamViewHolder>(
     DIFF_CALLBACK
 ) {
-
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: FamViewHolder, position: Int) {
         val model = getItem(position)
-        if (model != null) {
+        if(model != null) {
             holder.itemView.apply {
-                if (sharedPreferences.userId != null) {
-                    if (model.id == sharedPreferences.userId) {
+                if(sharedPreferences.userId != null) {
+                    if(model.id == sharedPreferences.userId) {
                         nameTextView.text = context.getString(R.string.me)
                     } else {
                         nameTextView.text = model.name
@@ -35,14 +34,14 @@ class MemberAdapter(
                 } else {
                     nameTextView.text = model.name
                 }
-                if (model.sosState) {
+                if(model.sosState) {
                     containerCardView.strokeWidth = 4
                     containerCardView.strokeColor =
                         ContextCompat.getColor(context, R.color.colorAlert)
                 } else {
                     containerCardView.strokeWidth = 0
                 }
-                if (model.lastKnownAddress.isNullOrEmpty()) {
+                if(model.lastKnownAddress.isNullOrEmpty()) {
                     placeTextView.text = "Enroute"
                 } else {
                     placeTextView.text = model.lastKnownAddress
@@ -51,7 +50,7 @@ class MemberAdapter(
 //                    lastUpdatedTextView.text = dateTimeUtils.getLastUpdatedFormatted(updatedText)
                 }
                 model.profileUrl?.let {
-                    if (it.isNotEmpty()) {
+                    if(it.isNotEmpty()) {
                         Glide.with(this).load(it).into(profileImageView);
                     }
                 }
