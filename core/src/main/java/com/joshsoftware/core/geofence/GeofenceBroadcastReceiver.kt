@@ -47,33 +47,7 @@ class GeofenceBroadcastReceiver(): BroadcastReceiver() {
                         .child(FirebaseDatabaseKey.ADDRESS.key)
                         .child(geofenceIntent.triggeringGeofences[0].requestId)
                         .child(FirebaseDatabaseKey.ENTERED.key).setValue(true)
-
-                dbManager.groupReference.child(gId).child(FirebaseDatabaseKey.MEMBERS.key)
-                    .child(mId)
-                    .child(FirebaseDatabaseKey.LASTKNOWNADDRESS.key)
-                    .setValue("")
             }
         }
-        if (context != null) {
-            createNotificationChannel(context)
-            val manager = context.getSystemService(NotificationManager::class.java)
-            showNotification(manager, context)
-        }
     }
-
-    private fun showNotification(manager: NotificationManager, context: Context) {
-        val notification: Notification = if (versionGreaterThanO()) {
-            Notification.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_stat_name)
-                .setContentTitle("Geofence triggered")
-                .setContentText("Your loved one's are being updated about your location")
-                //                .setContentIntent(pendingIntent)
-                .build()
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
-        manager.notify (1, notification)
-    }
-
-    private fun versionGreaterThanO() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 }
