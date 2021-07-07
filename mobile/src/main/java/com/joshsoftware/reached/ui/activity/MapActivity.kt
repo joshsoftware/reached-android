@@ -77,10 +77,6 @@ class MapActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
     }
 
     private fun setupNavigationButtonListeners() {
-        if (groups.size == 1) {
-            imgNext.visibility = View.GONE
-            imgPrevious.visibility = View.GONE
-        }
         imgNext.setOnClickListener {
             if (currentPosition < groups.size - 1) {
                 setCurrentGroup(groups[++currentPosition])
@@ -180,6 +176,10 @@ class MapActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyList
     }
 
     private fun updateArrows() {
+        if (groups.size == 1) {
+            imgNext.visibility = View.GONE
+            imgPrevious.visibility = View.GONE
+        }
         when {
             currentPosition + 1 >= groups.size -> {
                 imgNext.isEnabled = false
