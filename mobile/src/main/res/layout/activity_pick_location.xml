@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.PickLocationActivity">
+
     <include
         android:id="@+id/headerLayout"
         layout="@layout/layout_save_location_header"
@@ -13,18 +14,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/searchCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cardCornerRadius="10dp"
         android:layout_margin="16dp"
         android:padding="16dp"
         app:cardBackgroundColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/headerLayout"
-        >
+        app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerLayout">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/placesConstraintLayout"
             android:layout_width="match_parent"
@@ -72,18 +74,19 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
-            android:drawableStart="@drawable/ic_info_24"
             android:id="@+id/textViewLocationDragMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/text_message_padding_right_left"
-            android:drawablePadding="4dp"
-            android:paddingRight="@dimen/text_message_padding_right_left"
-            android:paddingTop="@dimen/text_message_padding"
-            android:paddingBottom="@dimen/text_message_padding"
-            android:textAppearance="@style/MessageText"
             android:background="@color/white"
-            android:text="@string/location_drag_message" />
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/ic_info_24"
+            android:paddingLeft="@dimen/text_message_padding_right_left"
+            android:paddingTop="@dimen/text_message_padding"
+            android:paddingRight="@dimen/text_message_padding_right_left"
+            android:paddingBottom="@dimen/text_message_padding"
+            android:text="@string/location_drag_message"
+            android:drawablePadding="8dp"
+            android:textAppearance="@style/MessageText" />
 
         <TextView
             android:id="@+id/txtSave"
