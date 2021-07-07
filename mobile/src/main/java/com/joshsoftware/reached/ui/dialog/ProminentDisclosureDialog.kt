@@ -26,11 +26,13 @@ class ProminentDisclosureDialog: DialogFragment() {
             binding.apply {
 
                 buttonNegative.setOnClickListener {
+                    listener?.onNegativeClick()
                     dismiss()
                 }
 
                 buttonPositive.setOnClickListener {
                     listener?.onPositiveClick()
+                    dismiss()
                 }
             }
 
@@ -52,6 +54,7 @@ class ProminentDisclosureDialog: DialogFragment() {
 
     interface Listener {
         fun onPositiveClick()
+        fun onNegativeClick()
     }
 
 }

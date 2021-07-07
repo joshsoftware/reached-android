@@ -22,6 +22,7 @@ import com.joshsoftware.reached.model.OnboardingData
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.HomeActivity
 import com.joshsoftware.reached.ui.adapter.OnboardingAdapter
+import com.joshsoftware.reached.ui.dialog.ProminentDisclosureDialog
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -158,7 +159,23 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
             transition.duration = 200
             TransitionManager.beginDelayedTransition(parent, transition)
             set.applyTo(parent)
-            checkForLocationPermission()
+            if(!allLocationPermissionsNotGranted()) {
+                val fragment = ProminentDisclosureDialog().apply {
+                    show(supportFragmentManager, "prominent")
+                }
+                fragment.listener = object: ProminentDisclosureDialog.Listener {
+                    override fun onPositiveClick() {
+                        checkForLocationPermission()
+                    }
+
+                    override fun onNegativeClick() {
+                        finish()
+                    }
+                }
+            } else {
+                listener?.onPermissionGrant()
+            }
+
             showLoginComponents(true)
         }
     }
