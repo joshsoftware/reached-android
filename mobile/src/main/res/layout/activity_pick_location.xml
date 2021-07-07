@@ -72,17 +72,17 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
+            android:drawableStart="@drawable/ic_info_24"
             android:id="@+id/textViewLocationDragMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
             android:paddingLeft="@dimen/text_message_padding_right_left"
+            android:drawablePadding="4dp"
             android:paddingRight="@dimen/text_message_padding_right_left"
             android:paddingTop="@dimen/text_message_padding"
             android:paddingBottom="@dimen/text_message_padding"
-            android:textColor="@color/quantum_grey900"
-            android:textAlignment="center"
-            android:background="@color/quantum_grey100"
+            android:textAppearance="@style/MessageText"
+            android:background="@color/white"
             android:text="@string/location_drag_message" />
 
         <TextView
