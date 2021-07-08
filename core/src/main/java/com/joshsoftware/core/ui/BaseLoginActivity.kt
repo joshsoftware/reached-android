@@ -77,5 +77,6 @@ open abstract class BaseLoginActivity: BaseLocationPermissionActivity() {
     }
 
     abstract fun attemptSignIn(account: GoogleSignInAccount)
+    abstract fun askForPermission(account: GoogleSignInAccount)
 
 }

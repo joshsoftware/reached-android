@@ -111,6 +111,25 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
         viewModel.signInWithGoogle(account, AppType.MOBILE)
     }
 
+    override fun askForPermission(account: GoogleSignInAccount) {
+        if(!allLocationPermissionsNotGranted()) {
+            val fragment = ProminentDisclosureDialog().apply {
+                show(supportFragmentManager, "prominent")
+            }
+            fragment.listener = object: ProminentDisclosureDialog.Listener {
+                override fun onPositiveClick() {
+                    checkForLocationPermission()
+                }
+
+                override fun onNegativeClick() {
+                    finish()
+                }
+            }
+        } else {
+            listener?.onPermissionGrant()
+        }
+    }
+
     private fun registerViewModelObservers() {
 
         viewModel.result.observe(this, Observer { (id, user) ->
