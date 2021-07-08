@@ -49,8 +49,10 @@ class PickLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivity
         setContentView(R.layout.activity_pick_location)
         if(BuildConfig.PLACES_ENABLED) {
             Places.initialize(this, getString(R.string.places_api_key))
+            textViewLocationDragMessage.visibility= View.GONE
         } else {
             txtSave.visibility = View.VISIBLE
+            textViewLocationDragMessage.visibility= View.VISIBLE
         }
         setupMap()
         handleIntent()

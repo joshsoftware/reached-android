@@ -6,16 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.joshsoftware.core.AppSharedPreferences
-import com.joshsoftware.core.FamViewHolder
 import com.joshsoftware.core.model.Group
 import com.joshsoftware.core.model.Member
 import com.joshsoftware.core.util.ConversionUtil
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.ui.viewholder.ViewHolder
 import kotlinx.android.synthetic.main.group_menu_layout.view.*
-import kotlinx.android.synthetic.main.home_view.*
 import kotlinx.android.synthetic.main.home_view.view.*
 
 class HomeAdapter(val sharedPreferences: AppSharedPreferences,
@@ -58,6 +55,10 @@ class HomeAdapter(val sharedPreferences: AppSharedPreferences,
                         viewTransparent.visibility = View.GONE
                         groupMenuLayout.visibility = View.GONE
                     }
+                }
+                viewTransparent.setOnClickListener{
+                    it.visibility = View.GONE
+                    groupMenuLayout.visibility = View.GONE
                 }
 
                 txtDelete.setOnClickListener {

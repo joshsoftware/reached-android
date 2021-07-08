@@ -22,6 +22,7 @@
     <style name="AlertDialogStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="shapeAppearanceOverlay">@style/App.ShapeAppearance.SmallComponent</item>
         <item name="android:layout_height">@dimen/create_group_dialog_height</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="ChoiceButton" parent="LoginComponent">
@@ -31,6 +32,7 @@
     <style name="LoginButton" parent="LoginComponent">
         <item name="cornerRadius">24dp</item>
     </style>
+
     <style name="LoginComponent">
         <item name="android:layout_marginStart">@dimen/login_component_margin</item>
         <item name="android:layout_marginEnd">@dimen/login_component_margin</item>
@@ -45,6 +47,7 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
     </style>
+
     <style name="App.ExtendedFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
         <item name="android:textColor">@color/colorOnPrimary</item>
         <item name="iconTint">@color/colorOnPrimary</item>
