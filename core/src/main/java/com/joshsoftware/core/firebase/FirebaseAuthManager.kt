@@ -4,9 +4,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.messaging.FirebaseMessaging
-import com.joshsoftware.core.BuildConfig
-import com.joshsoftware.core.model.Token
 import com.joshsoftware.core.model.User
+import com.joshsoftware.core.util.StringUtils.capitalizeInitialsName
 import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -28,7 +27,7 @@ class FirebaseAuthManager {
                             FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
                                 token?.let { fcmToken ->
                                     task.result?.user?.let { fUser ->
-                                        val user = User(fUser.displayName, fUser.email, profileUrl = fUser.photoUrl?.toString())
+                                        val user = User(capitalizeInitialsName(fUser.displayName), fUser.email, profileUrl = fUser.photoUrl?.toString())
                                         continuation.resume(Triple(fUser.uid, user, fcmToken))
                                     }
                                 }

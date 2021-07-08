@@ -1,6 +1,5 @@
 package com.joshsoftware.reached.ui.activity
 
-import android.R.attr
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -10,8 +9,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -29,6 +26,7 @@ import com.joshsoftware.core.viewmodel.MapViewModel
 import com.joshsoftware.reached.R
 import com.joshsoftware.reached.databinding.ActivityMapMobileBinding
 import com.joshsoftware.reached.ui.SosMapActivity
+import com.joshsoftware.reached.utils.Constants
 import com.joshsoftware.reached.viewmodel.SosViewModel
 import kotlinx.android.synthetic.main.activity_map_mobile.*
 import kotlinx.android.synthetic.main.activity_map_mobile.txtSos
@@ -42,10 +40,12 @@ import javax.inject.Inject
 
 
 const val INTENT_MEMBER_ID = "MEMBER_ID"
-class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
+
+class MapActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
 
@@ -57,7 +57,6 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
     private var showProgress = true
     private var groups = mutableListOf<Group>()
     private var currentPosition = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMapMobileBinding.inflate(layoutInflater)
@@ -67,7 +66,7 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
         listener = this
 
         val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment?
+            .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.let {
             setMapFragment(it)
         }
@@ -79,14 +78,16 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
 
     private fun setupNavigationButtonListeners() {
         imgNext.setOnClickListener {
-            if(currentPosition < groups.size - 1) {
+            if (currentPosition < groups.size - 1) {
                 setCurrentGroup(groups[++currentPosition])
+                updateArrows()
             }
         }
 
         imgPrevious.setOnClickListener {
-            if(currentPosition > 0) {
+            if (currentPosition > 0) {
                 setCurrentGroup(groups[--currentPosition])
+                updateArrows()
             }
         }
 
@@ -138,6 +139,7 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
             if (!groups.isNullOrEmpty()) {
                 this@MapActivity.groups = groups
                 setCurrentGroup(groups[currentPosition])
+                updateArrows()
             }
         })
 
@@ -160,7 +162,7 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
 
     private fun updateCamera() {
         val builder = LatLngBounds.Builder()
-        if(markers.size == 1) {
+        if (markers.size == 1) {
             val cu = CameraUpdateFactory.newLatLng(markers[0].position!!)
             map?.animateCamera(cu);
         } else {
@@ -173,14 +175,42 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
 
     }
 
+    private fun updateArrows() {
+        if (groups.size == 1) {
+            imgNext.visibility = View.GONE
+            imgPrevious.visibility = View.GONE
+        }
+        when {
+            currentPosition + 1 >= groups.size -> {
+                imgNext.isEnabled = false
+                imgNext.alpha = Constants.ALPHA_FADE
+                imgPrevious.alpha = Constants.ALPHA_VALUE_1
+                imgPrevious.isEnabled = true
+            }
+            currentPosition - 1 < 0 -> {
+                imgNext.isEnabled = true
+                imgNext.alpha = Constants.ALPHA_VALUE_1
+                imgPrevious.alpha = Constants.ALPHA_FADE
+                imgPrevious.isEnabled = false
+
+            }
+            else -> {
+                imgNext.isEnabled = true
+                imgNext.alpha = Constants.ALPHA_VALUE_1
+                imgPrevious.alpha = Constants.ALPHA_VALUE_1
+                imgPrevious.isEnabled = true
+            }
+        }
+    }
+
     override fun mapReady() {
         showProgressView()
-        if(member != null && group != null) {
-            viewModel.fetchMemberData(member?.id!!, group?.id!!).observe(this,  { member ->
+        if (member != null && group != null) {
+            viewModel.fetchMemberData(member?.id!!, group?.id!!).observe(this, { member ->
                 setupGeofence(member!!)
-                if(member?.id != sharedPreferences.userId) {
+                if (member?.id != sharedPreferences.userId) {
                     imgMarkSafe.setOnClickListener {
-                        if(imgMarkSafe.tag == R.drawable.unsafe) {
+                        if (imgMarkSafe.tag == R.drawable.unsafe) {
                             viewModel.markSafe(member?.id!!, member!!).observe(this, {
                                 showToastMessage("Marked safe successfully!")
                                 imgMarkSafe.setImageResource(R.drawable.safe)
@@ -194,7 +224,7 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
                 groupCard.visibility = View.GONE
                 memberCard.visibility = View.VISIBLE
                 var color = Color.RED
-                val text = if(member!!.sosState) {
+                val text = if (member!!.sosState) {
                     imgMarkSafe.tag = R.drawable.unsafe
                     txtSos.visibility = View.GONE
                     "${member!!.name} needs help"
@@ -209,7 +239,7 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
                 imgMarkSafe.setImageResource(if (member!!.sosState) R.drawable.unsafe else R.drawable.safe)
                 viewModel.observeLocationChanges(group?.id!!, member?.id!!)
             })
-        } else if(member != null) {
+        } else if (member != null) {
             groupCard.visibility = View.GONE
             memberCard.visibility = View.VISIBLE
             viewModel.observeLocationChanges(group?.id!!, member?.id!!)
@@ -223,15 +253,16 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
     private fun setupGeofence(member: Member) {
         member.address.forEach { (_, address) ->
             val circleOptions = CircleOptions()
-                    .center(LatLng(address.lat, address.long))
-                    .radius(address.radius.toDouble())
-                    .fillColor(0x40ff0000)
-                    .strokeColor(Color.TRANSPARENT)
-                    .strokeWidth(2f);
+                .center(LatLng(address.lat, address.long))
+                .radius(address.radius.toDouble())
+                .fillColor(0x40ff0000)
+                .strokeColor(Color.TRANSPARENT)
+                .strokeWidth(2f);
             map?.addCircle(circleOptions)
         }
 
     }
+
     private fun removeMarkers() {
         markers.forEach {
             it.remove()
@@ -241,9 +272,9 @@ class MapActivity: SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListe
     private fun addMarkerToMapFor(member: Member): CompletableDeferred<Boolean> {
         val deferred = CompletableDeferred<Boolean>()
         val view = (getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-                .inflate(R.layout.marker_view, null)
+            .inflate(R.layout.marker_view, null)
         val imageView = view.findViewById<ImageView>(R.id.imgProfile)
-        if(member.profileUrl.isNullOrEmpty().not()) {
+        if (member.profileUrl.isNullOrEmpty().not()) {
             Glide
                 .with(this)
                 .asBitmap()
