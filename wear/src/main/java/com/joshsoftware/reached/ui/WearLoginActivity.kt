@@ -37,10 +37,26 @@ class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Pe
             }
         }
         binding.btnGoogleSignIn.setOnClickListener {
-            isNetWorkAvailable {
-                if(sharedPreferences.userData == null) {
-                    signIn()
+//            isNetWorkAvailable {
+//                if(sharedPreferences.userData == null) {
+//                    signIn()
+//                }
+//            }
+            if(!allLocationPermissionsNotGranted()) {
+                val fragment = WearProminentDisclosureDialog().apply {
+                    show(supportFragmentManager, "prominent")
                 }
+                fragment.listener = object: WearProminentDisclosureDialog.Listener {
+                    override fun onPositiveClick() {
+                        checkForLocationPermission()
+                    }
+
+                    override fun onNegativeClick() {
+                        finish()
+                    }
+                }
+            } else {
+                listener?.onPermissionGrant()
             }
         }
 
@@ -49,6 +65,25 @@ class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Pe
 
     override fun attemptSignIn(account: GoogleSignInAccount) {
         viewModel.signInWithGoogle(account, AppType.WEAR)
+    }
+
+    override fun askForPermission(account: GoogleSignInAccount) {
+        if(!allLocationPermissionsNotGranted()) {
+            val fragment = WearProminentDisclosureDialog().apply {
+                show(supportFragmentManager, "prominent")
+            }
+            fragment.listener = object: WearProminentDisclosureDialog.Listener {
+                override fun onPositiveClick() {
+                    checkForLocationPermission()
+                }
+
+                override fun onNegativeClick() {
+                    finish()
+                }
+            }
+        } else {
+            listener?.onPermissionGrant()
+        }
     }
 
     private fun registerViewModelObservers() {
