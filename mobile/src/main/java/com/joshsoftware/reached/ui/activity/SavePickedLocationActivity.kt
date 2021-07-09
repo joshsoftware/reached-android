@@ -114,9 +114,15 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
         }
         radioBtnHome.setOnClickListener {
             edtLocation.setText("Home")
+            edtLocationLayout.visibility = View.GONE
         }
         radioBtnWork.setOnClickListener {
             edtLocation.setText("Work")
+            edtLocationLayout.visibility = View.GONE
+        }
+        radioBtnCustom.setOnClickListener {
+            edtLocation.setText("Other")
+            edtLocationLayout.visibility = View.VISIBLE
         }
     }
 
@@ -124,6 +130,7 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
         edtLocation.addTextChangedListener {
             if(edtLocation.text.toString() != "Home") radioBtnHome.isChecked = false
             if(edtLocation.text.toString() != "Work") radioBtnWork.isChecked = false
+            if(edtLocation.text.toString() != "Other") radioBtnCustom.isChecked = false
         }
 
         if(address.address.isEmpty()) {
