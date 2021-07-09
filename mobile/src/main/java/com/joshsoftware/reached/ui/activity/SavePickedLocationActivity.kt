@@ -21,12 +21,14 @@ import com.joshsoftware.core.BaseMapActivity
 import com.joshsoftware.core.model.Address
 import com.joshsoftware.core.model.IntentConstant
 import com.joshsoftware.reached.R
+import com.joshsoftware.reached.extansions.applyCheckedOnAll
 import com.joshsoftware.reached.model.Transition
 import com.joshsoftware.reached.ui.SosMapActivity
 import com.joshsoftware.reached.viewmodel.SaveLocationViewModel
 import com.joshsoftware.reached.viewmodel.SosViewModel
 import kotlinx.android.synthetic.main.activity_save_picked_location.*
 import kotlinx.android.synthetic.main.layout_save_location_header.*
+import kotlinx.android.synthetic.main.temp.*
 import javax.inject.Inject
 
 
@@ -47,7 +49,6 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_save_picked_location)
         setupMapFragmnet()
-
         handleIntent()
         setupListeners()
     }
@@ -124,7 +125,12 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
             edtLocation.setText("Other")
             edtLocationLayout.visibility = View.VISIBLE
         }
+        chipDaily.setOnClickListener {
+            chipDaily.isCloseIconVisible =!chipDaily.isCloseIconVisible
+            chipGroupWeekdays.applyCheckedOnAll(chipDaily.isCloseIconVisible)
+        }
     }
+
 
     private fun setupUi(address: Address) {
         edtLocation.addTextChangedListener {
