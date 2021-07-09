@@ -21,6 +21,7 @@ import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
 import com.joshsoftware.reached.model.OnboardingData
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.HomeActivity
+import com.joshsoftware.reached.ui.activity.PrivacyPolicyActivity
 import com.joshsoftware.reached.ui.adapter.OnboardingAdapter
 import com.joshsoftware.reached.ui.dialog.ProminentDisclosureDialog
 import timber.log.Timber
@@ -56,6 +57,10 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
                         signIn()
                     }
                 }
+            }
+            txtWithGoogle.setOnClickListener {
+                val intent = Intent(this@LoginActivity, PrivacyPolicyActivity::class.java)
+                startActivity(intent)
             }
         }
 

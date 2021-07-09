@@ -10,4 +10,5 @@
     <string name="my_groups">My Groups</string>
     <string name="show_on_map">Show on Map</string>
     <string name="ask_accept">Accept?</string>
+    <string name="choose_your_google_account_nto_continue">Choose your Google account\nto continue</string>
 </resources>

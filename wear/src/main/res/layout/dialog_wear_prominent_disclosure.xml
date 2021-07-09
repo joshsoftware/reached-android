@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left|bottom"
                     android:src="@drawable/ic_cc_clear"
-                    app:circle_color="#AFAFAF"
+                    app:circle_color="@color/grey"
                     app:circle_radius="25dp"
                     app:circle_radius_pressed="20dp" />
 
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|bottom"
                     android:src="@drawable/ic_cc_checkmark"
-                    app:circle_color="#0EB695"
+                    app:circle_color="@color/reached_yellow"
                     app:circle_radius="25dp"
                     app:circle_radius_pressed="20dp" />
             </FrameLayout>
