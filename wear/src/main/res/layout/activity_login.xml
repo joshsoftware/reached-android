@@ -51,7 +51,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="Choose your Google account\nto continue"
+        android:text="@string/choose_your_google_account_nto_continue"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_width="wrap_content"

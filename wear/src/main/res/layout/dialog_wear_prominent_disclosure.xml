@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/wear_background"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_box="all">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <TextView
+                android:id="@+id/tv_longtext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-condensed"
+                android:padding="5sp"
+                android:gravity="center_horizontal"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="@string/prominent_disclosure_text" />
+
+            <TextView
+                android:id="@+id/tv_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="5sp"
+                android:paddingBottom="15sp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="@string/ask_accept" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5sp">
+
+                <android.support.wearable.view.CircledImageView
+                    android:id="@+id/buttonNegative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|bottom"
+                    android:src="@drawable/ic_cc_clear"
+                    app:circle_color="@color/grey"
+                    app:circle_radius="25dp"
+                    app:circle_radius_pressed="20dp" />
+
+                <android.support.wearable.view.CircledImageView
+                    android:id="@+id/buttonPositive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|bottom"
+                    android:src="@drawable/ic_cc_checkmark"
+                    app:circle_color="@color/reached_yellow"
+                    app:circle_radius="25dp"
+                    app:circle_radius_pressed="20dp" />
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+</android.support.wearable.view.BoxInsetLayout>

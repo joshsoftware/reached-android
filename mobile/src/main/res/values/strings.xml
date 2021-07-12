@@ -47,7 +47,7 @@
     <string name="button_text_back">Back</string>
     <string name="choose_location_on_map_title">Choose Locaiton on map</string>
     <string name="safeguard_your_family_and_friend_s">SAFEGUARD FAMILY AND FRIEND\'S!</string>
-    <string name="with_your_google_account">With your Google account</string>
+    <string name="privacy_policy">Privacy policy</string>
     <string name="sign_in">SIGN IN</string>
     <string name="location_name">Location name</string>
     <string name="button_text_save">Save</string>
@@ -57,9 +57,6 @@
     <string name="message_address_deleted">Address was deleted successfully!!</string>
     <string name="logout">Logout</string>
     <string name="edit_group">Edit group</string>
-    <string name="reject">REJECT</string>
-    <string name="accept">ACCEPT</string>
-    <string name="prominent_disclosure_text">This app collects location data to enable other members of the group to see your location which enables them to make sure you are safe even when the app is closed or not in use.</string>
     <string name="location_drag_message">Tap and hold the marker to move around the map.</string>
     <string name="monday">M</string>
     <string name="sunday">S</string>
@@ -67,4 +64,5 @@
     <string name="wednesday">W</string>
     <string name="friday">F</string>
     <string name="saturday">S</string>
+    <string name="welcome_nto_nfamily_tracker">Welcome\nto\nFamily tracker</string>
 </resources>

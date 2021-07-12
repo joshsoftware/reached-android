@@ -12,16 +12,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ui.activity.GroupEditActivity"></activity>
-        <activity android:name=".ui.activity.SavePickedLocationActivity"></activity>
+        <activity android:name=".ui.activity.PrivacyPolicyActivity"></activity>
+        <activity android:name=".ui.activity.GroupEditActivity" />
+        <activity android:name=".ui.activity.SavePickedLocationActivity" />
         <activity android:name=".ui.activity.PickLocationActivity" />
         <activity
             android:name=".ui.activity.ProfileActivity"
             android:theme="@style/ProfileTheme" />
         <activity
             android:name=".ui.activity.HomeActivity"
-            android:launchMode="singleTop">
-        </activity>
+            android:launchMode="singleTop"></activity>
         <activity
             android:name=".ui.activity.OnboardingActivity"
             android:theme="@style/OnboardingTheme" />
@@ -55,11 +55,13 @@
             android:name=".ui.activity.GroupChoiceActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/GroupChoiceTheme" >
+            android:theme="@style/GroupChoiceTheme">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="reached1.page.link"
                     android:scheme="https" />
