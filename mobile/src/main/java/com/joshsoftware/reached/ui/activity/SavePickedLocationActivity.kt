@@ -28,7 +28,7 @@ import com.joshsoftware.reached.viewmodel.SaveLocationViewModel
 import com.joshsoftware.reached.viewmodel.SosViewModel
 import kotlinx.android.synthetic.main.activity_save_picked_location.*
 import kotlinx.android.synthetic.main.layout_save_location_header.*
-import kotlinx.android.synthetic.main.temp.*
+import kotlinx.android.synthetic.main.weekdays_chip_layout.*
 import javax.inject.Inject
 
 
