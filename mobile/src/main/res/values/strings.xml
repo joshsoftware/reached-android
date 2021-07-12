@@ -58,5 +58,11 @@
     <string name="logout">Logout</string>
     <string name="edit_group">Edit group</string>
     <string name="location_drag_message">Tap and hold the marker to move around the map.</string>
+    <string name="monday">M</string>
+    <string name="sunday">S</string>
+    <string name="tuesday">T</string>
+    <string name="wednesday">W</string>
+    <string name="friday">F</string>
+    <string name="saturday">S</string>
     <string name="welcome_nto_nfamily_tracker">Welcome\nto\nFamily tracker</string>
 </resources>
