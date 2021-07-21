@@ -21,7 +21,9 @@ import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
 import com.joshsoftware.reached.model.OnboardingData
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.HomeActivity
+import com.joshsoftware.reached.ui.activity.PrivacyPolicyActivity
 import com.joshsoftware.reached.ui.adapter.OnboardingAdapter
+import com.joshsoftware.reached.ui.dialog.ProminentDisclosureDialog
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -55,6 +57,10 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
                         signIn()
                     }
                 }
+            }
+            txtWithGoogle.setOnClickListener {
+                val intent = Intent(this@LoginActivity, PrivacyPolicyActivity::class.java)
+                startActivity(intent)
             }
         }
 
@@ -110,6 +116,25 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
         viewModel.signInWithGoogle(account, AppType.MOBILE)
     }
 
+    override fun askForPermission(account: GoogleSignInAccount) {
+        if(!allLocationPermissionsNotGranted()) {
+            val fragment = ProminentDisclosureDialog().apply {
+                show(supportFragmentManager, "prominent")
+            }
+            fragment.listener = object: ProminentDisclosureDialog.Listener {
+                override fun onPositiveClick() {
+                    checkForLocationPermission()
+                }
+
+                override fun onNegativeClick() {
+                    finish()
+                }
+            }
+        } else {
+            listener?.onPermissionGrant()
+        }
+    }
+
     private fun registerViewModelObservers() {
 
         viewModel.result.observe(this, Observer { (id, user) ->
@@ -154,7 +179,23 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
             transition.duration = 200
             TransitionManager.beginDelayedTransition(parent, transition)
             set.applyTo(parent)
-            checkForLocationPermission()
+            if(!allLocationPermissionsNotGranted()) {
+                val fragment = ProminentDisclosureDialog().apply {
+                    show(supportFragmentManager, "prominent")
+                }
+                fragment.listener = object: ProminentDisclosureDialog.Listener {
+                    override fun onPositiveClick() {
+                        checkForLocationPermission()
+                    }
+
+                    override fun onNegativeClick() {
+                        finish()
+                    }
+                }
+            } else {
+                listener?.onPermissionGrant()
+            }
+
             showLoginComponents(true)
         }
     }

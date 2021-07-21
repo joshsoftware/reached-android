@@ -17,7 +17,7 @@ android {
         applicationId "com.joshsoftware.reached"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 9
+        versionCode 11
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
