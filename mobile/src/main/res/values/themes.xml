@@ -132,7 +132,7 @@
 
     <style name="DailyChipStyle" parent="DayChipStyle">
         <item name="android:textAppearance">@style/ChipTextAppearance</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="closeIconTint">@color/white</item>
         <item name="closeIcon">@drawable/ic_check_24</item>
     </style>
