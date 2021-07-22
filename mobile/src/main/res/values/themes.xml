@@ -106,4 +106,12 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/quantum_grey600</item>
     </style>
+    <style name="LocationAlertTitle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/location_permission_title_color</item>
+    </style>
+    <style name="LocationSettingTitle" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/location_permission_title_color</item>
+    </style>
 </resources>

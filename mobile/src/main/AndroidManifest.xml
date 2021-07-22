@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".ui.activity.PrivacyPolicyActivity"></activity>
+        <activity android:name=".ui.activity.PermissionsRequiredActivity"></activity>
+        <activity android:name=".ui.activity.PrivacyPolicyActivity" />
         <activity android:name=".ui.activity.GroupEditActivity" />
         <activity android:name=".ui.activity.SavePickedLocationActivity" />
         <activity android:name=".ui.activity.PickLocationActivity" />
@@ -21,7 +22,7 @@
             android:theme="@style/ProfileTheme" />
         <activity
             android:name=".ui.activity.HomeActivity"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTop" />
         <activity
             android:name=".ui.activity.OnboardingActivity"
             android:theme="@style/OnboardingTheme" />

@@ -2,12 +2,10 @@ package com.joshsoftware.reached.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.joshsoftware.core.AppSharedPreferences
-import com.joshsoftware.reached.ui.LoginActivity
 
-class SplashActivity : AppCompatActivity() {
+class
+SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,7 +14,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun startLoginActivity() {
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, PermissionsRequiredActivity::class.java)
         startActivity(intent)
     }
 
