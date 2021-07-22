@@ -110,8 +110,16 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/location_permission_title_color</item>
     </style>
+    <style name="PermissionMessage" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
     <style name="LocationSettingTitle" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/location_permission_title_color</item>
+    </style>
+    <style name="LocationTitle" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 </resources>

@@ -4,13 +4,12 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingVertical="16dp"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="16dp"
+        android:layout_marginVertical="20dp"
         android:layout_marginHorizontal="16dp"
         android:gravity="center"
         android:text="@string/location_title_message"
@@ -21,7 +20,7 @@
         android:id="@+id/textViewAppSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="16dp"
+        android:layout_marginVertical="12dp"
         android:layout_marginHorizontal="16dp"
         android:gravity="center"
         android:textAppearance="@style/LocationSettingTitle"
@@ -33,20 +32,23 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="12dp"
         android:layout_marginHorizontal="16dp"
+        android:clickable="true"
         android:gravity="center"
         android:textSize="12sp"
-        android:text="@string/location_app_message" />
+        android:text="@string/location_app_message"
+        android:focusable="true" />
 
     <com.google.android.material.button.MaterialButton
        android:id="@+id/buttonGoToPermissionLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="18dp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="14dp"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="20dp"
         android:text="@string/location_permission"
         android:textAllCaps="false"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:cornerRadius="40dp" />
 </LinearLayout>

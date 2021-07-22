@@ -35,4 +35,7 @@ abstract class ActivityModule {
     @ContributesAndroidInjector
     abstract fun contributeGroupEditActivity(): GroupEditActivity
 
+    @ContributesAndroidInjector
+    abstract fun contributePermissionActivity(): PermissionsRequiredActivity
+
 }

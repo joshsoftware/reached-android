@@ -220,7 +220,7 @@
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/loginGroup"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="headerCard,txtSafeGuard,txtWithGoogle,txtSignIn,googleIcon,btnGoogleSignIn" />
