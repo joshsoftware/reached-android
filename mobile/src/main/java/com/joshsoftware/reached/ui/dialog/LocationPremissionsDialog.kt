@@ -1,7 +1,6 @@
 package com.joshsoftware.reached.ui.dialog
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -15,8 +14,6 @@ import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshsoftware.reached.R
@@ -42,6 +39,10 @@ class LocationPremissionsDialog : DialogFragment() {
                     //i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivityForResult(i, 21)
                     dialog?.dismiss()
+                }
+                textViewPolicy.setOnClickListener {
+                    val intent = Intent(context, PrivacyPolicyActivity::class.java)
+                    startActivity(intent)
                 }
                 setTextclickablePolicy()
                 setBoldText()
