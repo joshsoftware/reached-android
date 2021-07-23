@@ -147,7 +147,7 @@
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:layout_marginBottom="8dp"
-        android:textColor="@color/login_text_color"
+        android:textColor="@color/reached_yellow"
         android:text="@string/privacy_policy"
         app:layout_constraintBottom_toTopOf="@id/txtSafeGuard"
         app:layout_constraintEnd_toEndOf="parent"

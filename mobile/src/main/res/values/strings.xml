@@ -59,4 +59,10 @@
     <string name="edit_group">Edit group</string>
     <string name="location_drag_message">Tap and hold the marker to move around the map.</string>
     <string name="welcome_nto_nfamily_tracker">Welcome\nto\nFamily tracker</string>
+    <string name="location_title_message">Reached only works correctly if it can access your location \"all the time\"</string>
+    <string name="location_app_setting_message">In app settings, select Allow all the time for Reached location permission.</string>
+    <string name="location_app_message">This app collects location data to enable Driving Analysis, Crash Detection, Place Alerts and to share location with your Circle Members,even the app is closed or not in use. Your location data will also be shared with third parties, including for research tailored adversting, and analytics purposes, in accordance to our Privacy Policy and user settings.</string>
+    <string name="location_permission">Go to location premissions</string>
+    <string name="permission_message">Reached required location permission to work</string>
+
 </resources>

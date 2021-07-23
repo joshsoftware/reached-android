@@ -25,4 +25,5 @@
     <color name="map_text_color">#000000</color>
     <color name="safe_text_color">#15CF00</color>
     <color name="map_background_color">#E8E8E8</color>
+    <color name="location_permission_title_color">@color/black</color>
 </resources>
