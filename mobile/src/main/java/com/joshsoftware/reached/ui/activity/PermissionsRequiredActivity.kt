@@ -8,14 +8,15 @@ import com.joshsoftware.reached.databinding.ActivityPermissionsRequiredBinding
 import com.joshsoftware.reached.ui.LoginActivity
 import com.joshsoftware.reached.ui.dialog.LocationPremissionsDialog
 
-class PermissionsRequiredActivity : BaseLocationPermissionActivity() {
+class PermissionsRequiredActivity : BaseLocationPermissionActivity(),
+    BaseLocationPermissionActivity.PermissionListener {
     lateinit var binding: ActivityPermissionsRequiredBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPermissionsRequiredBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-    }
+        listener = this    }
 
     override fun initializeViewModel() {
     }
@@ -35,7 +36,7 @@ class PermissionsRequiredActivity : BaseLocationPermissionActivity() {
                 startLoginActivity()
             }
             enableLocation.setOnClickListener {
-                showLocationAlertDialogPermission()
+                checkForLocationPermission()
             }
 
         }
@@ -56,4 +57,20 @@ class PermissionsRequiredActivity : BaseLocationPermissionActivity() {
         val dialog = LocationPremissionsDialog()
         dialog.show(supportFragmentManager, dialog.tag)
     }
+
+    override fun onPermissionGrant() {
+        init()
+    }
+
+    override fun onAllowAllTheTimeDenied() {
+        showLocationAlertDialogPermission()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 21 || requestCode == 22) {
+            checkForLocationPermission()
+        }
+    }
+
 }

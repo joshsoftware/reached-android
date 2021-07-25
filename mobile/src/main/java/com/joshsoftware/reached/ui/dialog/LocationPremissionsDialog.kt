@@ -37,7 +37,7 @@ class LocationPremissionsDialog : DialogFragment() {
                         )
                     )
                     //i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivityForResult(i, 21)
+                    activity?.let { it.startActivityForResult(i, 21) }
                     dialog?.dismiss()
                 }
                 textViewPolicy.setOnClickListener {

@@ -143,4 +143,8 @@ class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Pe
             signIn()
         }
     }
+
+    override fun onAllowAllTheTimeDenied() {
+        TODO("Not yet implemented")
+    }
 }

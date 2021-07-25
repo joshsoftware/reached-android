@@ -21,6 +21,7 @@ import com.joshsoftware.reached.databinding.ActivityLoginMobileBinding
 import com.joshsoftware.reached.model.OnboardingData
 import com.joshsoftware.reached.ui.activity.GroupChoiceActivity
 import com.joshsoftware.reached.ui.activity.HomeActivity
+import com.joshsoftware.reached.ui.activity.PermissionsRequiredActivity
 import com.joshsoftware.reached.ui.activity.PrivacyPolicyActivity
 import com.joshsoftware.reached.ui.adapter.OnboardingAdapter
 import com.joshsoftware.reached.ui.dialog.ProminentDisclosureDialog
@@ -49,7 +50,9 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
         }
         binding.apply {
             imgSkip.setOnClickListener {
-                hideOnboarding()
+
+                startPermissionActivity()
+
             }
             btnGoogleSignIn.setOnClickListener {
                 isNetWorkAvailable {
@@ -101,7 +104,6 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
             val set = ConstraintSet()
             set.clone(parent)
             set.connect(onboardingLayout.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-
             val transition = ChangeBounds()
             transition.interpolator = AnticipateOvershootInterpolator(0.5f)
             transition.duration = 500
@@ -118,18 +120,7 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
 
     override fun askForPermission(account: GoogleSignInAccount) {
         if(!allLocationPermissionsNotGranted()) {
-            val fragment = ProminentDisclosureDialog().apply {
-                show(supportFragmentManager, "prominent")
-            }
-            fragment.listener = object: ProminentDisclosureDialog.Listener {
-                override fun onPositiveClick() {
-                    checkForLocationPermission()
-                }
-
-                override fun onNegativeClick() {
-                    finish()
-                }
-            }
+            startPermissionActivity()
         } else {
             listener?.onPermissionGrant()
         }
@@ -180,18 +171,7 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
             TransitionManager.beginDelayedTransition(parent, transition)
             set.applyTo(parent)
             if(!allLocationPermissionsNotGranted()) {
-                val fragment = ProminentDisclosureDialog().apply {
-                    show(supportFragmentManager, "prominent")
-                }
-                fragment.listener = object: ProminentDisclosureDialog.Listener {
-                    override fun onPositiveClick() {
-                        checkForLocationPermission()
-                    }
-
-                    override fun onNegativeClick() {
-                        finish()
-                    }
-                }
+                startPermissionActivity()
             } else {
                 listener?.onPermissionGrant()
             }
@@ -223,10 +203,17 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
         }
     }
 
+    override fun onAllowAllTheTimeDenied() {
+    }
+
     private fun showLoginComponents(show: Boolean) {
         binding.apply {
             loginGroup.visibility = if(show) View.VISIBLE else View.GONE
             imgLogo.visibility = if(!show) View.VISIBLE else View.GONE
         }
+    }
+    private fun startPermissionActivity() {
+        val intent = Intent(this, PermissionsRequiredActivity::class.java)
+        startActivity(intent)
     }
 }
