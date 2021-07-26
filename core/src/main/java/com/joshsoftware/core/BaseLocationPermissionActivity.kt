@@ -15,18 +15,22 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
     protected var listener: PermissionListener? = null
 
     protected fun checkForLocationPermission() {
-        if (allLocationPermissionsNotGranted()) {
+        if (allLocationPermissionsGranted()) {
             listener?.onPermissionGrant()
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                requestPermissions(
-                    arrayOf(
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    ),
-                    10
-                )
+                if(backgroundPermissionNotGranted()) {
+                    listener?.onAllowAllTheTimeDenied()
+                } else {
+                    requestPermissions(
+                        arrayOf(
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        ),
+                        10
+                    )
+                }
             } else {
                 requestPermissions(
                     arrayOf(
@@ -39,7 +43,7 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
         }
     }
 
-    protected fun allLocationPermissionsNotGranted(): Boolean {
+    protected fun allLocationPermissionsGranted(): Boolean {
         return ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -52,6 +56,21 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
             this,
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    protected fun backgroundPermissionNotGranted(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
     }
 
     override fun onRequestPermissionsResult(
@@ -69,7 +88,7 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
                         if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                             listener?.onPermissionGrant()
                         } else {
-                         listener?.onAllowAllTheTimeDenied()
+                            listener?.onAllowAllTheTimeDenied()
                         }
                     } else {
                         if (!ActivityCompat.shouldShowRequestPermissionRationale(
