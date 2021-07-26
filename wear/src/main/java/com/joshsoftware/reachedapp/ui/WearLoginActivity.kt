@@ -40,7 +40,7 @@ class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Pe
 //                    signIn()
 //                }
 //            }
-            if(!allLocationPermissionsNotGranted()) {
+            if(!allLocationPermissionsGranted()) {
                 val fragment = WearProminentDisclosureDialog().apply {
                     show(supportFragmentManager, "prominent")
                 }
@@ -66,7 +66,7 @@ class WearLoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Pe
     }
 
     override fun askForPermission(account: GoogleSignInAccount) {
-        if(!allLocationPermissionsNotGranted()) {
+        if(!allLocationPermissionsGranted()) {
             val fragment = WearProminentDisclosureDialog().apply {
                 show(supportFragmentManager, "prominent")
             }

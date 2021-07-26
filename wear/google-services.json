@@ -15,6 +15,46 @@
       },
       "oauth_client": [
         {
+          "client_id": "272106169401-19bglt5oc4c0stm1gmrks0k8g5l5i5eq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joshsoftware.reached",
+            "certificate_hash": "37ff8013b517150a6115ca7d90c7ade234a34f95"
+          }
+        },
+        {
+          "client_id": "272106169401-ib6v8g8dg57brm6dmp7eol502f45vgcm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joshsoftware.reached",
+            "certificate_hash": "dfc7c165ad703d59734f74922d7709c9902422a3"
+          }
+        },
+        {
+          "client_id": "272106169401-jjll79s8dnkadlk7k1gv38s9709pj2r1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joshsoftware.reached",
+            "certificate_hash": "2e162a24f67c8deaf0945b3ed2b2d29e2146b913"
+          }
+        },
+        {
+          "client_id": "272106169401-q0jsjj4jq6a01cagr405n3a9p34gn7si.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joshsoftware.reached",
+            "certificate_hash": "6d3171fd8309ff81d090fc4e2d0344a3ff73b0c8"
+          }
+        },
+        {
+          "client_id": "272106169401-tmth9r946u7m9sjfnsql6r0c5v337hkt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joshsoftware.reached",
+            "certificate_hash": "fcfab97dcb1ce4fd81ed8739c102878e7bafe3bf"
+          }
+        },
+        {
           "client_id": "272106169401-htmsq48ojidbn3aabgs5uvca0adbt10c.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,6 +70,51 @@
             {
               "client_id": "272106169401-htmsq48ojidbn3aabgs5uvca0adbt10c.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "272106169401-buoqgsvpi8eecv4vhobqke5fsgg4a6pa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.joshsoftware.app.reached",
+                "app_store_id": "1561609913"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272106169401:android:9a89f75d0b1338381fd9e8",
+        "android_client_info": {
+          "package_name": "com.joshsoftware.reachedapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "272106169401-htmsq48ojidbn3aabgs5uvca0adbt10c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQk3rofOurFyFs-moepr8s_s2DZ4U9auY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "272106169401-htmsq48ojidbn3aabgs5uvca0adbt10c.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "272106169401-buoqgsvpi8eecv4vhobqke5fsgg4a6pa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.joshsoftware.app.reached",
+                "app_store_id": "1561609913"
+              }
             }
           ]
         }
