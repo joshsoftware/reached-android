@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.joshsoftware.reached">
+    package="com.joshsoftware.reachedapp">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
@@ -10,22 +10,22 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name="com.joshsoftware.reached.FamApp"
+        android:name="com.joshsoftware.reachedapp.FamApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name="com.joshsoftware.reached.ui.GroupWaitActivity"
+        <activity android:name="com.joshsoftware.reachedapp.ui.GroupWaitActivity"
             android:theme="@style/Theme.MyApplication"/>
         <activity
-            android:name="com.joshsoftware.reached.ui.MapActivity"
+            android:name="com.joshsoftware.reachedapp.ui.MapActivity"
             android:theme="@style/Theme.MyApplication" />
         <activity
-            android:name="com.joshsoftware.reached.ui.GroupMemberActivity"
+            android:name="com.joshsoftware.reachedapp.ui.GroupMemberActivity"
             android:theme="@style/Theme.MyApplication" />
         <activity
-            android:name="com.joshsoftware.reached.ui.WearLoginActivity"
+            android:name="com.joshsoftware.reachedapp.ui.WearLoginActivity"
             android:theme="@style/Theme.MyApplication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +35,7 @@
         </activity>
 
         <activity
-            android:name="com.joshsoftware.reached.ui.WearGroupListActivity"
+            android:name="com.joshsoftware.reachedapp.ui.WearGroupListActivity"
             android:theme="@style/Theme.MyApplication">
 
         </activity>
@@ -58,7 +58,7 @@
             android:name="com.joshsoftware.core.service.LocationUpdateService"
             android:enabled="true"
             android:exported="true"/>
-        <service android:name=".service.ReachedWearFirebaseService"
+        <service android:name="com.joshsoftware.reachedapp.service.ReachedWearFirebaseService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
