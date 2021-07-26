@@ -23,7 +23,7 @@ class PermissionsRequiredActivity : BaseLocationPermissionActivity(),
 
     private fun init() {
         binding.apply {
-            if (allLocationPermissionsNotGranted()) {
+            if (allLocationPermissionsGranted()) {
                 imageViewTick.visibility = View.VISIBLE
                 enableLocation.visibility = View.GONE
                 buttonGoToPermissionLocation.isEnabled = true

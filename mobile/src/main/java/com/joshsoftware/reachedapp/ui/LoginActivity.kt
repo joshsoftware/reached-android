@@ -117,7 +117,7 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
     }
 
     override fun askForPermission(account: GoogleSignInAccount) {
-        if(!allLocationPermissionsNotGranted()) {
+        if(!allLocationPermissionsGranted()) {
             startPermissionActivity()
         } else {
             listener?.onPermissionGrant()
@@ -168,7 +168,8 @@ class LoginActivity : BaseLoginActivity(), BaseLocationPermissionActivity.Permis
             transition.duration = 200
             TransitionManager.beginDelayedTransition(parent, transition)
             set.applyTo(parent)
-            if(!allLocationPermissionsNotGranted()) {
+
+            if(!allLocationPermissionsGranted()) {
                 startPermissionActivity()
             } else {
                 listener?.onPermissionGrant()
