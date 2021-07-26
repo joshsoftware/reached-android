@@ -15,8 +15,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <View
+        android:id="@+id/view3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/map_background_color"
@@ -83,56 +83,68 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="297dp"
         app:layout_constraintTop_toBottomOf="@id/txtAddressLabel" />
-    <TextView
-        android:id="@+id/txtSaveTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save_as_favorite"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline4"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        />
+
     <RadioGroup
         android:id="@+id/radioGroupLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/txtSaveTitle"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        >
+        app:layout_constraintTop_toBottomOf="@id/guideline4">
+
         <RadioButton
             android:id="@+id/radioBtnHome"
-            android:text="Home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            android:text="Home" />
+
         <RadioButton
-            android:layout_marginStart="38dp"
             android:id="@+id/radioBtnWork"
-            android:text="Work"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            android:layout_marginStart="38dp"
+            android:text="Work" />
+
+        <RadioButton
+            android:id="@+id/radioBtnCustom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="38dp"
+            android:text="Other" />
     </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/visitingTimeRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupLocation">
+
+        <include
+            android:id="@+id/buttonVisitingTime"
+            layout="@layout/time_picker_button_layout" />
+
+        <include
+            android:id="@+id/buttonEndTime"
+            layout="@layout/time_picker_button_layout" />
+    </LinearLayout>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/edtLocationLayout"
+        style="@style/TextInputStyleFilled"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:focusable="true"
         android:hint="@string/location_name"
-        style="@style/TextInputStyleFilled"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/radioGroupLocation"
         app:layout_constraintStart_toStartOf="parent"
-        >
+        app:layout_constraintTop_toBottomOf="@id/radioGroupLocation">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edtLocation"
@@ -140,6 +152,35 @@
             android:layout_height="wrap_content"
             android:textSize="18sp" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipDaily"
+        style="@style/DailyChipStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Daily"
+        app:layout_constraintBottom_toTopOf="@id/view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/visitingTimeRange" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="@color/map_background_color"
+        app:layout_constraintBottom_toTopOf="@+id/chipWeekdays" />
+
+    <include
+        android:id="@+id/chipWeekdays"
+        layout="@layout/weekdays_chip_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="12dp"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
 
     <TextView
         android:id="@+id/txtSave"
