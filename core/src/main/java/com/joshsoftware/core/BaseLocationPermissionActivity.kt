@@ -78,7 +78,7 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
                             )
                         ) {
                             // If User Checked 'Don't Show Again' checkbox for runtime permission, then navigate user to Settings
-                            showAlert("You have to Allow permission to access user location", 22)
+                            showAlert("Reached needs access to your location so that all your group members know you are safe.", 22)
                         }
                     }
                 } else {
@@ -93,7 +93,7 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
                             )
                         ) {
                             // If User Checked 'Don't Show Again' checkbox for runtime permission, then navigate user to Settings
-                            showAlert("You have to Allow permission to access user location", 22)
+                            showAlert("Reached needs access to your location so that all your group members know you are safe.", 22)
                         }
                     }
                 }
@@ -105,7 +105,7 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
                     )
                 ) {
                     // If User Checked 'Don't Show Again' checkbox for runtime permission, then navigate user to Settings
-                    showAlert("You have to Allow permission to access user location", 22)
+                    showAlert("Reached needs access to your location so that all your group members know you are safe.", 22)
                 }
                 //code for deny
             }
@@ -115,7 +115,7 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
 
     open fun showAlert(message: String, requestCode: Int) {
         val dialog: AlertDialog.Builder = AlertDialog.Builder(this)
-        dialog.setTitle("Permission Required")
+        dialog.setTitle("Location Permission Required")
         dialog.setCancelable(false)
         dialog.setMessage(message)
         dialog.setPositiveButton("Settings") { _, _ ->
