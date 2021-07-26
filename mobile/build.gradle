@@ -14,7 +14,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.joshsoftware.reached"
+        applicationId "com.joshsoftware.reachedapp"
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 11
