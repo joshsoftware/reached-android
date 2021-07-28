@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +17,9 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_KEYBOARD
+import com.google.android.material.timepicker.TimeFormat
 import com.joshsoftware.core.AppSharedPreferences
 import com.joshsoftware.core.BaseMapActivity
 import com.joshsoftware.core.model.Address
@@ -27,14 +31,17 @@ import com.joshsoftware.reachedapp.viewmodel.SaveLocationViewModel
 import com.joshsoftware.reachedapp.viewmodel.SosViewModel
 import kotlinx.android.synthetic.main.activity_save_picked_location.*
 import kotlinx.android.synthetic.main.layout_save_location_header.*
+import kotlinx.android.synthetic.main.time_picker_button_layout.*
 import kotlinx.android.synthetic.main.weekdays_chip_layout.*
 import javax.inject.Inject
 
 
-class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapActivityReadyListener {
+class SavePickedLocationActivity : SosMapActivity(),
+    BaseMapActivity.OnBaseMapActivityReadyListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     @Inject
     lateinit var sharedPreferences: AppSharedPreferences
 
@@ -48,7 +55,6 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_save_picked_location)
         setupMapFragmnet()
-
         handleIntent()
         setupListeners()
     }
@@ -65,13 +71,16 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
         intent.extras?.getParcelable<Address>(IntentConstant.ADDRESS.name)?.let {
             address = it
             setupUi(address)
-        } ?: kotlin.run { throw Exception("Address with lat, long and name required for saving location") }
+        }
+            ?: kotlin.run {
+                throw Exception("Address with lat, long and name required for saving location")
+            }
     }
 
     private fun setupMapFragmnet() {
         listener = this
         val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment?
+            .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.let {
             setMapFragment(it)
         }
@@ -82,7 +91,7 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
         sosViewModel = ViewModelProvider(this, viewModelFactory)[SosViewModel::class.java]
 
         viewModel.result.observe(this, { address ->
-            if(address != null) {
+            if (address != null) {
                 showToastMessage(getString(R.string.address_save_success_message))
                 val resultIntent = Intent()
                 resultIntent.putExtra(IntentConstant.ADDRESS.name, address)
@@ -91,10 +100,10 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
             }
         })
         viewModel.error.observe(this, {
-            if(it != null) showErrorMessage(it)
+            if (it != null) showErrorMessage(it)
         })
-        viewModel.spinner.observe(this,  {
-            if(it) showProgressView() else hideProgressView()
+        viewModel.spinner.observe(this, {
+            if (it) showProgressView() else hideProgressView()
         })
     }
 
@@ -105,7 +114,7 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
         }
         txtSave.setOnClickListener {
             isNetWorkAvailable {
-                if(TextUtils.isEmpty(edtLocation.text)) {
+                if (TextUtils.isEmpty(edtLocation.text)) {
                     showToastMessage("Please enter a name for location")
                     return@isNetWorkAvailable
                 }
@@ -126,19 +135,36 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
             edtLocationLayout.visibility = View.VISIBLE
         }
         chipDaily.setOnClickListener {
-            chipDaily.isCloseIconVisible =!chipDaily.isCloseIconVisible
+            chipDaily.isCloseIconVisible = !chipDaily.isCloseIconVisible
             chipGroupWeekdays.applyCheckedOnAll(chipDaily.isCloseIconVisible)
+        }
+        buttonVisitingTime.setOnClickListener {
+            showTimePicker()
+
+        }
+        buttonEndTime.setOnClickListener {
+            showTimePicker()
         }
     }
 
+    private fun showTimePicker() {
+        val picker =
+            MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_12H)
+                .setHour(12)
+                .setMinute(10).setTitleText("Select time")
+                .setInputMode(INPUT_MODE_KEYBOARD).build()
+                .show(supportFragmentManager,"tag")
+}
+
     private fun setupUi(address: Address) {
         edtLocation.addTextChangedListener {
-            if(edtLocation.text.toString() != "Home") radioBtnHome.isChecked = false
-            if(edtLocation.text.toString() != "Work") radioBtnWork.isChecked = false
-            if(edtLocation.text.toString() != "Other") radioBtnCustom.isChecked = false
+            if (edtLocation.text.toString() != "Home") radioBtnHome.isChecked = false
+            if (edtLocation.text.toString() != "Work") radioBtnWork.isChecked = false
+            if (edtLocation.text.toString() != "Other") radioBtnCustom.isChecked = false
         }
 
-        if(address.address.isEmpty()) {
+        if (address.address.isEmpty()) {
             txtAddressLabel.visibility = View.GONE
             txtAddress.visibility = View.GONE
         } else {
@@ -158,9 +184,10 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
     private fun addMarker(latLng: LatLng) {
         ContextCompat.getDrawable(this, R.drawable.marker_mini_map)?.let {
             map?.addMarker(
-                    MarkerOptions()
-                            .position(latLng)
-                            .icon(getMarkerIconFromDrawable(it)))
+                MarkerOptions()
+                    .position(latLng)
+                    .icon(getMarkerIconFromDrawable(it))
+            )
         }
     }
 
@@ -171,13 +198,15 @@ class SavePickedLocationActivity : SosMapActivity(), BaseMapActivity.OnBaseMapAc
 
     private fun getMarkerIconFromDrawable(drawable: Drawable): BitmapDescriptor? {
         val canvas = Canvas()
-        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
         canvas.setBitmap(bitmap)
         drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
         drawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
-
-
 }
 

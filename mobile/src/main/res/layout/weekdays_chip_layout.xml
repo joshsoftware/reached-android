@@ -6,19 +6,24 @@
 
     <com.google.android.material.chip.ChipGroup
         android:layout_width="match_parent"
-        app:chipSpacingHorizontal="4dp"
+        app:singleLine="true"
         android:id="@+id/chipGroupWeekdays"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        app:lineSpacing="4dp"
+
         app:layout_constraintTop_toTopOf="parent">
         <com.google.android.material.chip.Chip
             android:id="@+id/sun"
             style="@style/DayChipStyle"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sunday" />
+
         <com.google.android.material.chip.Chip
             android:id="@+id/mon"
-            style="@style/DayChipStyle"
+            style="@style/WedandMonDayChipStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/monday" />
@@ -30,7 +35,7 @@
             android:text="@string/tuesday" />
         <com.google.android.material.chip.Chip
             android:id="@+id/wed"
-            style="@style/DayChipStyle"
+            style="@style/WedandMonDayChipStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/wednesday" />

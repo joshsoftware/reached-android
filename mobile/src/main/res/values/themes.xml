@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.MyApplication" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -17,32 +17,38 @@
         <item name="toolbarStyle">@style/ToolbarStyle</item>
         <!-- Customize your theme here. -->
     </style>
+
     <style name="TextInputStyleFilled" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxBackgroundColor">@color/text_input_white</item>
     </style>
+
     <style name="LoginTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="fontFamily">@font/sora_regular</item>
         <item name="android:textColor">@color/black</item>
         <item name="colorSurface">@color/login_surface_color</item>
         <item name="android:statusBarColor">@color/login_status_bar_color</item>
     </style>
+
     <style name="GroupChoiceTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="fontFamily">@font/sora_regular</item>
         <item name="android:textColor">@color/login_text_color</item>
         <item name="colorSurface">@color/login_surface_color</item>
         <item name="android:statusBarColor">@color/login_status_bar_color</item>
     </style>
+
     <style name="MapTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="fontFamily">@font/sora_regular</item>
         <item name="android:textColor">@color/map_text_color</item>
         <item name="colorSurface">@color/map_surface_color</item>
         <item name="android:statusBarColor">@color/login_status_bar_color</item>
     </style>
+
     <style name="ProfileTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="fontFamily">@font/sora_regular</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:statusBarColor">@color/login_status_bar_color</item>
     </style>
+
     <style name="LoginCardShapeAppearance" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopLeft">0dp</item>
@@ -76,6 +82,7 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:statusBarColor">@color/login_status_bar_color</item>
     </style>
+
     <style name="ToolbarStyle" parent="Widget.MaterialComponents.Toolbar">
         <item name="titleTextColor">@color/colorOnPrimary</item>
         <item name="android:background">?attr/colorPrimary</item>
@@ -85,6 +92,7 @@
     <style name="LoginButton" parent="LoginComponent">
         <item name="cornerRadius">24dp</item>
     </style>
+
     <style name="LoginComponent">
         <item name="android:layout_marginStart">@dimen/login_component_margin</item>
         <item name="android:layout_marginEnd">@dimen/login_component_margin</item>
@@ -99,26 +107,32 @@
         <item name="android:textColor">@color/buttonTextColor</item>
         <item name="android:textSize">14sp</item>
     </style>
+
     <style name="CircularImage">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
     <style name="MessageText" parent="TextAppearance.AppCompat.Small">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/quantum_grey600</item>
     </style>
+
     <style name="LocationAlertTitle" parent="TextAppearance.AppCompat.Title">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/location_permission_title_color</item>
     </style>
+
     <style name="PermissionMessage" parent="TextAppearance.AppCompat.Title">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="LocationSettingTitle" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/location_permission_title_color</item>
     </style>
+
     <style name="LocationTitle" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/white</item>
@@ -126,20 +140,38 @@
 
     <style name="ChipTextAppearance" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textAllCaps">false</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="WedandMonDayChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/background_chip_color</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="chipEndPadding">7dp</item>
+        <item name="chipStartPadding">6dp</item>
+        <item name="chipMinHeight">40dp</item>
     </style>
 
     <style name="DayChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/background_chip_color</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="chipEndPadding">10dp</item>
+        <item name="chipStartPadding">8dp</item>
+        <item name="chipMinHeight">40dp</item>
+
     </style>
 
     <style name="DailyChipStyle" parent="DayChipStyle">
         <item name="android:textAppearance">@style/ChipTextAppearance</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textAlignment">center</item>
         <item name="closeIconTint">@color/white</item>
         <item name="closeIcon">@drawable/ic_check_24</item>
+        <item name="chipMinHeight">40dp</item>
     </style>
+
 </resources>
