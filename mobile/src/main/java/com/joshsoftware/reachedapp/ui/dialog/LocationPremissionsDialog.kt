@@ -64,29 +64,29 @@ class LocationPremissionsDialog : DialogFragment() {
     }
 
     private fun LocationPermissionLayoutBinding.setTextclickablePolicy() {
-        val clickableSpan = object : ClickableSpan() {
-            override fun onClick(textView: View) {
-                val intent = Intent(context, PrivacyPolicyActivity::class.java)
-                startActivity(intent)
-            }
-
-            override fun updateDrawState(textPaint: TextPaint) {
-                super.updateDrawState(textPaint)
-                textPaint.color = Color.BLUE
-                textPaint.isUnderlineText = false
-            }
-        }
-        val message = getString(R.string.location_app_message)
-        val startIndex = message.indexOf("Privacy Policy")
-        val endIndex = startIndex + "Privacy Policy".length
-        val spannableString = SpannableString(message)
-        spannableString.setSpan(
-            clickableSpan,
-            startIndex,
-            endIndex,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        textViewPolicy.text = spannableString
+//        val clickableSpan = object : ClickableSpan() {
+//            override fun onClick(textView: View) {
+//                val intent = Intent(context, PrivacyPolicyActivity::class.java)
+//                startActivity(intent)
+//            }
+//
+//            override fun updateDrawState(textPaint: TextPaint) {
+//                super.updateDrawState(textPaint)
+//                textPaint.color = Color.BLUE
+//                textPaint.isUnderlineText = false
+//            }
+//        }
+//        val message = getString(R.string.location_app_message)
+//        val startIndex = message.indexOf("Privacy Policy")
+//        val endIndex = startIndex + "Privacy Policy".length
+//        val spannableString = SpannableString(message)
+//        spannableString.setSpan(
+//            clickableSpan,
+//            startIndex,
+//            endIndex,
+//            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+//        )
+//        textViewPolicy.text = spannableString
     }
 
     private fun LocationPermissionLayoutBinding.setBoldText() {

@@ -97,7 +97,7 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
                             )
                         ) {
                             // If User Checked 'Don't Show Again' checkbox for runtime permission, then navigate user to Settings
-                            showAlert("Reached needs access to your location so that all your group members know you are safe.", 22)
+                            showAlert(getString(R.string.prominent_disclosure_text), 22)
                         }
                     }
                 } else {
@@ -112,7 +112,7 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
                             )
                         ) {
                             // If User Checked 'Don't Show Again' checkbox for runtime permission, then navigate user to Settings
-                            showAlert("Reached needs access to your location so that all your group members know you are safe.", 22)
+                            showAlert(getString(R.string.prominent_disclosure_text), 22)
                         }
                     }
                 }
@@ -124,7 +124,7 @@ abstract class BaseLocationPermissionActivity : BaseActivity() {
                     )
                 ) {
                     // If User Checked 'Don't Show Again' checkbox for runtime permission, then navigate user to Settings
-                    showAlert("Reached needs access to your location so that all your group members know you are safe.", 22)
+                    showAlert(getString(R.string.prominent_disclosure_text), 22)
                 }
                 //code for deny
             }

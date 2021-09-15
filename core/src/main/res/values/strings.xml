@@ -11,5 +11,5 @@
     <string name="me">Me</string>
     <string name="reject">REJECT</string>
     <string name="accept">ACCEPT</string>
-    <string name="prominent_disclosure_text">This app collects location data even when the app is closed or not in use to enable other members of the group to see your location which allows them to make sure you are safe. This is the purpose of the app and hence, if you reject this the app will close. </string>
+    <string name="prominent_disclosure_text">This app collects location data to enable members of the group to track your location even when the app is closed or not in use. This allows the members to make sure you are safe.</string>
 </resources>
